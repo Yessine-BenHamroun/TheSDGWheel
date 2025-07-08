@@ -10,6 +10,7 @@ import { MouseFollower } from "@/components/mouse-follower"
 import { ScrollProgress } from "@/components/scroll-progress"
 import { SectionHeading } from "@/components/section-heading"
 import { GlassmorphicCard } from "@/components/glassmorphic-card"
+import { SDGWheel } from "@/components/sdg-wheel"
 
 
 export default function Portfolio() {
@@ -82,23 +83,7 @@ export default function Portfolio() {
           <SectionHeading title="About The SDG Wheel" subtitle="Gamifying sustainable development awareness" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mt-16">
-            <div className="relative">
-              <div className="absolute -inset-4 rounded-xl bg-gradient-to-r from-green-500/20 to-blue-500/20 blur-xl opacity-70"></div>
-              <div className="relative aspect-square rounded-xl overflow-hidden border border-zinc-800">
-                <img
-                  src="https://via.placeholder.com/600x600"
-                  alt="SDG Wheel Interface"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 w-full p-6">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-                    <span className="text-sm font-medium">Interactive & Engaging</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <SDGWheel />
 
             <div className="space-y-6">
               <GlassmorphicCard>
@@ -106,12 +91,14 @@ export default function Portfolio() {
                   Project Overview
                 </h3>
                 <p className="text-lg text-zinc-300">
-                  The SDG Wheel is a gamified web application designed to raise awareness among citizens, particularly youth, 
-                  about the 17 Sustainable Development Goals (SDGs), with a special focus on climate-related themes.
+                  The SDG Wheel is a gamified web application designed to raise awareness among citizens, particularly
+                  youth, about the 17 Sustainable Development Goals (SDGs), with a special focus on climate-related
+                  themes.
                 </p>
                 <p className="text-lg text-zinc-300 mt-4">
-                  Users spin an interactive wheel representing the 17 SDGs, draw challenges or quizzes, respond, 
-                  justify their actions with proof (photos/videos), accumulate points, and progress in their sustainable engagement profile.
+                  Users spin an interactive wheel representing the 17 SDGs, draw challenges or quizzes, respond, justify
+                  their actions with proof (photos/videos), accumulate points, and progress in their sustainable
+                  engagement profile.
                 </p>
 
                 <div className="grid grid-cols-1 gap-4 mt-8">
