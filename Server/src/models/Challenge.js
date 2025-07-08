@@ -1,0 +1,71 @@
+const mongoose = require('mongoose');
+
+const challengeSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 5,
+    maxlength: 200
+  },
+  description: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 10,
+    maxlength: 1000
+  },
+  type: {
+    type: String,
+    required: true,
+    enum: ['DAILY', 'WEEKLY', 'MONTHLY', 'SPECIAL']
+  },
+  difficulty: {
+    type: String,
+    required: true,
+    enum: ['EASY', 'MEDIUM', 'HARD', 'EXPERT']
+  },
+  points: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 1000
+  },
+  associatedODD: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ODD',
+    required: true
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  completionCount: {
+    type: Number,
+    default: 0
+  }
+}, {
+  timestamps: true
+});
+
+// Index for performance
+challengeSchema.index({ associatedODD: 1 });
+challengeSchema.index({ type: 1 });
+challengeSchema.index({ difficulty: 1 });
+challengeSchema.index({ isActive: 1 });
+
+// Static method to get random challenge by ODD
+challengeSchema.statics.getRandomByODD = function(oddId) {
+  return this.aggregate([
+    { $match: { associatedODD: oddId, isActive: true } },
+    { $sample: { size: 1 } }
+  ]).then(results => results[0] || null);
+};
+
+// Method to increment completion count
+challengeSchema.methods.incrementCompletion = function() {
+  this.completionCount += 1;
+  return this.save();
+};
+
+module.exports = mongoose.model('Challenge', challengeSchema);
