@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import { useNavigate } from "react-router-dom"
-import { useAuth } from "@/contexts/AuthContext"
-import ApiService from "@/services/api"
+import { useNavigate, useLocation } from "react-router-dom"
+import { useAuth } from "../contexts/AuthContext"
+import ApiService from "../services/api"
 import {
   Activity,
   AlertCircle,
@@ -19,6 +19,7 @@ import {
   Hexagon,
   LineChart,
   Lock,
+  Logs,
   MessageSquare,
   Mic,
   Moon,
@@ -50,7 +51,7 @@ export default function Dashboard() {
   const [theme, setTheme] = useState("dark")
   const [systemStatus, setSystemStatus] = useState(85)
   const [cpuUsage, setCpuUsage] = useState(42)
-  const [memoryUsage, setMemoryUsage] = useState(68)
+  const [earnedVotes, setEarnedVotes] = useState(68)
   const [networkStatus, setNetworkStatus] = useState(92)
   const [securityLevel, setSecurityLevel] = useState(75)
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -59,6 +60,7 @@ export default function Dashboard() {
 
   const canvasRef = useRef(null)
   const navigate = useNavigate()
+  const location = useLocation()
   const { toast } = useToast()
   const { user, logout } = useAuth()
 
@@ -84,7 +86,7 @@ export default function Dashboard() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCpuUsage(Math.floor(Math.random() * 30) + 30)
-      setMemoryUsage(Math.floor(Math.random() * 20) + 60)
+      setEarnedVotes(5)
       setNetworkStatus(Math.floor(Math.random() * 15) + 80)
       setSystemStatus(Math.floor(Math.random() * 10) + 80)
     }, 3000)
@@ -216,7 +218,7 @@ export default function Dashboard() {
       {/* Background particle effect */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30" />
 
-      {/* Loading overlay */}
+      {/* Loading overlay
       {isLoading && (
         <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-50">
           <div className="flex flex-col items-center">
@@ -230,7 +232,7 @@ export default function Dashboard() {
             <div className="mt-4 text-purple-400 font-mono text-sm tracking-wider">SYSTEM INITIALIZING</div>
           </div>
         </div>
-      )}
+      )} */}
 
       <div className="container mx-auto p-4 relative z-10">
         {/* Header - Updated with your design */}
@@ -302,24 +304,41 @@ export default function Dashboard() {
 
               <div className="relative p-4">
                 <nav className="space-y-2">
-                  <NavItem icon={Command} label="Dashboard" active />
-                  <NavItem icon={Activity} label="Diagnostics" />
-                  <NavItem icon={Database} label="Data Center" />
-                  <NavItem icon={Globe} label="Network" />
-                  <NavItem icon={Shield} label="Security" />
-                  <NavItem icon={Terminal} label="Console" />
-                  <NavItem icon={MessageSquare} label="Communications" />
+                  <NavItem 
+                    icon={Command} 
+                    label="Dashboard" 
+                    active={location.pathname === "/dashboard"} 
+                    href="/dashboard" 
+                  />
+                  <NavItem 
+                    icon={Activity} 
+                    label="Spin The Wheel" 
+                    active={location.pathname === "/wheel"} 
+                    href="/wheel" 
+                  />
+                  <NavItem 
+                    icon={Database} 
+                    label="Leaderboard" 
+                    active={location.pathname === "/leaderboard"} 
+                    href="/leaderboard" 
+                  />
+                  <NavItem 
+                    icon={Globe} 
+                    label="Community" 
+                    active={location.pathname === "/community"} 
+                    href="/community" 
+                  />
                   <NavItem icon={Settings} label="Settings" />
                 </nav>
 
-                <div className="mt-8 pt-6 border-t border-zinc-700/50">
+                {/* <div className="mt-8 pt-6 border-t border-zinc-700/50">
                   <div className="text-xs text-zinc-500 mb-2 font-mono">SYSTEM STATUS</div>
                   <div className="space-y-3">
                     <StatusItem label="Core Systems" value={systemStatus} color="purple" />
                     <StatusItem label="Security" value={securityLevel} color="green" />
                     <StatusItem label="Network" value={networkStatus} color="blue" />
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -336,7 +355,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between">
                       <h2 className="text-xl font-bold text-white flex items-center">
                         <Activity className="mr-2 h-5 w-5 text-purple-500" />
-                        System Overview
+                        Statistics
                       </h2>
                       <div className="flex items-center space-x-2">
                         <Badge
@@ -356,20 +375,18 @@ export default function Dashboard() {
                   <div className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <MetricCard
-                        title="CPU Usage"
+                        title="Completed Challaneges"
                         value={cpuUsage}
                         icon={Cpu}
                         trend="up"
                         color="purple"
-                        detail="3.8 GHz | 12 Cores"
                       />
                       <MetricCard
-                        title="Memory"
-                        value={memoryUsage}
+                        title="Earned Votes"
+                        value={earnedVotes}
                         icon={HardDrive}
                         trend="stable"
                         color="pink"
-                        detail="16.4 GB / 24 GB"
                       />
                       <MetricCard
                         title="Network"
@@ -377,7 +394,6 @@ export default function Dashboard() {
                         icon={Wifi}
                         trend="down"
                         color="blue"
-                        detail="1.2 GB/s | 42ms"
                       />
                     </div>
 
@@ -385,38 +401,44 @@ export default function Dashboard() {
                       <Tabs defaultValue="performance" className="w-full">
                         <div className="flex items-center justify-between mb-4">
                           <TabsList className="bg-zinc-800/50 p-1">
+                          <TabsTrigger
+                              value="performance"
+                              className="data-[state=active]:bg-zinc-700 data-[state=active]:text-purple-400"
+                            >
+                              All
+                            </TabsTrigger>
                             <TabsTrigger
                               value="performance"
                               className="data-[state=active]:bg-zinc-700 data-[state=active]:text-purple-400"
                             >
-                              Performance
+                              Challanges
                             </TabsTrigger>
                             <TabsTrigger
                               value="processes"
                               className="data-[state=active]:bg-zinc-700 data-[state=active]:text-purple-400"
                             >
-                              Processes
+                              Quizzes
                             </TabsTrigger>
                             <TabsTrigger
                               value="storage"
                               className="data-[state=active]:bg-zinc-700 data-[state=active]:text-purple-400"
                             >
-                              Storage
+                              Votes
                             </TabsTrigger>
                           </TabsList>
 
                           <div className="flex items-center space-x-2 text-xs text-zinc-400">
                             <div className="flex items-center">
                               <div className="h-2 w-2 rounded-full bg-purple-500 mr-1"></div>
-                              CPU
+                              Challenges
                             </div>
                             <div className="flex items-center">
                               <div className="h-2 w-2 rounded-full bg-pink-500 mr-1"></div>
-                              Memory
+                              Quizzes
                             </div>
                             <div className="flex items-center">
                               <div className="h-2 w-2 rounded-full bg-blue-500 mr-1"></div>
-                              Network
+                              Votes
                             </div>
                           </div>
                         </div>
@@ -424,21 +446,41 @@ export default function Dashboard() {
                         <TabsContent value="performance" className="mt-0">
                           <div className="h-64 w-full relative bg-zinc-800/30 rounded-lg border border-zinc-700/50 overflow-hidden">
                             <PerformanceChart />
-                            <div className="absolute bottom-4 right-4 bg-zinc-900/80 backdrop-blur-sm rounded-md px-3 py-2 border border-zinc-700/50">
+                            {/* <div className="absolute bottom-4 right-4 bg-zinc-900/80 backdrop-blur-sm rounded-md px-3 py-2 border border-zinc-700/50">
                               <div className="text-xs text-zinc-400">System Load</div>
                               <div className="text-lg font-mono text-purple-400">{cpuUsage}%</div>
-                            </div>
+                            </div> */}
                           </div>
                         </TabsContent>
+
+                <div className="relative">
+                  <div className="border-b border-zinc-700/50 p-6 pb-3">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl font-bold text-white flex items-center">
+                        <Logs className="mr-2 h-5 w-5 text-purple-500" />
+                        History
+                      </h2>
+                      <div className="flex items-center space-x-2">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400">
+                          <RefreshCw className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    </div>
+                    </div>
 
                         <TabsContent value="processes" className="mt-0">
                           <div className="bg-zinc-800/30 rounded-lg border border-zinc-700/50 overflow-hidden">
                             <div className="grid grid-cols-12 text-xs text-zinc-400 p-3 border-b border-zinc-700/50 bg-zinc-800/50">
-                              <div className="col-span-1">PID</div>
-                              <div className="col-span-4">Process</div>
-                              <div className="col-span-2">User</div>
-                              <div className="col-span-2">CPU</div>
-                              <div className="col-span-2">Memory</div>
+                              <div className="col-span-1">Spin ID</div>
+                              <div className="col-span-4">SDG</div>
+                              <div className="col-span-2">Date</div>
+                              <div className="col-span-2">Challenge/Quizz</div>
+                              <div className="col-span-2">Proof</div>
                               <div className="col-span-1">Status</div>
                             </div>
 
@@ -495,16 +537,7 @@ export default function Dashboard() {
                           </div>
                         </TabsContent>
 
-                        <TabsContent value="storage" className="mt-0">
-                          <div className="bg-zinc-800/30 rounded-lg border border-zinc-700/50 p-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <StorageItem name="System Drive (C:)" total={512} used={324} type="SSD" />
-                              <StorageItem name="Data Drive (D:)" total={2048} used={1285} type="HDD" />
-                              <StorageItem name="Backup Drive (E:)" total={4096} used={1865} type="HDD" />
-                              <StorageItem name="External Drive (F:)" total={1024} used={210} type="SSD" />
-                            </div>
-                          </div>
-                        </TabsContent>
+                        
                       </Tabs>
                     </div>
                   </div>
@@ -675,7 +708,7 @@ export default function Dashboard() {
                 <div className="relative">
                   <div className="bg-gradient-to-br from-zinc-800 to-zinc-900 p-6 border-b border-zinc-700/50">
                     <div className="text-center">
-                      <div className="text-xs text-zinc-500 mb-1 font-mono">SYSTEM TIME</div>
+                      <div className="text-xs text-zinc-500 mb-1 font-mono">CURRENT TIME</div>
                       <div className="text-3xl font-mono text-purple-400 mb-1">{formatTime(currentTime)}</div>
                       <div className="text-sm text-zinc-400">{formatDate(currentTime)}</div>
                     </div>
@@ -819,11 +852,22 @@ export default function Dashboard() {
 }
 
 // Component for nav items
-function NavItem({ icon: Icon, label, active }) {
+function NavItem({ icon: Icon, label, active, onClick, href }) {
+  const navigate = useNavigate()
+  
+  const handleClick = () => {
+    if (onClick) {
+      onClick()
+    } else if (href) {
+      navigate(href)
+    }
+  }
+
   return (
     <Button
       variant="ghost"
       className={`w-full justify-start ${active ? "bg-zinc-800/70 text-purple-400" : "text-zinc-400 hover:text-white"}`}
+      onClick={handleClick}
     >
       <Icon className="mr-2 h-4 w-4" />
       {label}
@@ -905,18 +949,116 @@ function MetricCard({ title, value, icon: Icon, trend, color, detail }) {
 
 // Performance chart component
 function PerformanceChart() {
+  // Generate last 5 days from current date
+  const getLast5Days = () => {
+    const days = []
+    const today = new Date()
+    
+    for (let i = 4; i >= 0; i--) {
+      const date = new Date(today)
+      date.setDate(today.getDate() - i)
+      days.push(date.toLocaleDateString("en-US", { month: "short", day: "numeric" }))
+    }
+    
+    return days
+  }
+
+  const last5Days = getLast5Days()
+
+  // Static accumulated SDG performance data for last 5 days
+  const generateAccumulatedData = () => {
+    // Static daily activities for consistent display
+    const dailyActivitiesData = [
+      { challenges: 2, quizzes: 3, votes: 5 }, // Day 1
+      { challenges: 1, quizzes: 4, votes: 8 }, // Day 2
+      { challenges: 3, quizzes: 2, votes: 6 }, // Day 3
+      { challenges: 2, quizzes: 5, votes: 4 }, // Day 4
+      { challenges: 1, quizzes: 3, votes: 7 }  // Day 5
+    ]
+    
+    let challengeTotal = 0
+    let quizTotal = 0
+    let voteTotal = 0
+    
+    const data = []
+    
+    for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
+      const dailyActivities = dailyActivitiesData[dayIndex]
+      
+      // Calculate points: Challenge=25, Quiz=15, Vote=1
+      const challengePoints = dailyActivities.challenges * 25
+      const quizPoints = dailyActivities.quizzes * 15
+      const votePoints = dailyActivities.votes * 1
+      
+      // Accumulate totals
+      challengeTotal += challengePoints
+      quizTotal += quizPoints
+      voteTotal += votePoints
+      
+      data.push({
+        day: last5Days[dayIndex],
+        challengeTotal,
+        quizTotal,
+        voteTotal,
+        dailyActivities
+      })
+    }
+    
+    return data
+  }
+
+  const accumulatedData = generateAccumulatedData()
+  
+  // Calculate dynamic Y-axis scale
+  const maxPoints = Math.max(
+    ...accumulatedData.map(day => Math.max(day.challengeTotal, day.quizTotal, day.voteTotal))
+  )
+  const yAxisMax = Math.max(100, Math.ceil(maxPoints / 50) * 50) // Default 100, or round up to nearest 50
+  
+  // Generate Y-axis labels
+  const yAxisLabels = []
+  const stepSize = yAxisMax / 4
+  for (let i = 4; i >= 0; i--) {
+    yAxisLabels.push(Math.round(stepSize * i))
+  }
+
+  // Calculate line coordinates
+  const getLineCoordinates = (dataPoints) => {
+    const chartWidth = 100 // percentage
+    const chartHeight = 100 // percentage
+    const stepX = chartWidth / (dataPoints.length - 1)
+    
+    return dataPoints.map((point, index) => ({
+      x: index * stepX,
+      y: chartHeight - (point / yAxisMax) * chartHeight
+    }))
+  }
+
+  const challengeCoords = getLineCoordinates(accumulatedData.map(d => d.challengeTotal))
+  const quizCoords = getLineCoordinates(accumulatedData.map(d => d.quizTotal))
+  const voteCoords = getLineCoordinates(accumulatedData.map(d => d.voteTotal))
+
+  // Create SVG path string
+  const createPath = (coords) => {
+    if (coords.length === 0) return ""
+    
+    let path = `M ${coords[0].x} ${coords[0].y}`
+    for (let i = 1; i < coords.length; i++) {
+      path += ` L ${coords[i].x} ${coords[i].y}`
+    }
+    return path
+  }
+
   return (
-    <div className="h-full w-full flex items-end justify-between px-4 pt-4 pb-8 relative">
-      {/* Y-axis labels */}
+    <div className="h-full w-full relative px-4 pt-4 pb-8">
+      {/* Y-axis labels - Dynamic based on data */}
       <div className="absolute left-2 top-0 h-full flex flex-col justify-between py-4">
-        <div className="text-xs text-zinc-500">100%</div>
-        <div className="text-xs text-zinc-500">75%</div>
-        <div className="text-xs text-zinc-500">50%</div>
-        <div className="text-xs text-zinc-500">25%</div>
-        <div className="text-xs text-zinc-500">0%</div>
+        {yAxisLabels.map((label, index) => (
+          <div key={index} className="text-xs text-zinc-500">{label}</div>
+        ))}
       </div>
 
-      {/* X-axis grid lines */}
+      {/* Grid lines */}
       <div className="absolute left-0 right-0 top-0 h-full flex flex-col justify-between py-4 px-10">
         <div className="border-b border-zinc-700/30 w-full"></div>
         <div className="border-b border-zinc-700/30 w-full"></div>
@@ -925,39 +1067,112 @@ function PerformanceChart() {
         <div className="border-b border-zinc-700/30 w-full"></div>
       </div>
 
-      {/* Chart bars */}
-      <div className="flex-1 h-full flex items-end justify-between px-2 z-10">
-        {Array.from({ length: 24 }).map((_, i) => {
-          const cpuHeight = Math.floor(Math.random() * 60) + 20
-          const memHeight = Math.floor(Math.random() * 40) + 40
-          const netHeight = Math.floor(Math.random() * 30) + 30
-
-          return (
-            <div key={i} className="flex space-x-0.5">
-              <div
-                className="w-1 bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-sm"
-                style={{ height: `${cpuHeight}%` }}
-              ></div>
-              <div
-                className="w-1 bg-gradient-to-t from-pink-500 to-pink-400 rounded-t-sm"
-                style={{ height: `${memHeight}%` }}
-              ></div>
-              <div
-                className="w-1 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-sm"
-                style={{ height: `${netHeight}%` }}
-              ></div>
-            </div>
-          )
-        })}
+      {/* Vertical grid lines */}
+      <div className="absolute left-10 right-10 top-0 h-full flex justify-between py-4">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div key={index} className="border-l border-zinc-700/30 h-full"></div>
+        ))}
       </div>
 
-      {/* X-axis labels */}
+      {/* Line Chart */}
+      <div className="absolute left-10 right-10 top-4 bottom-8">
+        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {/* Challenge line */}
+          <path
+            d={createPath(challengeCoords)}
+            fill="none"
+            stroke="rgb(168 85 247)" // purple-500
+            strokeWidth="0.5"
+            className="drop-shadow-sm"
+          />
+          
+          {/* Quiz line */}
+          <path
+            d={createPath(quizCoords)}
+            fill="none"
+            stroke="rgb(236 72 153)" // pink-500
+            strokeWidth="0.5"
+            className="drop-shadow-sm"
+          />
+          
+          {/* Vote line */}
+          <path
+            d={createPath(voteCoords)}
+            fill="none"
+            stroke="rgb(59 130 246)" // blue-500
+            strokeWidth="0.5"
+            className="drop-shadow-sm"
+          />
+
+          {/* Data points */}
+          {challengeCoords.map((coord, index) => (
+            <circle
+              key={`challenge-${index}`}
+              cx={coord.x}
+              cy={coord.y}
+              r="1"
+              fill="rgb(168 85 247)"
+              className="drop-shadow-sm"
+            />
+          ))}
+          
+          {quizCoords.map((coord, index) => (
+            <circle
+              key={`quiz-${index}`}
+              cx={coord.x}
+              cy={coord.y}
+              r="1"
+              fill="rgb(236 72 153)"
+              className="drop-shadow-sm"
+            />
+          ))}
+          
+          {voteCoords.map((coord, index) => (
+            <circle
+              key={`vote-${index}`}
+              cx={coord.x}
+              cy={coord.y}
+              r="1"
+              fill="rgb(59 130 246)"
+              className="drop-shadow-sm"
+            />
+          ))}
+        </svg>
+      </div>
+
+      {/* Data point tooltips on hover */}
+      <div className="absolute left-10 right-10 top-4 bottom-8 flex justify-between items-end">
+        {accumulatedData.map((day, index) => (
+          <div
+            key={index}
+            className="group relative flex-1 h-full flex items-end justify-center cursor-pointer"
+          >
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-full mb-2 bg-zinc-800/90 backdrop-blur-sm rounded-md p-2 border border-zinc-700/50 text-xs whitespace-nowrap z-20">
+              <div className="text-zinc-300 font-medium mb-1">{day.day}</div>
+              <div className="space-y-1">
+                <div className="flex items-center">
+                  <div className="w-2 h-2 rounded-full bg-purple-500 mr-2"></div>
+                  <span className="text-purple-400">Challenges: {day.challengeTotal}pts</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 rounded-full bg-pink-500 mr-2"></div>
+                  <span className="text-pink-400">Quizzes: {day.quizTotal}pts</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+                  <span className="text-blue-400">Votes: {day.voteTotal}pts</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* X-axis labels - Show last 5 days */}
       <div className="absolute bottom-0 left-0 right-0 flex justify-between px-10">
-        <div className="text-xs text-zinc-500">00:00</div>
-        <div className="text-xs text-zinc-500">06:00</div>
-        <div className="text-xs text-zinc-500">12:00</div>
-        <div className="text-xs text-zinc-500">18:00</div>
-        <div className="text-xs text-zinc-500">24:00</div>
+        {last5Days.map((day, index) => (
+          <div key={index} className="text-xs text-zinc-500">{day}</div>
+        ))}
       </div>
     </div>
   )

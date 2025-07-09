@@ -9,14 +9,8 @@ const getProfile = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
-    const progress = await UserProgress.find({ user: req.user._id })
-      .populate('odd', 'name icon color');
     
-    res.json({
-      user: user.toJSON(),
-      progress: progress
-    });
+    res.json(user.toJSON());
   } catch (error) {
     next(error);
   }

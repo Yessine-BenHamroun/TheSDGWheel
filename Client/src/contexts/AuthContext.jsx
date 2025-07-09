@@ -1,47 +1,70 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import ApiService from '@/services/api'
+"use client"
+
+import { createContext, useContext, useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import ApiService from "../services/api"
 
 const AuthContext = createContext({})
 
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context
-}
-
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    // Check if user is logged in on app start
-    const token = ApiService.getAuthToken()
-    const userData = ApiService.getUserData()
-    
-    if (token && userData) {
-      setUser(userData)
-      setIsAuthenticated(true)
+    // Check for existing token on app load
+    const token = localStorage.getItem("token")
+    if (token) {
+      try {
+        // Decode JWT token (simple base64 decode for demo)
+        const payload = JSON.parse(atob(token.split(".")[1]))
+        if (payload.exp > Date.now() / 1000) {
+          // Token is still valid, get user profile
+          loadUserProfile()
+        } else {
+          localStorage.removeItem("token")
+          setLoading(false)
+        }
+      } catch (error) {
+        console.error("Invalid token:", error)
+        localStorage.removeItem("token")
+        setLoading(false)
+      }
+    } else {
+      setLoading(false)
     }
-    
-    setIsLoading(false)
   }, [])
+
+  const loadUserProfile = async () => {
+    try {
+      const profile = await ApiService.getProfile()
+      setUser(profile)
+    } catch (error) {
+      console.error("Failed to load user profile:", error)
+      localStorage.removeItem("token")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const login = async (credentials) => {
     try {
       const response = await ApiService.login(credentials)
-      
-      // Store token and user data
-      ApiService.setAuthToken(response.token)
-      ApiService.setUserData(response.user)
-      
-      setUser(response.user)
-      setIsAuthenticated(true)
-      
-      return response
+      const { token, user: userData } = response
+
+      localStorage.setItem("token", token)
+      setUser(userData)
+
+      // Redirect based on role
+      if (userData.role === "admin") {
+        navigate("/admin")
+      } else {
+        navigate("/dashboard")
+      }
+
+      return { success: true, user: userData }
     } catch (error) {
+      console.error("Login error:", error)
       throw error
     }
   }
@@ -49,46 +72,62 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const response = await ApiService.register(userData)
-      
-      // Store token and user data
-      ApiService.setAuthToken(response.token)
-      ApiService.setUserData(response.user)
-      
-      setUser(response.user)
-      setIsAuthenticated(true)
-      
-      return response
+      const { token, user: newUser } = response
+
+      localStorage.setItem("token", token)
+      setUser(newUser)
+
+      navigate("/dashboard")
+      return { success: true, user: newUser }
     } catch (error) {
+      console.error("Registration error:", error)
       throw error
     }
   }
 
   const logout = () => {
-    ApiService.logout()
+    localStorage.removeItem("token")
     setUser(null)
-    setIsAuthenticated(false)
+    navigate("/login")
   }
 
-  const updateUser = (userData) => {
-    setUser(userData)
-    ApiService.setUserData(userData)
+  const refreshToken = async () => {
+    try {
+      const response = await ApiService.refreshToken()
+      const { token } = response
+      localStorage.setItem("token", token)
+      return { success: true }
+    } catch (error) {
+      console.error("Token refresh error:", error)
+      logout()
+      throw error
+    }
+  }
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token")
+    return token ? { Authorization: `Bearer ${token}` } : {}
   }
 
   const value = {
     user,
-    isAuthenticated,
-    isLoading,
     login,
     register,
     logout,
-    updateUser
+    refreshToken,
+    loading,
+    getAuthHeaders,
+    isAdmin: user?.role === "admin",
+    isAuthenticated: !!user,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-export default AuthContext
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider")
+  }
+  return context
+}
