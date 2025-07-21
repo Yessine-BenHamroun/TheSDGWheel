@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import ApiService from "@/services/api"
 import { AdminSidebar } from "@/components/AdminSidebar"
 import { MouseFollower } from "@/components/mouse-follower"
 import { ScrollProgress } from "@/components/scroll-progress"
@@ -14,110 +15,40 @@ export default function History() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState("all")
-  const [activities, setActivities] = useState([
-    {
-      id: 1,
-      type: "user_registration",
-      user: "eco_warrior",
-      action: "User registered",
-      details: "New user account created",
-      timestamp: "2024-03-16T10:30:00Z",
-      ip: "192.168.1.100",
-    },
-    {
-      id: 2,
-      type: "challenge_completion",
-      user: "green_champion",
-      action: "Challenge completed",
-      details: "Plant a tree challenge - Proof submitted",
-      timestamp: "2024-03-16T09:15:00Z",
-      points: 25,
-    },
-    {
-      id: 3,
-      type: "proof_validation",
-      user: "admin",
-      action: "Proof approved",
-      details: "Approved proof for 'Reduce plastic waste' challenge",
-      timestamp: "2024-03-16T08:45:00Z",
-      target: "climate_hero",
-    },
-    {
-      id: 4,
-      type: "wheel_spin",
-      user: "sustainability_pro",
-      action: "Wheel spun",
-      details: "Landed on ODD 13: Climate Action",
-      timestamp: "2024-03-16T08:20:00Z",
-      result: "ODD 13",
-    },
-    {
-      id: 5,
-      type: "quiz_completion",
-      user: "earth_guardian",
-      action: "Quiz completed",
-      details: "Understanding the SDGs - Score: 85%",
-      timestamp: "2024-03-16T07:30:00Z",
-      score: 85,
-      points: 15,
-    },
-    {
-      id: 6,
-      type: "admin_action",
-      user: "admin",
-      action: "Challenge created",
-      details: "Created new challenge: 'Sustainable Transportation'",
-      timestamp: "2024-03-15T16:45:00Z",
-    },
-    {
-      id: 7,
-      type: "community_vote",
-      user: "eco_warrior",
-      action: "Voted on proof",
-      details: "Voted for proof in 'Clean Energy' challenge",
-      timestamp: "2024-03-15T15:20:00Z",
-    },
-    {
-      id: 8,
-      type: "badge_earned",
-      user: "green_champion",
-      action: "Badge earned",
-      details: "Earned 'Climate Action Hero' badge",
-      timestamp: "2024-03-15T14:10:00Z",
-      badge: "Climate Action Hero",
-    },
-    {
-      id: 9,
-      type: "proof_validation",
-      user: "admin",
-      action: "Proof rejected",
-      details: "Rejected proof for 'Water Conservation' - Insufficient evidence",
-      timestamp: "2024-03-15T13:30:00Z",
-      target: "new_user",
-    },
-    {
-      id: 10,
-      type: "system_action",
-      user: "system",
-      action: "ODDs seeded",
-      details: "Default ODDs configuration loaded",
-      timestamp: "2024-03-15T12:00:00Z",
-    },
-  ])
+  const [activities, setActivities] = useState([])
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => setLoading(false), 1000)
+    fetchLogs()
   }, [])
 
+  const fetchLogs = async () => {
+    setLoading(true)
+    try {
+      const res = await ApiService.getActivityLogs()
+      setActivities(res.logs || [])
+    } catch (e) {
+      setActivities([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getUserName = (activity) => {
+    if (!activity.user) return "";
+    if (typeof activity.user === "string") return activity.user;
+    if (typeof activity.user === "object" && activity.user.username) return activity.user.username;
+    return "";
+  }
+
   const filteredActivities = activities.filter((activity) => {
+    const userName = getUserName(activity)
+    const action = activity.action || ""
+    const details = activity.details || ""
     const matchesSearch =
-      activity.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      activity.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      activity.details.toLowerCase().includes(searchTerm.toLowerCase())
-
+      userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      details.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesFilter = filterType === "all" || activity.type === filterType
-
     return matchesSearch && matchesFilter
   })
 
@@ -332,7 +263,7 @@ export default function History() {
                       <p className="text-sm text-zinc-300 mb-2">{activity.details}</p>
                       <div className="flex items-center space-x-4 text-xs text-zinc-400">
                         <span>
-                          User: <span className="text-white">{activity.user}</span>
+                          User: <span className="text-white">{getUserName(activity)}</span>
                         </span>
                         {activity.points && (
                           <span>

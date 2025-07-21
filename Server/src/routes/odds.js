@@ -64,4 +64,6 @@ router.delete('/:id',
 // Get ODD challenges
 router.get('/:id/challenges', oddController.getODDChallenges);
 
+router.post('/spin', authenticateToken, oddController.spinWheel);
+
 module.exports = router;

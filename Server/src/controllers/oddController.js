@@ -1,4 +1,5 @@
 const ODD = require('../models/ODD');
+const ActivityLog = require('../models/ActivityLog');
 
 const getAllODDs = async (req, res, next) => {
   try {
@@ -592,6 +593,28 @@ const getWeightedRandomODD = async (req, res, next) => {
   }
 };
 
+exports.spinWheel = async (req, res, next) => {
+  try {
+    const odds = await ODD.find({});
+    if (!odds.length) return res.status(404).json({ message: 'No ODDs found' });
+    // Sélection aléatoire simple (pondération possible ici)
+    const randomIndex = Math.floor(Math.random() * odds.length);
+    const chosenODD = odds[randomIndex];
+    // Log l'action
+    await ActivityLog.create({
+      type: 'wheel_spin',
+      user: req.user._id,
+      action: 'Wheel spun',
+      details: `Landed on ODD ${chosenODD.oddId}: ${chosenODD.name.en}`,
+      target: chosenODD._id,
+      targetModel: 'ODD',
+    });
+    res.json({ odd: chosenODD });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllODDs,
   getODDById,
@@ -603,5 +626,6 @@ module.exports = {
   getODDChallenges,
   seedDefaultODDs,
   resetODDs,
-  getWeightedRandomODD
+  getWeightedRandomODD,
+  spinWheel: exports.spinWheel
 };

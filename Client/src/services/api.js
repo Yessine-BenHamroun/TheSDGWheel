@@ -87,9 +87,7 @@ class ApiService {
   }
 
   async spinWheel() {
-    return this.request("/users/spin-wheel", {
-      method: "POST",
-    })
+    return this.request('/odds/spin', { method: 'POST' });
   }
 
   // Challenge endpoints
@@ -280,6 +278,18 @@ class ApiService {
     return this.request(`/quizzes/${id}`, {
       method: "DELETE",
     })
+  }
+
+  // Activity Log endpoints
+  async getActivityLogs(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return this.request(`/activity-logs${query ? '?' + query : ''}`);
+  }
+  async createActivityLog(logData) {
+    return this.request("/activity-logs", {
+      method: "POST",
+      body: JSON.stringify(logData),
+    });
   }
 }
 

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "../../components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
-import { Plus, Edit, Trash2, BookOpen, Target as TargetIcon } from "lucide-react"
+import { Plus, Edit, Trash2, BookOpen, Target as TargetIcon, Eye } from "lucide-react"
 import { AdminSidebar } from "@/components/AdminSidebar"
 import { MouseFollower } from "@/components/mouse-follower"
 import { ScrollProgress } from "@/components/scroll-progress"
@@ -39,12 +39,13 @@ export default function QuizzChallengeAdmin() {
     title: "",
     description: "",
     associatedODD: "",
-    type: "DAILY",
-    difficulty: "EASY",
-    points: 20,
   })
   const [odds, setOdds] = useState([])
   const [loading, setLoading] = useState(false)
+
+  // Ajout état pour le modal de détails
+  const [challengeDetails, setChallengeDetails] = useState(null)
+  const [quizDetails, setQuizDetails] = useState(null)
 
   useEffect(() => {
     fetchAll()
@@ -136,7 +137,7 @@ export default function QuizzChallengeAdmin() {
     setChallengeForm(
       challenge
         ? { ...challenge, associatedODD: challenge.associatedODD?._id || "" }
-        : { title: "", description: "", associatedODD: "", type: "DAILY", difficulty: "EASY", points: 20 },
+        : { title: "", description: "", associatedODD: "" },
     )
     setChallengeModalOpen(true)
   }
@@ -154,7 +155,8 @@ export default function QuizzChallengeAdmin() {
     e.preventDefault()
     try {
       if (challengeEdit) {
-        await ApiService.updateChallenge(challengeEdit._id, challengeForm)
+        const { _id, isActive, completionCount, createdAt, updatedAt,__v, ...challengeData } = challengeForm
+        await ApiService.updateChallenge(challengeEdit._id, challengeData)
         toast({ title: "Challenge updated!", description: "The challenge was updated successfully." })
       } else {
         await ApiService.createChallenge(challengeForm)
@@ -283,7 +285,7 @@ export default function QuizzChallengeAdmin() {
                         </td>
                         <td className="px-4 py-3">
                           <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-sm">
-                            {quiz.associatedODD?.name?.en || "-"}
+                            {quiz.associatedODD?.oddId ? `SDG ${quiz.associatedODD.oddId} - ${quiz.associatedODD.name?.en}` : (quiz.associatedODD?.name?.en || "-")}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-yellow-400 font-medium">{quiz.points}</td>
@@ -309,7 +311,7 @@ export default function QuizzChallengeAdmin() {
                             onClick={() => openQuizModal(quiz)}
                             className="hover:bg-blue-500/20"
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-4 w-4 text-white" />
                           </Button>
                           <Button
                             size="sm"
@@ -317,7 +319,15 @@ export default function QuizzChallengeAdmin() {
                             onClick={() => handleQuizDelete(quiz)}
                             className="hover:bg-red-500/20 text-red-400"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4 text-white" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setQuizDetails(quiz)}
+                            className="hover:bg-purple-500/20 text-purple-400"
+                          >
+                            <Eye className="h-4 w-4 text-purple-400" />
                           </Button>
                         </td>
                       </tr>
@@ -366,9 +376,6 @@ export default function QuizzChallengeAdmin() {
                     <tr className="text-zinc-400 border-b border-zinc-700">
                       <th className="px-4 py-3 font-medium">Title</th>
                       <th className="px-4 py-3 font-medium">Description</th>
-                      <th className="px-4 py-3 font-medium">Type</th>
-                      <th className="px-4 py-3 font-medium">Difficulty</th>
-                      <th className="px-4 py-3 font-medium">Points</th>
                       <th className="px-4 py-3 font-medium">ODD</th>
                       <th className="px-4 py-3 font-medium">Actions</th>
                     </tr>
@@ -381,40 +388,10 @@ export default function QuizzChallengeAdmin() {
                       >
                         <td className="px-4 py-3 font-medium text-white">{challenge.title}</td>
                         <td className="px-4 py-3 text-zinc-300 max-w-xs truncate">{challenge.description}</td>
-                        <td className="px-4 py-3">
-                          <span
-                            className={`px-2 py-1 rounded text-sm ${
-                              challenge.type === "DAILY"
-                                ? "bg-blue-500/20 text-blue-400"
-                                : challenge.type === "WEEKLY"
-                                  ? "bg-green-500/20 text-green-400"
-                                  : challenge.type === "MONTHLY"
-                                    ? "bg-purple-500/20 text-purple-400"
-                                    : "bg-orange-500/20 text-orange-400"
-                            }`}
-                          >
-                            {challenge.type}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span
-                            className={`px-2 py-1 rounded text-sm ${
-                              challenge.difficulty === "EASY"
-                                ? "bg-green-500/20 text-green-400"
-                                : challenge.difficulty === "MEDIUM"
-                                  ? "bg-yellow-500/20 text-yellow-400"
-                                  : challenge.difficulty === "HARD"
-                                    ? "bg-orange-500/20 text-orange-400"
-                                    : "bg-red-500/20 text-red-400"
-                            }`}
-                          >
-                            {challenge.difficulty}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-yellow-400 font-medium">{challenge.points}</td>
+                        
                         <td className="px-4 py-3">
                           <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-sm">
-                            {challenge.associatedODD?.name?.en || "-"}
+                            {challenge.associatedODD?.oddId ? `SDG ${challenge.associatedODD.oddId} - ${challenge.associatedODD.name?.en}` : (challenge.associatedODD?.name?.en || "-")}
                           </span>
                         </td>
                         <td className="px-4 py-3 flex space-x-2">
@@ -424,7 +401,7 @@ export default function QuizzChallengeAdmin() {
                             onClick={() => openChallengeModal(challenge)}
                             className="hover:bg-green-500/20"
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-4 w-4 text-white" />
                           </Button>
                           <Button
                             size="sm"
@@ -432,7 +409,15 @@ export default function QuizzChallengeAdmin() {
                             onClick={() => handleChallengeDelete(challenge)}
                             className="hover:bg-red-500/20 text-red-400"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4 text-white" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setChallengeDetails(challenge)}
+                            className="hover:bg-purple-500/20 text-purple-400"
+                          >
+                            <Eye className="h-4 w-4 text-purple-400" />
                           </Button>
                         </td>
                       </tr>
@@ -585,10 +570,8 @@ export default function QuizzChallengeAdmin() {
                 >
                   {quizEdit ? "Update Quiz" : "Create Quiz"}
                 </Button>
-                <DialogClose asChild>
-                  <Button type="button" variant="outline" className="flex-1 bg-transparent" onClick={closeQuizModal}>
-                    Cancel
-                  </Button>
+                <DialogClose>
+                  <Button type="button" variant="outline" className="flex-1 bg-zinc-800 text-white border border-zinc-500 hover:bg-zinc-700 hover:text-white focus:bg-zinc-700 focus:text-white transition">Cancel</Button>
                 </DialogClose>
               </DialogFooter>
             </form>
@@ -618,7 +601,6 @@ export default function QuizzChallengeAdmin() {
                     placeholder="Enter challenge title..."
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-white mb-2">Description</label>
                   <textarea
@@ -633,65 +615,21 @@ export default function QuizzChallengeAdmin() {
                     placeholder="Describe the challenge..."
                   />
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">Type</label>
-                    <select
-                      name="type"
-                      value={challengeForm.type}
-                      onChange={handleChallengeFormChange}
-                      className="w-full rounded-lg bg-zinc-800 border border-zinc-600 px-4 py-3 text-white focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
-                    >
-                      <option value="DAILY">Daily</option>
-                      <option value="WEEKLY">Weekly</option>
-                      <option value="MONTHLY">Monthly</option>
-                      <option value="SPECIAL">Special</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">Difficulty</label>
-                    <select
-                      name="difficulty"
-                      value={challengeForm.difficulty}
-                      onChange={handleChallengeFormChange}
-                      className="w-full rounded-lg bg-zinc-800 border border-zinc-600 px-4 py-3 text-white focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
-                    >
-                      <option value="EASY">Easy</option>
-                      <option value="MEDIUM">Medium</option>
-                      <option value="HARD">Hard</option>
-                      <option value="EXPERT">Expert</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">Points</label>
-                    <input
-                      name="points"
-                      type="number"
-                      value={challengeForm.points}
-                      onChange={handleChallengeFormChange}
-                      className="w-full rounded-lg bg-zinc-800 border border-zinc-600 px-4 py-3 text-white focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
-                      min={1}
-                      max={1000}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">Associated ODD</label>
-                    <select
-                      name="associatedODD"
-                      value={challengeForm.associatedODD}
-                      onChange={handleChallengeFormChange}
-                      className="w-full rounded-lg bg-zinc-800 border border-zinc-600 px-4 py-3 text-white focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
-                    >
-                      <option value="">Select ODD</option>
-                      {odds.map((odd) => (
-                        <option key={odd._id} value={odd._id}>
-                          {odd.name?.en}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Associated ODD</label>
+                  <select
+                    name="associatedODD"
+                    value={challengeForm.associatedODD}
+                    onChange={handleChallengeFormChange}
+                    className="w-full rounded-lg bg-zinc-800 border border-zinc-600 px-4 py-3 text-white focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
+                  >
+                    <option value="">Select ODD</option>
+                    {odds.map((odd) => (
+                      <option key={odd._id} value={odd._id}>
+                        {odd.name?.en}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <DialogFooter className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -701,18 +639,67 @@ export default function QuizzChallengeAdmin() {
                 >
                   {challengeEdit ? "Update Challenge" : "Create Challenge"}
                 </Button>
-                <DialogClose asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1 bg-transparent"
-                    onClick={closeChallengeModal}
-                  >
-                    Cancel
-                  </Button>
+                <DialogClose>
+                  <Button type="button" variant="outline" className="flex-1 bg-zinc-800 text-white border border-zinc-500 hover:bg-zinc-700 hover:text-white focus:bg-zinc-700 focus:text-white transition">Cancel</Button>
                 </DialogClose>
               </DialogFooter>
             </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de détails Challenge */}
+        <Dialog open={!!challengeDetails} onOpenChange={() => setChallengeDetails(null)}>
+          <DialogContent className="bg-zinc-900/95 border border-purple-900/60 shadow-lg max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="text-purple-400 text-xl">Challenge Details</DialogTitle>
+            </DialogHeader>
+            {challengeDetails && (
+              <div className="space-y-4 mt-4">
+                <div><span className="font-bold text-white">Title:</span> <span className="text-zinc-300">{challengeDetails.title}</span></div>
+                <div><span className="font-bold text-white">Description:</span> <span className="text-zinc-300">{challengeDetails.description}</span></div>
+                <div><span className="font-bold text-white">ODD:</span> <span className="text-blue-400">{challengeDetails.associatedODD?.oddId ? `SDG ${challengeDetails.associatedODD.oddId} - ${challengeDetails.associatedODD.name?.en}` : (challengeDetails.associatedODD?.name?.en || '-')}</span></div>
+                <div><span className="font-bold text-white">Created:</span> <span className="text-zinc-400">{new Date(challengeDetails.createdAt).toLocaleString()}</span></div>
+                <div><span className="font-bold text-white">Updated:</span> <span className="text-zinc-400">{new Date(challengeDetails.updatedAt).toLocaleString()}</span></div>
+              </div>
+            )}
+            <DialogFooter className="mt-6">
+              <DialogClose>
+                <Button type="button" variant="outline" className="flex-1 bg-zinc-800 text-white border border-zinc-500 hover:bg-zinc-700 hover:text-white focus:bg-zinc-700 focus:text-white transition">Close</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de détails Quiz */}
+        <Dialog open={!!quizDetails} onOpenChange={() => setQuizDetails(null)}>
+          <DialogContent className="bg-zinc-900/95 border border-purple-900/60 shadow-lg max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="text-purple-400 text-xl">Quiz Details</DialogTitle>
+            </DialogHeader>
+            {quizDetails && (
+              <div className="space-y-4 mt-4">
+                <div><span className="font-bold text-white">Title:</span> <span className="text-zinc-300">{quizDetails.title}</span></div>
+                <div><span className="font-bold text-white">Question:</span> <span className="text-zinc-300">{quizDetails.question}</span></div>
+                <div><span className="font-bold text-white">Choices:</span>
+                  <ul className="ml-4 list-decimal text-zinc-300">
+                    {quizDetails.choices.map((c, i) => (
+                      <li key={i} className={i === quizDetails.correctAnswer ? "text-green-400 font-bold" : ""}>{c}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div><span className="font-bold text-white">Correct Answer:</span> <span className="text-green-400">Choice {quizDetails.correctAnswer + 1}</span></div>
+                <div><span className="font-bold text-white">ODD:</span> <span className="text-blue-400">{quizDetails.associatedODD?.oddId ? `SDG ${quizDetails.associatedODD.oddId} - ${quizDetails.associatedODD.name?.en}` : (quizDetails.associatedODD?.name?.en || '-')}</span></div>
+                <div><span className="font-bold text-white">Points:</span> <span className="text-yellow-400">{quizDetails.points}</span></div>
+                <div><span className="font-bold text-white">Difficulty:</span> <span className="text-purple-400">{quizDetails.difficulty}</span></div>
+                <div><span className="font-bold text-white">Created:</span> <span className="text-zinc-400">{new Date(quizDetails.createdAt).toLocaleString()}</span></div>
+                <div><span className="font-bold text-white">Updated:</span> <span className="text-zinc-400">{new Date(quizDetails.updatedAt).toLocaleString()}</span></div>
+              </div>
+            )}
+            <DialogFooter className="mt-6">
+              <DialogClose>
+                <Button type="button" variant="outline" className="flex-1 bg-zinc-800 text-white border border-zinc-500 hover:bg-zinc-700 hover:text-white focus:bg-zinc-700 focus:text-white transition">Close</Button>
+              </DialogClose>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

@@ -25,6 +25,7 @@ router.use('/challenges', challengeRoutes);
 router.use('/proofs', proofRoutes);
 router.use('/badges', badgeRoutes);
 router.use('/odds', oddRoutes);
+router.use('/activity-logs', require('./activityLogs'));
 router.use('/quizzes', require('./quizzes'));
 
 // API info endpoint
