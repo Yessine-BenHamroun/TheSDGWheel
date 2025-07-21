@@ -1,5 +1,6 @@
 const Quiz = require('../models/Quiz');
 const ODD = require('../models/ODD');
+const ActivityLog = require('../models/ActivityLog');
 
 const getAllQuizzes = async (req, res, next) => {
   try {
@@ -38,6 +39,17 @@ const createQuiz = async (req, res, next) => {
     const quiz = new Quiz(req.body);
     await quiz.save();
     await quiz.populate('associatedODD', 'name icon color');
+
+    // Log admin action
+    if (req.user) {
+      await ActivityLog.create({
+        type: 'admin_action',
+        user: req.user._id,
+        action: 'Quiz created',
+        details: `Admin created quiz: ${quiz.title}`
+      });
+    }
+
     res.status(201).json({ quiz });
   } catch (error) {
     next(error);
@@ -57,6 +69,7 @@ const updateQuiz = async (req, res, next) => {
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({ error: 'No valid updates provided' });
     }
+    const oldQuiz = await Quiz.findById(id).lean();
     const quiz = await Quiz.findByIdAndUpdate(
       id,
       updates,
@@ -65,7 +78,17 @@ const updateQuiz = async (req, res, next) => {
     if (!quiz) {
       return res.status(404).json({ error: 'Quiz not found' });
     }
-    res.json({ quiz });
+    if (quiz && req.user) {
+      await ActivityLog.create({
+        type: 'admin_action',
+        user: req.user._id,
+        action: 'Quiz updated',
+        details: `Admin updated quiz: ${quiz.title}`,
+        old: oldQuiz,
+        updated: quiz
+      });
+    }
+    res.json({ old: oldQuiz, updated: quiz });
   } catch (error) {
     next(error);
   }
@@ -81,6 +104,14 @@ const deleteQuiz = async (req, res, next) => {
     );
     if (!quiz) {
       return res.status(404).json({ error: 'Quiz not found' });
+    }
+    if (quiz && req.user) {
+      await ActivityLog.create({
+        type: 'admin_action',
+        user: req.user._id,
+        action: 'Quiz deleted',
+        details: `Admin deleted quiz: ${quiz.title}`
+      });
     }
     res.json({ message: 'Quiz deleted successfully' });
   } catch (error) {

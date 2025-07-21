@@ -9,13 +9,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { HistoryIcon, Search, Calendar, User, Target, FileCheck, Settings, Zap } from "lucide-react"
+import { HistoryIcon, Search, Calendar, User, Target, FileCheck, Settings, Zap, ArrowRight } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog"
 
 export default function History() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState("all")
   const [activities, setActivities] = useState([])
+  const [selectedLog, setSelectedLog] = useState(null)
 
   useEffect(() => {
     fetchLogs()
@@ -246,8 +248,9 @@ export default function History() {
                 const { date, time } = formatTimestamp(activity.timestamp)
                 return (
                   <div
-                    key={activity.id}
-                    className="flex items-start space-x-4 p-4 bg-zinc-900 border border-zinc-700 rounded-lg hover:bg-zinc-700/50 transition-colors"
+                    key={activity._id || activity.id}
+                    className="flex items-start space-x-4 p-4 bg-zinc-900 border border-zinc-700 rounded-lg hover:bg-zinc-700/50 transition-colors cursor-pointer"
+                    onClick={() => setSelectedLog(activity)}
                   >
                     <div className="flex-shrink-0 mt-1">{getActivityIcon(activity.type)}</div>
                     <div className="flex-1 min-w-0">
@@ -294,7 +297,75 @@ export default function History() {
 
             {filteredActivities.length === 0 && (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4">📋</div>
+                <div className="flex justify-center items-center mb-4">
+                  <svg
+                    viewBox="0 0 48 48"
+                    width="50"
+                    height="50"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ display: "block" }}
+                  >
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="20"
+                      stroke="#ff7575"
+                      strokeWidth="3"
+                      fill="transparent"
+                      style={{
+                        filter: "drop-shadow(0 0 6px #ff7575aa)",
+                        opacity: 0.7,
+                        animation: "pulseCircle 1.5s infinite"
+                      }}
+                    />
+                    <g>
+                      <line
+                        x1="16"
+                        y1="16"
+                        x2="32"
+                        y2="32"
+                        stroke="#ff7575"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        style={{
+                          animation: "cross1 1.5s infinite"
+                        }}
+                      />
+                      <line
+                        x1="32"
+                        y1="16"
+                        x2="16"
+                        y2="32"
+                        stroke="#ff7575"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        style={{
+                          animation: "cross2 1.5s infinite"
+                        }}
+                      />
+                    </g>
+                    <style>
+                      {`
+                        @keyframes pulseCircle {
+                          0% { opacity: 0.7; r: 20; }
+                          50% { opacity: 1; r: 22; }
+                          100% { opacity: 0.7; r: 20; }
+                        }
+                        @keyframes cross1 {
+                          0% { stroke-dasharray: 0 24; }
+                          30% { stroke-dasharray: 24 0; }
+                          100% { stroke-dasharray: 24 0; }
+                        }
+                        @keyframes cross2 {
+                          0% { stroke-dasharray: 0 24; }
+                          60% { stroke-dasharray: 24 0; }
+                          100% { stroke-dasharray: 24 0; }
+                        }
+                      `}
+                    </style>
+                  </svg>
+                </div>
                 <h3 className="text-2xl font-bold text-white mb-2">No activities found</h3>
                 <p className="text-zinc-400">Try adjusting your search or filter criteria</p>
               </div>
@@ -302,6 +373,69 @@ export default function History() {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Modal de détails du log */}
+      <Dialog open={!!selectedLog} onOpenChange={() => setSelectedLog(null)}>
+        <DialogContent className="bg-gradient-to-br from-zinc-900 via-zinc-950 to-black border border-purple-900/60 shadow-2xl max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-purple-400 text-2xl font-bold flex items-center gap-2">
+              {selectedLog?.action?.includes('Quiz') ? 'Quiz Update' : selectedLog?.action?.includes('Challenge') ? 'Challenge Update' : 'Log Details'}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedLog && selectedLog.old && selectedLog.updated ? (
+            <div className="space-y-6 mt-4">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                <div>
+                  <div className="text-sm text-zinc-400 mb-1">By <span className="text-blue-400 font-semibold">{getUserName(selectedLog)}</span></div>
+                  <div className="text-xs text-zinc-500">{formatTimestamp(selectedLog.timestamp).date} at {formatTimestamp(selectedLog.timestamp).time}</div>
+                </div>
+                <Badge className="bg-purple-700/30 text-purple-300 border border-purple-700 ml-2">Modification</Badge>
+              </div>
+              <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900/80 shadow-lg">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-zinc-800 text-zinc-400">
+                      <th className="px-4 py-2">Field</th>
+                      <th className="px-4 py-2">Old</th>
+                      <th></th>
+                      <th className="px-4 py-2">New</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.keys(selectedLog.updated).map((field) => (
+                      selectedLog.old[field] !== selectedLog.updated[field] && (
+                        <tr key={field} className="transition-all hover:bg-zinc-800/60 animate-fade-in">
+                          <td className="px-4 py-2 font-bold text-white flex items-center gap-2">
+                            {field}
+                            <span className="ml-2 px-2 py-0.5 rounded bg-yellow-700/30 text-yellow-300 text-xs">modified</span>
+                          </td>
+                          <td className="px-4 py-2 text-red-400 line-through">{String(selectedLog.old[field])}</td>
+                          <td className="px-2 py-2 text-zinc-400"><ArrowRight className="h-4 w-4" /></td>
+                          <td className="px-4 py-2 text-green-400 font-semibold">{String(selectedLog.updated[field])}</td>
+                          <td></td>
+                        </tr>
+                      )
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : selectedLog && (
+            <div className="space-y-2 mt-4">
+              <div><span className="font-bold text-white">Type:</span> <span className="text-zinc-300">{selectedLog.type}</span></div>
+              <div><span className="font-bold text-white">Action:</span> <span className="text-zinc-300">{selectedLog.action}</span></div>
+              <div><span className="font-bold text-white">Details:</span> <span className="text-zinc-300">{selectedLog.details}</span></div>
+              {/* Ajoute d'autres champs si besoin */}
+            </div>
+          )}
+          <DialogFooter className="mt-6">
+            <DialogClose asChild>
+              <Button type="button" variant="outline" className="w-2/3 mx-auto block bg-zinc-800 text-white border border-zinc-500 hover:bg-zinc-700 hover:text-white focus:bg-zinc-700 focus:text-white transition">Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

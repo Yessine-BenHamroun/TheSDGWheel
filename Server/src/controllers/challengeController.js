@@ -1,5 +1,6 @@
 const Challenge = require('../models/Challenge');
 const ODD = require('../models/ODD');
+const ActivityLog = require('../models/ActivityLog');
 
 const getAllChallenges = async (req, res, next) => {
   try {
@@ -42,9 +43,18 @@ const createChallenge = async (req, res, next) => {
 
     const challenge = new Challenge(req.body);
     await challenge.save();
-    
     await challenge.populate('associatedODD', 'name icon color');
-    
+
+    // Log admin action
+    if (req.user) {
+      await ActivityLog.create({
+        type: 'admin_action',
+        user: req.user._id,
+        action: 'Challenge created',
+        details: `Admin created challenge: ${challenge.title}`
+      });
+    }
+
     res.status(201).json({ challenge });
   } catch (error) {
     next(error);
@@ -67,6 +77,7 @@ const updateChallenge = async (req, res, next) => {
       return res.status(400).json({ error: 'No valid updates provided' });
     }
 
+    const oldChallenge = await Challenge.findById(id).lean();
     const challenge = await Challenge.findByIdAndUpdate(
       id,
       updates,
@@ -77,7 +88,18 @@ const updateChallenge = async (req, res, next) => {
       return res.status(404).json({ error: 'Challenge not found' });
     }
 
-    res.json({ challenge });
+    if (challenge && req.user) {
+      await ActivityLog.create({
+        type: 'admin_action',
+        user: req.user._id,
+        action: 'Challenge updated',
+        details: `Admin updated challenge: ${challenge.title}`,
+        old: oldChallenge,
+        updated: challenge
+      });
+    }
+
+    res.json({ old: oldChallenge, updated: challenge });
   } catch (error) {
     next(error);
   }
@@ -95,6 +117,15 @@ const deleteChallenge = async (req, res, next) => {
 
     if (!challenge) {
       return res.status(404).json({ error: 'Challenge not found' });
+    }
+
+    if (challenge && req.user) {
+      await ActivityLog.create({
+        type: 'admin_action',
+        user: req.user._id,
+        action: 'Challenge deleted',
+        details: `Admin deleted challenge: ${challenge.title}`
+      });
     }
 
     res.json({ message: 'Challenge deleted successfully' });

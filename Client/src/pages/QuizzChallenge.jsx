@@ -107,7 +107,8 @@ export default function QuizzChallengeAdmin() {
     e.preventDefault()
     try {
       if (quizEdit) {
-        await ApiService.updateQuiz(quizEdit._id, quizForm)
+        const { _id, createdAt, updatedAt, isActive, __v, ...quizData } = quizForm
+        await ApiService.updateQuiz(quizEdit._id, quizData)
         toast({ title: "Quiz updated!", description: "The quiz was updated successfully." })
       } else {
         await ApiService.createQuiz(quizForm)
@@ -616,14 +617,14 @@ export default function QuizzChallengeAdmin() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Associated ODD</label>
+                  <label className="block text-sm font-medium text-white mb-2">Associated SDG</label>
                   <select
                     name="associatedODD"
                     value={challengeForm.associatedODD}
                     onChange={handleChallengeFormChange}
                     className="w-full rounded-lg bg-zinc-800 border border-zinc-600 px-4 py-3 text-white focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
                   >
-                    <option value="">Select ODD</option>
+                    <option value="">Select SDG</option>
                     {odds.map((odd) => (
                       <option key={odd._id} value={odd._id}>
                         {odd.name?.en}
@@ -688,7 +689,7 @@ export default function QuizzChallengeAdmin() {
                   </ul>
                 </div>
                 <div><span className="font-bold text-white">Correct Answer:</span> <span className="text-green-400">Choice {quizDetails.correctAnswer + 1}</span></div>
-                <div><span className="font-bold text-white">ODD:</span> <span className="text-blue-400">{quizDetails.associatedODD?.oddId ? `SDG ${quizDetails.associatedODD.oddId} - ${quizDetails.associatedODD.name?.en}` : (quizDetails.associatedODD?.name?.en || '-')}</span></div>
+                <div><span className="font-bold text-white">SDG:</span> <span className="text-blue-400">{quizDetails.associatedODD?.oddId ? `SDG ${quizDetails.associatedODD.oddId} - ${quizDetails.associatedODD.name?.en}` : (quizDetails.associatedODD?.name?.en || '-')}</span></div>
                 <div><span className="font-bold text-white">Points:</span> <span className="text-yellow-400">{quizDetails.points}</span></div>
                 <div><span className="font-bold text-white">Difficulty:</span> <span className="text-purple-400">{quizDetails.difficulty}</span></div>
                 <div><span className="font-bold text-white">Created:</span> <span className="text-zinc-400">{new Date(quizDetails.createdAt).toLocaleString()}</span></div>

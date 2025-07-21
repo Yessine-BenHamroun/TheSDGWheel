@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const { generateToken } = require('../middleware/auth');
 const config = require('../config/config');
+const ActivityLog = require('../models/ActivityLog');
 
 const register = async (req, res, next) => {
   try {
@@ -30,6 +31,14 @@ const register = async (req, res, next) => {
     });
 
     await user.save();
+
+    // Log registration in ActivityLog
+    await ActivityLog.create({
+      type: 'user_registration',
+      user: user._id,
+      action: 'User registered',
+      details: `New user account created: ${user.username}\n${user.email}`
+    });
 
     // Generate JWT token
     const token = generateToken(user._id);

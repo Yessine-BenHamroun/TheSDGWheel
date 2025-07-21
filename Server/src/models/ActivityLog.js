@@ -1,7 +1,21 @@
 const mongoose = require('mongoose');
 
 const activityLogSchema = new mongoose.Schema({
-  type: { type: String, required: true },
+  type: {
+    type: String,
+    required: true,
+    enum: [
+      'user_registration',
+      'challenge_completion',
+      'proof_validation',
+      'wheel_spin',
+      'quiz_completion',
+      'community_vote',
+      'badge_earned',
+      'admin_action',
+      'system_action',
+    ],
+  },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
   action: { type: String, required: true },
   details: { type: String },
@@ -11,6 +25,8 @@ const activityLogSchema = new mongoose.Schema({
   score: { type: Number },
   badge: { type: String },
   ip: { type: String },
+  old: { type: Object },
+  updated: { type: Object },
   timestamp: { type: Date, default: Date.now }
 }, { timestamps: true });
 
