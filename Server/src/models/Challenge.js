@@ -15,22 +15,6 @@ const challengeSchema = new mongoose.Schema({
     minlength: 10,
     maxlength: 1000
   },
-  type: {
-    type: String,
-    required: true,
-    enum: ['DAILY', 'WEEKLY', 'MONTHLY', 'SPECIAL']
-  },
-  difficulty: {
-    type: String,
-    required: true,
-    enum: ['EASY', 'MEDIUM', 'HARD', 'EXPERT']
-  },
-  points: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 1000
-  },
   associatedODD: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'ODD',

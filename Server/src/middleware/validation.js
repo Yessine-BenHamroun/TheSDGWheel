@@ -88,9 +88,6 @@ const userUpdateSchema = Joi.object({
 const challengeCreateSchema = Joi.object({
   title: Joi.string().min(5).max(200).required(),
   description: Joi.string().min(10).max(1000).required(),
-  type: Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY', 'SPECIAL').required(),
-  difficulty: Joi.string().valid('EASY', 'MEDIUM', 'HARD', 'EXPERT').required(),
-  points: Joi.number().integer().min(1).max(1000).required(),
   associatedODD: Joi.string().hex().length(24).required()
 });
 
@@ -167,6 +164,17 @@ const oddUpdateSchema = Joi.object({
   'object.min': 'At least one field must be provided for update'
 });
 
+const quizCreateSchema = Joi.object({
+  title: Joi.string().min(5).max(200).required(),
+  question: Joi.string().min(5).max(1000).required(),
+  choices: Joi.array().items(Joi.string().min(1).max(300)).length(4).required(),
+  correctAnswer: Joi.number().integer().min(0).max(3).required(),
+  associatedODD: Joi.string().hex().length(24).required(),
+  points: Joi.number().integer().min(1).max(1000).required(),
+  difficulty: Joi.string().valid('EASY', 'MEDIUM', 'HARD', 'EXPERT').required(),
+  isActive: Joi.boolean().optional()
+});
+
 module.exports = {
   validateRequest,
   validateQuery,
@@ -181,5 +189,6 @@ module.exports = {
   oddUpdateSchema,
   multipleODDsCreateSchema,
   multilingualTextSchema,
-  multilingualIconSchema
+  multilingualIconSchema,
+  quizCreateSchema
 };

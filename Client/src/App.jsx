@@ -13,6 +13,11 @@ import AdminDashboard from "./pages/adminDashboard"
 import WheelGame from "./pages/wheelGame"
 import Leaderboard from "./pages/leaderboard"
 import CommunityVoting from "./pages/voting"
+import QuizzChallengeAdmin from "./pages/QuizzChallenge"
+import Statistics from "./pages/adminSection/Statistics"
+import Users from "./pages/adminSection/Users"
+import History from "./pages/adminSection/History"
+import Export from "./pages/adminSection/Export"
 
 // Protected Route Component
 import { useAuth } from "./contexts/AuthContext"
@@ -89,6 +94,46 @@ function App() {
             element={
               <ProtectedRoute adminOnly>
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adminSection/QuizzChallenge"
+            element={
+              <ProtectedRoute adminOnly>
+                <QuizzChallengeAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adminSection/Statistics"
+            element={
+              <ProtectedRoute adminOnly>
+                <Statistics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adminSection/Users"
+            element={
+              <ProtectedRoute adminOnly>
+                <Users />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adminSection/History"
+            element={
+              <ProtectedRoute adminOnly>
+                <History />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adminSection/Export"
+            element={
+              <ProtectedRoute adminOnly>
+                <Export />
               </ProtectedRoute>
             }
           />

@@ -47,8 +47,12 @@ export default function Login() {
         description: `Welcome back, ${response.user.username}!`,
       })
 
-      // Redirect to dashboard
-      navigate("/dashboard")
+      // Redirection selon le rôle
+      if (response.user.role === "admin") {
+        navigate("/admin")
+      } else {
+        navigate("/dashboard")
+      }
 
     } catch (error) {
       console.error('Login error:', error)

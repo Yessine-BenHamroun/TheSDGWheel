@@ -55,13 +55,6 @@ export function AuthProvider({ children }) {
       localStorage.setItem("token", token)
       setUser(userData)
 
-      // Redirect based on role
-      if (userData.role === "admin") {
-        navigate("/admin")
-      } else {
-        navigate("/dashboard")
-      }
-
       return { success: true, user: userData }
     } catch (error) {
       console.error("Login error:", error)
@@ -77,7 +70,6 @@ export function AuthProvider({ children }) {
       localStorage.setItem("token", token)
       setUser(newUser)
 
-      navigate("/dashboard")
       return { success: true, user: newUser }
     } catch (error) {
       console.error("Registration error:", error)

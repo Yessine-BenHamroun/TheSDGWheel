@@ -5,8 +5,6 @@ const getAllChallenges = async (req, res, next) => {
   try {
     const filters = { isActive: true };
     
-    if (req.query.type) filters.type = req.query.type;
-    if (req.query.difficulty) filters.difficulty = req.query.difficulty;
     if (req.query.oddId) filters.associatedODD = req.query.oddId;
 
     const challenges = await Challenge.find(filters)
@@ -56,7 +54,7 @@ const createChallenge = async (req, res, next) => {
 const updateChallenge = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const allowedUpdates = ['title', 'description', 'type', 'difficulty', 'points'];
+    const allowedUpdates = ['title', 'description'];
     
     const updates = {};
     for (const field of allowedUpdates) {

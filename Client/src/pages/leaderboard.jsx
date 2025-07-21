@@ -29,7 +29,9 @@ export default function Leaderboard() {
     try {
       setLoading(true)
       const data = await ApiService.getLeaderboard()
-      setLeaderboardData(data)
+      // Ensure data is an array, or use the data property if it's wrapped
+      const leaderboardArray = Array.isArray(data) ? data : (data.data || data.users || [])
+      setLeaderboardData(leaderboardArray)
     } catch (error) {
       console.error("Error loading leaderboard:", error)
       toast({
@@ -126,7 +128,18 @@ export default function Leaderboard() {
         <div className="absolute bottom-20 left-1/3 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8">
+      {/* Loading State */}
+      {loading && (
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+            <p className="text-zinc-400">Loading leaderboard...</p>
+          </div>
+        </div>
+      )}
+
+      {!loading && (
+        <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
@@ -163,7 +176,7 @@ export default function Leaderboard() {
 
             {/* Top 3 Podium */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              {leaderboardData.slice(0, 3).map((leader, index) => (
+              {Array.isArray(leaderboardData) && leaderboardData.slice(0, 3).map((leader, index) => (
                 <motion.div
                   key={leader._id}
                   initial={{ opacity: 0, y: 20 }}
@@ -203,7 +216,7 @@ export default function Leaderboard() {
 
             {/* Remaining Leaders */}
             <div className="space-y-4">
-              {leaderboardData.slice(3).map((leader, index) => (
+              {Array.isArray(leaderboardData) && leaderboardData.slice(3).map((leader, index) => (
                 <motion.div
                   key={leader._id}
                   initial={{ opacity: 0, x: -20 }}
@@ -231,7 +244,7 @@ export default function Leaderboard() {
                           <div className="text-sm text-zinc-400">points</div>
                         </div>
                         <div className="flex flex-col items-center space-y-1">
-                          <Badge variant="outline" className={getLevelColor(leader.level)} size="sm">
+                          <Badge variant="outline" className={getLevelColor(leader.level)}>
                             {leader.level}
                           </Badge>
                           <div className="flex space-x-2 text-xs">
@@ -245,7 +258,7 @@ export default function Leaderboard() {
               ))}
             </div>
 
-            {leaderboardData.length === 0 && !loading && (
+            {(!Array.isArray(leaderboardData) || leaderboardData.length === 0) && !loading && (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🏆</div>
                 <h3 className="text-2xl font-bold text-white mb-2">No leaders yet</h3>
@@ -312,7 +325,8 @@ export default function Leaderboard() {
             </Card>
           </motion.div>
         )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

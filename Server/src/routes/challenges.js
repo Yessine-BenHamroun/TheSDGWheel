@@ -22,6 +22,7 @@ router.post('/',
 router.put('/:id', 
   authenticateToken, 
   requireAdmin, 
+  validateRequest(challengeCreateSchema), 
   challengeController.updateChallenge
 );
 

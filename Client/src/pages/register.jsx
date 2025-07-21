@@ -197,8 +197,12 @@ export default function Register() {
         description: `Welcome, ${response.user.username}! You're now registered.`,
       })
 
-      // Redirect to dashboard (user is now logged in)
-      navigate("/dashboard")
+      // Redirection selon le rôle
+      if (response.user.role === "admin") {
+        navigate("/admin")
+      } else {
+        navigate("/dashboard")
+      }
 
     } catch (error) {
       console.error('Registration error:', error)

@@ -256,6 +256,31 @@ class ApiService {
   async getODDChallenges(id) {
     return this.request(`/odds/${id}/challenges`)
   }
+
+  // Quiz endpoints
+  async getAllQuizzes() {
+    return this.request("/quizzes")
+  }
+  async getQuizById(id) {
+    return this.request(`/quizzes/${id}`)
+  }
+  async createQuiz(quizData) {
+    return this.request("/quizzes", {
+      method: "POST",
+      body: JSON.stringify(quizData),
+    })
+  }
+  async updateQuiz(id, quizData) {
+    return this.request(`/quizzes/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(quizData),
+    })
+  }
+  async deleteQuiz(id) {
+    return this.request(`/quizzes/${id}`, {
+      method: "DELETE",
+    })
+  }
 }
 
 export default new ApiService()

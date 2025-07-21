@@ -63,6 +63,12 @@ export default function Dashboard() {
   const location = useLocation()
   const { toast } = useToast()
   const { user, logout } = useAuth()
+  
+  useEffect(() => {
+    if (user && user.role === "admin") {
+      navigate("/admin")
+    }
+  }, [user, navigate])
 
   // Simulate data loading
   useEffect(() => {
