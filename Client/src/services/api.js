@@ -86,6 +86,10 @@ class ApiService {
     return this.request(`/users/${userId}/progress`)
   }
 
+  async getUserStats() {
+    return this.request('/users/stats');
+  }
+
   async spinWheel() {
     return this.request('/odds/spin', { method: 'POST' });
   }

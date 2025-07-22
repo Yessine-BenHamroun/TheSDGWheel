@@ -377,7 +377,7 @@ export default function AdminDashboard() {
               )}
             </TabsContent>
 
-            {/* Challenges Tab */}
+            {/* Challenges Tab
             <TabsContent value="challenges" className="space-y-6">
               <div className="flex justify-between items-center">
                 <div>
@@ -454,7 +454,7 @@ export default function AdminDashboard() {
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabsContent> */}
 
             {/* ODDs Tab */}
             <TabsContent value="odds" className="space-y-6">

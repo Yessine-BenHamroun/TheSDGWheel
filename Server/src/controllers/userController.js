@@ -93,10 +93,52 @@ const spinWheel = async (req, res, next) => {
   }
 };
 
+const getUserStats = async (req, res, next) => {
+  try {
+    // Nombre total d'utilisateurs (hors admin)
+    const total = await User.countDocuments({ role: 'user' });
+
+    // Nombre d'inscriptions par jour pour le mois courant
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const daily = await User.aggregate([
+      { $match: { role: 'user', createdAt: { $gte: startOfMonth } } },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    // Générer la liste complète des jours du mois
+    const today = new Date();
+    const daysInMonth = today.getDate();
+    const dailyCounts = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      const d = new Date(startOfMonth);
+      d.setDate(i);
+      const key = d.toISOString().slice(0, 10);
+      const found = daily.find(e => e._id === key);
+      dailyCounts.push({ date: key, count: found ? found.count : 0 });
+    }
+
+    res.json({ total, daily: dailyCounts });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
   getLeaderboard,
   getUserProgress,
-  spinWheel
+  spinWheel,
+  getUserStats
 };

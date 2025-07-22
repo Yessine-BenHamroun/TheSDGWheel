@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, Users, Target, Award, Download, Calendar, Globe, Zap } from "lucide-react"
+import ApiService from "@/services/api"
 
 export default function Statistics() {
   const [loading, setLoading] = useState(true)
@@ -33,9 +34,58 @@ export default function Statistics() {
   })
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => setLoading(false), 1000)
+    async function fetchStats() {
+      setLoading(true)
+      try {
+        const userStats = await ApiService.getUserStats();
+        // Calcul croissance journalière
+        let dailyGrowth = 0;
+        if (userStats.daily && userStats.daily.length > 1) {
+          const today = userStats.daily[userStats.daily.length - 1].count;
+          const yesterday = userStats.daily[userStats.daily.length - 2].count;
+          dailyGrowth = yesterday > 0 ? ((today - yesterday) / yesterday) * 100 : 0;
+        }
+        // Calcul croissance mensuelle (depuis le 1er du mois)
+        let monthlyGrowth = 0;
+        if (userStats.daily && userStats.daily.length > 1) {
+          const firstDay = userStats.daily[0].count;
+          const lastDay = userStats.daily[userStats.daily.length - 1].count;
+          monthlyGrowth = firstDay > 0 ? ((lastDay - firstDay) / firstDay) * 100 : 0;
+        }
+        // Calcul du nombre de nouveaux participants aujourd'hui
+        let newToday = 0;
+        if (userStats.daily && userStats.daily.length > 1) {
+          const today = userStats.daily[userStats.daily.length - 1].count;
+          const yesterday = userStats.daily[userStats.daily.length - 2].count;
+          newToday = today - yesterday;
+        }
+        setStats(prev => ({
+          ...prev,
+          participants: userStats.total,
+          newToday,
+          monthlyGrowth: monthlyGrowth.toFixed(2),
+        }))
+      } catch (e) {
+        // fallback ou erreur
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchStats();
   }, [])
+
+
+  // const getUsersRegisteredToday = (users = []) => {
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0);
+  //   return users.filter(user => {
+  //     if (!user.created_at) return false;
+  //     const dateCreation = new Date(user.created_at);
+  //     dateCreation.setHours(0, 0, 0, 0);
+  //     return dateCreation.getTime() === today.getTime();
+  //   }).length;
+  // }
+  
 
   const handleExportCSV = () => {
     // Simulate CSV export
@@ -88,13 +138,22 @@ export default function Statistics() {
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard
-            title="Total Participants"
-            value={stats.participants}
-            icon={Users}
-            color="blue"
-            trend={`+${stats.monthlyGrowth}% this month`}
-          />
+          <Card className="bg-zinc-900 border border-blue-900/60 shadow-lg">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-base font-medium text-white">Participants</CardTitle>
+              <Users className="h-8 w-8 text-white" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">{stats.participants}</div>
+              <div className={
+                stats.newToday > 0 ? 'text-green-400' :
+                stats.newToday < 0 ? 'text-red-400' :
+                'text-zinc-400'
+              }>
+                {stats.newToday > 0 ? '+' : stats.newToday < 0 ? '' : ''}{stats.newToday} participants today
+              </div>
+            </CardContent>
+          </Card>
           <StatCard
             title="Total Points Earned"
             value={stats.totalPoints}
@@ -109,13 +168,22 @@ export default function Statistics() {
             color="green"
             trend="User performance"
           />
-          <StatCard
-            title="Monthly Growth"
-            value={`${stats.monthlyGrowth}%`}
-            icon={Zap}
-            color="purple"
-            trend="New registrations"
-          />
+          <Card className="bg-zinc-900 border border-green-900/60 shadow-lg">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-base font-medium text-white">Monthly Growth</CardTitle>
+              <Zap className="h-8 w-8 text-white" />
+            </CardHeader>
+            <CardContent>
+              <div className={
+                Number(stats.monthlyGrowth) > 0 ? 'text-green-400 text-2xl font-bold' :
+                Number(stats.monthlyGrowth) < 0 ? 'text-red-400 text-2xl font-bold' :
+                'text-zinc-400 text-2xl font-bold'
+              }>
+                {Number(stats.monthlyGrowth) > 0 ? '+' : Number(stats.monthlyGrowth) < 0 ? '' : ''}{stats.monthlyGrowth}%
+              </div>
+              <div className="text-zinc-400 text-sm mt-2">Growth in participants this month</div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
@@ -263,7 +331,6 @@ export default function Statistics() {
     </div>
   )
 }
-
 // Stat Card Component
 function StatCard({ title, value, icon: Icon, color, trend }) {
   const colorClasses = {
@@ -292,3 +359,4 @@ function StatCard({ title, value, icon: Icon, color, trend }) {
     </Card>
   )
 }
+

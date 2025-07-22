@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { authenticateToken } = require('../middleware/auth');
 const { validateRequest, userUpdateSchema } = require('../middleware/validation');
+const { getUserStats } = require('../controllers/userController');
 
 // Get user profile
 router.get('/profile', authenticateToken, userController.getProfile);
@@ -22,5 +23,7 @@ router.get('/:userId/progress', authenticateToken, userController.getUserProgres
 
 // Spin wheel for random challenge
 router.post('/spin-wheel', authenticateToken, userController.spinWheel);
+
+router.get('/stats', getUserStats);
 
 module.exports = router;

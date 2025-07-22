@@ -194,7 +194,7 @@ export default function Export() {
                     variant="outline"
                     size="sm"
                     onClick={handleSelectAll}
-                    className="border-zinc-600 bg-transparent"
+                    className="border-zinc-600 bg-zinc-600"
                   >
                     {selectedExports.length === exportOptions.length ? "Deselect All" : "Select All"}
                   </Button>

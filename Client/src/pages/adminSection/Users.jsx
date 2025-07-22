@@ -26,7 +26,25 @@ export default function Statistics() {
       { title: "Climate Change Basics", completions: 287, type: "Quiz" },
       { title: "Sustainable Transportation", completions: 234, type: "Challenge" },
     ],
-    participants: 1247,
+    participants: 0, // Sera mis à jour dynamiquement
+
+    // Dans un useEffect plus bas, ajoutez ceci pour charger dynamiquement le nombre d'utilisateurs :
+    /*
+    useEffect(() => {
+      async function fetchParticipants() {
+        try {
+          const response = await fetch("/api/users?role=user"); // À adapter selon votre API
+          const users = await response.json();
+          // Exclure les admins si jamais ils sont dans la liste
+          const filtered = users.filter(u => u.role === "user");
+          setStats(prev => ({ ...prev, participants: filtered.length }));
+        } catch (e) {
+          // Gérer l'erreur si besoin
+        }
+      }
+      fetchParticipants();
+    }, []);
+    */
     totalPoints: 45678,
     monthlyGrowth: 18.5,
     averageScore: 78.3,
@@ -81,7 +99,7 @@ export default function Statistics() {
       <div className="flex-1 relative z-10 p-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-600 mb-2">
-            Advanced Statistics
+            Advanced Statistics (to delete)
           </h1>
           <p className="text-zinc-400">Comprehensive analytics and insights</p>
         </div>

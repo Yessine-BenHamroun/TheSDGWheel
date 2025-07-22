@@ -54,7 +54,7 @@ export function AdminSidebar() {
       label: "SDG Management",
       tab: "odds",
       icon: Settings,
-      route: "/admin-dashboard",
+      route: "/adminSection/SdgManagement",
       color: "text-purple-400",
     },
     {
@@ -140,11 +140,22 @@ export function AdminSidebar() {
             </AvatarFallback>
           </Avatar>
           {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{user?.username}</p>
-              <Badge variant="outline" className="bg-purple-500/20 text-purple-400 border-purple-500/50 text-xs">
-                Administrator
-              </Badge>
+            <div className="flex-1 min-w-0 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-white truncate">{user?.username}</p>
+                <Badge variant="outline" className="bg-purple-500/20 text-purple-400 border-purple-500/50 text-xs">
+                  Administrator
+                </Badge>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="ml-2 text-red-400 hover:text-red-300"
+                onClick={handleLogout}
+                title="Logout"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
             </div>
           )}
         </div>
@@ -174,18 +185,6 @@ export function AdminSidebar() {
           )
         })}
       </nav>
-
-      {/* Logout */}
-      <div className="p-4 border-t border-zinc-700/50">
-        <Button
-          variant="ghost"
-          className={`w-full ${collapsed ? "px-2" : "justify-start px-4"} py-3 h-auto text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200`}
-          onClick={handleLogout}
-        >
-          <LogOut className={`h-5 w-5 ${collapsed ? "" : "mr-3"}`} />
-          {!collapsed && <span className="font-medium">Logout</span>}
-        </Button>
-      </div>
     </aside>
   )
 }

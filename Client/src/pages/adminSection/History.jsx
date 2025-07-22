@@ -119,6 +119,31 @@ export default function History() {
     }
   }
 
+  const getShadowColor = (type) => {
+    switch (type) {
+      case "user_registration":
+        return "#3b82f6"; // blue
+      case "challenge_completion":
+        return "#22c55e"; // green
+      case "proof_validation":
+        return "#f59e42"; // orange
+      case "wheel_spin":
+        return "#a78bfa"; // purple
+      case "quiz_completion":
+        return "#06b6d4"; // cyan
+      case "admin_action":
+        return "#ef4444"; // red
+      case "community_vote":
+        return "#ec4899"; // pink
+      case "badge_earned":
+        return "#fde047"; // yellow
+      case "system_action":
+        return "#64748b"; // zinc
+      default:
+        return "#a78bfa"; // fallback purple
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-zinc-900 to-black text-white flex">
       <MouseFollower />
@@ -376,9 +401,15 @@ export default function History() {
       
       {/* Modal de détails du log */}
       <Dialog open={!!selectedLog} onOpenChange={() => setSelectedLog(null)}>
-        <DialogContent className="bg-gradient-to-br from-zinc-900 via-zinc-950 to-black border border-purple-900/60 shadow-2xl max-w-2xl">
+        <DialogContent
+          className="bg-zinc-900/95 border border-zinc-700 max-w-2xl"
+          style={{ boxShadow: `0 0 40px 0 ${getShadowColor(selectedLog?.type)}99` }}
+        >
           <DialogHeader>
-            <DialogTitle className="text-purple-400 text-2xl font-bold flex items-center gap-2">
+            <DialogTitle
+              className="text-xl font-bold flex items-center gap-2"
+              style={{ color: getShadowColor(selectedLog?.type) }}
+            >
               {selectedLog?.action?.includes('Quiz') ? 'Quiz Update' : selectedLog?.action?.includes('Challenge') ? 'Challenge Update' : 'Log Details'}
             </DialogTitle>
           </DialogHeader>
@@ -391,7 +422,7 @@ export default function History() {
                 </div>
                 <Badge className="bg-purple-700/30 text-purple-300 border border-purple-700 ml-2">Modification</Badge>
               </div>
-              <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900/80 shadow-lg">
+              <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900/80 shadow">
                 <table className="w-full text-left">
                   <thead>
                     <tr className="bg-zinc-800 text-zinc-400">
@@ -399,13 +430,12 @@ export default function History() {
                       <th className="px-4 py-2">Old</th>
                       <th></th>
                       <th className="px-4 py-2">New</th>
-                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
                     {Object.keys(selectedLog.updated).map((field) => (
                       selectedLog.old[field] !== selectedLog.updated[field] && (
-                        <tr key={field} className="transition-all hover:bg-zinc-800/60 animate-fade-in">
+                        <tr key={field} className="hover:bg-zinc-800/60 transition">
                           <td className="px-4 py-2 font-bold text-white flex items-center gap-2">
                             {field}
                             <span className="ml-2 px-2 py-0.5 rounded bg-yellow-700/30 text-yellow-300 text-xs">modified</span>
@@ -413,7 +443,6 @@ export default function History() {
                           <td className="px-4 py-2 text-red-400 line-through">{String(selectedLog.old[field])}</td>
                           <td className="px-2 py-2 text-zinc-400"><ArrowRight className="h-4 w-4" /></td>
                           <td className="px-4 py-2 text-green-400 font-semibold">{String(selectedLog.updated[field])}</td>
-                          <td></td>
                         </tr>
                       )
                     ))}
@@ -422,11 +451,20 @@ export default function History() {
               </div>
             </div>
           ) : selectedLog && (
-            <div className="space-y-2 mt-4">
-              <div><span className="font-bold text-white">Type:</span> <span className="text-zinc-300">{selectedLog.type}</span></div>
-              <div><span className="font-bold text-white">Action:</span> <span className="text-zinc-300">{selectedLog.action}</span></div>
-              <div><span className="font-bold text-white">Details:</span> <span className="text-zinc-300">{selectedLog.details}</span></div>
-              {/* Ajoute d'autres champs si besoin */}
+            <div className="mt-4 text-white space-y-3">
+              <div className="flex items-center">
+                <div className="text-zinc-400 font-semibold min-w-[130px]">Type</div>
+                <div>{selectedLog.type}</div>
+              </div>
+              <div className="flex items-center">
+                <div className="text-zinc-400 font-semibold min-w-[130px]">Action</div>
+                <div>{selectedLog.action}</div>
+              </div>
+              <div className="flex items-center">
+                <div className="text-zinc-400 font-semibold min-w-[130px]">Details</div>
+                <div>{selectedLog.details}</div>
+              </div>
+              {/* Add more fields as needed */}
             </div>
           )}
           <DialogFooter className="mt-6">

@@ -655,12 +655,27 @@ export default function QuizzChallengeAdmin() {
               <DialogTitle className="text-purple-400 text-xl">Challenge Details</DialogTitle>
             </DialogHeader>
             {challengeDetails && (
-              <div className="space-y-4 mt-4">
-                <div><span className="font-bold text-white">Title:</span> <span className="text-zinc-300">{challengeDetails.title}</span></div>
-                <div><span className="font-bold text-white">Description:</span> <span className="text-zinc-300">{challengeDetails.description}</span></div>
-                <div><span className="font-bold text-white">ODD:</span> <span className="text-blue-400">{challengeDetails.associatedODD?.oddId ? `SDG ${challengeDetails.associatedODD.oddId} - ${challengeDetails.associatedODD.name?.en}` : (challengeDetails.associatedODD?.name?.en || '-')}</span></div>
-                <div><span className="font-bold text-white">Created:</span> <span className="text-zinc-400">{new Date(challengeDetails.createdAt).toLocaleString()}</span></div>
-                <div><span className="font-bold text-white">Updated:</span> <span className="text-zinc-400">{new Date(challengeDetails.updatedAt).toLocaleString()}</span></div>
+              <div className="mt-4 text-white space-y-3">
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Title</div>
+                  <div>{challengeDetails.title}</div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Description</div>
+                  <div>{challengeDetails.description}</div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">ODD</div>
+                  <div className="text-blue-400">{challengeDetails.associatedODD?.oddId ? `SDG ${challengeDetails.associatedODD.oddId} - ${challengeDetails.associatedODD.name?.en}` : (challengeDetails.associatedODD?.name?.en || '-')}</div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Created</div>
+                  <div className="text-zinc-400">{new Date(challengeDetails.createdAt).toLocaleString()}</div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Updated</div>
+                  <div className="text-zinc-400">{new Date(challengeDetails.updatedAt).toLocaleString()}</div>
+                </div>
               </div>
             )}
             <DialogFooter className="mt-6">
@@ -678,22 +693,47 @@ export default function QuizzChallengeAdmin() {
               <DialogTitle className="text-purple-400 text-xl">Quiz Details</DialogTitle>
             </DialogHeader>
             {quizDetails && (
-              <div className="space-y-4 mt-4">
-                <div><span className="font-bold text-white">Title:</span> <span className="text-zinc-300">{quizDetails.title}</span></div>
-                <div><span className="font-bold text-white">Question:</span> <span className="text-zinc-300">{quizDetails.question}</span></div>
-                <div><span className="font-bold text-white">Choices:</span>
+              <div className="mt-4 text-white space-y-3">
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Title</div>
+                  <div>{quizDetails.title}</div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Question</div>
+                  <div>{quizDetails.question}</div>
+                </div>
+                <div className="flex items-start">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Choices</div>
                   <ul className="ml-4 list-decimal text-zinc-300">
                     {quizDetails.choices.map((c, i) => (
                       <li key={i} className={i === quizDetails.correctAnswer ? "text-green-400 font-bold" : ""}>{c}</li>
                     ))}
                   </ul>
                 </div>
-                <div><span className="font-bold text-white">Correct Answer:</span> <span className="text-green-400">Choice {quizDetails.correctAnswer + 1}</span></div>
-                <div><span className="font-bold text-white">SDG:</span> <span className="text-blue-400">{quizDetails.associatedODD?.oddId ? `SDG ${quizDetails.associatedODD.oddId} - ${quizDetails.associatedODD.name?.en}` : (quizDetails.associatedODD?.name?.en || '-')}</span></div>
-                <div><span className="font-bold text-white">Points:</span> <span className="text-yellow-400">{quizDetails.points}</span></div>
-                <div><span className="font-bold text-white">Difficulty:</span> <span className="text-purple-400">{quizDetails.difficulty}</span></div>
-                <div><span className="font-bold text-white">Created:</span> <span className="text-zinc-400">{new Date(quizDetails.createdAt).toLocaleString()}</span></div>
-                <div><span className="font-bold text-white">Updated:</span> <span className="text-zinc-400">{new Date(quizDetails.updatedAt).toLocaleString()}</span></div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Correct Answer</div>
+                  <div className="text-green-400">Choice {quizDetails.correctAnswer + 1}</div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">SDG</div>
+                  <div className="text-blue-400">{quizDetails.associatedODD?.oddId ? `SDG ${quizDetails.associatedODD.oddId} - ${quizDetails.associatedODD.name?.en}` : (quizDetails.associatedODD?.name?.en || '-')}</div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Points</div>
+                  <div className="text-yellow-400">{quizDetails.points}</div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Difficulty</div>
+                  <div className="text-purple-400">{quizDetails.difficulty}</div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Created</div>
+                  <div className="text-zinc-400">{new Date(quizDetails.createdAt).toLocaleString()}</div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-zinc-400 font-semibold min-w-[130px]">Updated</div>
+                  <div className="text-zinc-400">{new Date(quizDetails.updatedAt).toLocaleString()}</div>
+                </div>
               </div>
             )}
             <DialogFooter className="mt-6">

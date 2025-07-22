@@ -18,6 +18,7 @@ import Statistics from "./pages/adminSection/Statistics"
 import Users from "./pages/adminSection/Users"
 import History from "./pages/adminSection/History"
 import Export from "./pages/adminSection/Export"
+import SdgManagement from "./pages/adminSection/SdgManagement"
 
 // Protected Route Component
 import { useAuth } from "./contexts/AuthContext"
@@ -134,6 +135,14 @@ function App() {
             element={
               <ProtectedRoute adminOnly>
                 <Export />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adminSection/SdgManagement"
+            element={
+              <ProtectedRoute adminOnly>
+                <SdgManagement />
               </ProtectedRoute>
             }
           />
