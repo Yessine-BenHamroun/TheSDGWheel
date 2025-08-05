@@ -94,6 +94,10 @@ class ApiService {
     return this.request('/odds/spin', { method: 'POST' });
   }
 
+  async getLastWheelSpin() {
+    return this.request('/activity-logs/last-wheel-spin');
+  }
+
   // Challenge endpoints
   async getAllChallenges() {
     return this.request("/challenges")
@@ -260,11 +264,11 @@ class ApiService {
   }
 
   // Quiz endpoints
-  async getAllQuizzes() {
-    return this.request("/quizzes")
+  async getAllQuizzes(language = 'en') {
+    return this.request(`/quizzes?language=${language}`)
   }
-  async getQuizById(id) {
-    return this.request(`/quizzes/${id}`)
+  async getQuizById(id, language = 'en') {
+    return this.request(`/quizzes/${id}?language=${language}`)
   }
   async createQuiz(quizData) {
     return this.request("/quizzes", {

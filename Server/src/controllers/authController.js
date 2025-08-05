@@ -2,6 +2,8 @@ const User = require('../models/User');
 const { generateToken } = require('../middleware/auth');
 const config = require('../config/config');
 const ActivityLog = require('../models/ActivityLog');
+const crypto = require('crypto');
+const { sendVerificationEmail } = require('../utils/mailer');
 
 const register = async (req, res, next) => {
   try {
@@ -21,16 +23,21 @@ const register = async (req, res, next) => {
       });
     }
 
+    const verificationToken = crypto.randomBytes(32).toString('hex');
     // Create new user
     const user = new User({
       username,
       email,
       password, // Will be automatically hashed by the pre-save middleware
       avatar,
-      country
+      country,
+      isActive: false,
+      verificationToken,
     });
 
     await user.save();
+    // EmailJS will handle email sending from frontend
+    // await sendVerificationEmail(user.email, verificationToken);
 
     // Log registration in ActivityLog
     await ActivityLog.create({
@@ -44,8 +51,12 @@ const register = async (req, res, next) => {
     const token = generateToken(user._id);
 
     res.status(201).json({
-      message: 'User registered successfully',
-      user: user.toJSON(), // Password is excluded in toJSON method
+      message: 'User registered successfully. Please check your email to verify your account.',
+      user: {
+        ...user.toJSON(),
+        verificationToken: verificationToken // Include token for frontend email sending
+      },
+      verificationToken: verificationToken, // Also include it at the top level for easier access
       token
     });
   } catch (error) {
@@ -53,17 +64,33 @@ const register = async (req, res, next) => {
   }
 };
 
+const verifyEmail = async (req, res) => {
+  const { token } = req.params;
+  const user = await User.findOne({ verificationToken: token });
+  if (!user) {
+    return res.status(400).json({ message: 'Invalid or expired verification token.' });
+  }
+  user.isActive = true;
+  user.verificationToken = undefined;
+  await user.save();
+  res.json({ message: 'Email verified successfully. You can now log in.' });
+};
+
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     // Find user by email
-    const user = await User.findOne({ email, isActive: true });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({
         error: 'Authentication failed',
         message: 'Invalid email or password'
       });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ message: 'Please verify your email before logging in.' });
     }
 
     // Check password
@@ -136,5 +163,6 @@ module.exports = {
   register,
   login,
   createAdmin,
-  refreshToken
+  refreshToken,
+  verifyEmail
 };

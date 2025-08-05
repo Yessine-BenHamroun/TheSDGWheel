@@ -8,23 +8,9 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useNavigate } from "react-router-dom"
 
 export function FloatingNav() {
-  const [isVisible, setIsVisible] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const isMobile = useMobile()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setIsVisible(true)
-      } else {
-        setIsVisible(false)
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
 
   const navItems = [
     { name: "About", href: "#about" },
@@ -59,9 +45,9 @@ export function FloatingNav() {
   return (
     <>
       <motion.div
-        className={`fixed top-6 right-6 z-50 ${isVisible ? "opacity-100" : "opacity-0 pointer-events-none"} max-w-[calc(100vw-3rem)]`}
+        className="fixed top-6 right-6 z-50 opacity-100 max-w-[calc(100vw-3rem)]"
         initial={{ y: -100 }}
-        animate={{ y: isVisible ? 0 : -100 }}
+        animate={{ y: 0 }}
         transition={{ duration: 0.3 }}
       >
         <div className="relative px-4 py-3 rounded-full bg-zinc-800/80 backdrop-blur-md border border-zinc-700/50 shadow-lg w-fit mx-auto">

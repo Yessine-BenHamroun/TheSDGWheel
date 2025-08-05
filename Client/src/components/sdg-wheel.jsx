@@ -24,11 +24,15 @@ const sdgData = [
   { id: 17, title: "Partnerships", color: "#19486A", icon: "🤝" },
 ]
 
-export function SDGWheel() {
+export function SDGWheel({ isSpinning = false, selectedSDG = null, onSpinComplete = null }) {
   const canvasRef = useRef(null)
   const animationRef = useRef(null)
   const [isMobile, setIsMobile] = useState(false)
   const [wheelSize, setWheelSize] = useState(600)
+  const [wheelRotation, setWheelRotation] = useState(0)
+  const [initialRotation, setInitialRotation] = useState(0)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [lastSpinSDG, setLastSpinSDG] = useState(null)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -40,6 +44,90 @@ export function SDGWheel() {
 
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
+
+  // Animation function for spinning the wheel
+  const spinWheel = (targetSDGId) => {
+    if (isAnimating) return
+
+    setIsAnimating(true)
+    
+    // Calculate target rotation
+    const segmentAngle = (2 * Math.PI) / sdgData.length
+    const targetIndex = sdgData.findIndex(sdg => sdg.id === targetSDGId)
+    
+    console.log(`Spinning wheel to SDG ${targetSDGId}, index: ${targetIndex}, title: ${sdgData[targetIndex]?.title}`)
+    
+    // Calculate the exact angle to make the target segment point to the arrow
+    // The arrow points to top (12 o'clock), so we need to rotate the wheel so the target segment is at the top
+    // We need to add an offset to align with the arrow position
+    const targetAngle = -(targetIndex * segmentAngle) + (Math.PI / 2)
+    
+    console.log(`Target angle: ${targetAngle}rad, segment angle: ${segmentAngle}rad`)
+    
+    // Add multiple full rotations for dramatic effect
+    const fullRotations = 8
+    const finalRotation = targetAngle - (fullRotations * 2 * Math.PI)
+    
+    // Use CSS animation for smooth spinning with easing
+    const wheel = canvasRef.current
+    if (wheel) {
+      // Start from current rotation position
+      const startRotation = wheelRotation
+      
+      // Reset any existing transition
+      wheel.style.transition = 'none'
+      wheel.style.transform = `rotate(${startRotation}rad)`
+      
+      // Force a reflow
+      wheel.offsetHeight
+      
+      // Apply the spinning animation
+      wheel.style.transition = 'transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+      wheel.style.transform = `rotate(${finalRotation}rad)`
+      
+             setTimeout(() => {
+         setWheelRotation(finalRotation)
+         setIsAnimating(false)
+         if (onSpinComplete) {
+           // Always return the targetSDGId that was passed to this function
+           onSpinComplete(targetSDGId)
+         }
+       }, 4000)
+    }
+  }
+
+  // Calculate initial rotation when selectedSDG changes (for page load)
+  useEffect(() => {
+    if (selectedSDG && !isSpinning) {
+      const targetId = selectedSDG.oddId || selectedSDG.id
+      const segmentAngle = (2 * Math.PI) / sdgData.length
+      const targetIndex = sdgData.findIndex(sdg => sdg.id === targetId)
+      
+      if (targetIndex !== -1) {
+        // Calculate the angle to align the target segment with the arrow
+        const targetAngle = -(targetIndex * segmentAngle) + (Math.PI / 2)
+        setInitialRotation(targetAngle)
+        setWheelRotation(targetAngle)
+        
+        // Apply the rotation to the canvas immediately
+        const wheel = canvasRef.current
+        if (wheel) {
+          wheel.style.transition = 'none'
+          wheel.style.transform = `rotate(${targetAngle}rad)`
+        }
+      }
+    }
+  }, [selectedSDG])
+
+  // Trigger spin animation when isSpinning changes
+  useEffect(() => {
+    if (isSpinning && selectedSDG) {
+      // Use the selectedSDG directly without async calls
+      const targetId = selectedSDG.oddId || selectedSDG.id
+      console.log("Spinning wheel with selected SDG:", targetId, selectedSDG)
+      spinWheel(targetId)
+    }
+  }, [isSpinning, selectedSDG])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -79,7 +167,7 @@ export function SDGWheel() {
     setCanvasSize()
     window.addEventListener("resize", setCanvasSize)
 
-    let rotation = 0
+    let rotation = wheelRotation
     const centerX = canvas.width / 2
     const centerY = canvas.height / 2
     const outerRadius = canvas.width * 0.45
@@ -241,8 +329,10 @@ export function SDGWheel() {
         }
       }
 
-      // Update rotation
-      rotation += 0.005
+             // Update rotation only when spinning
+       if (isSpinning && !isAnimating) {
+         rotation += 0.02 // Faster rotation during spin
+       }
 
       animationRef.current = requestAnimationFrame(animate)
     }
@@ -255,7 +345,7 @@ export function SDGWheel() {
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [isMobile])
+  }, [isMobile, wheelRotation, isAnimating])
 
   return (
     <motion.div
@@ -277,6 +367,13 @@ export function SDGWheel() {
           }}
         ></div>
       )}
+
+      {/* Arrow indicator */}
+      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="w-0 h-0 border-l-[20px] border-r-[20px] border-t-[35px] border-l-transparent border-r-transparent border-t-red-500 drop-shadow-lg animate-pulse"></div>
+        <div className="w-0 h-0 border-l-[16px] border-r-[16px] border-t-[28px] border-l-transparent border-r-transparent border-t-red-400 ml-[4px] -mt-[7px]"></div>
+        <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[21px] border-l-transparent border-r-transparent border-t-red-300 ml-[8px] -mt-[7px]"></div>
+      </div>
 
       {/* Canvas container */}
       <div className="relative rounded-full overflow-hidden border-2 border-purple-500/30 shadow-2xl">

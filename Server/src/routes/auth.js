@@ -16,4 +16,6 @@ router.post('/create-admin', authController.createAdmin);
 // Refresh token
 router.post('/refresh', authenticateToken, authController.refreshToken);
 
+router.get('/verify/:token', authController.verifyEmail);
+
 module.exports = router;

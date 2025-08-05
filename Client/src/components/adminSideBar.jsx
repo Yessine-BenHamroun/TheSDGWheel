@@ -79,7 +79,7 @@ export function AdminSidebar() {
       color: "text-yellow-400",
     },
     {
-      label: "Export CSV",
+      label: "Data Export",
       tab: "export",
       icon: Download,
       route: "/adminSection/Export",

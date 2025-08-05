@@ -1,0 +1,1617 @@
+[
+  {
+    "_id": { "$oid": "b5d9034421ab474bb368c3b5" },
+    "title": "QUIZZ 1",
+    "question": "Which of the following best describes the goal of SDG 1?",
+    "choices": [
+      "Reduce carbon emissions",
+      "Eradicate extreme poverty",
+      "Promote space exploration",
+      "Increase oil exports"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "686aeadc14f396840ce6b28b" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "f8c7209e52c342fe98a17ae2" },
+    "title": "QUIZZ 1",
+    "question": "Which region has the highest rate of extreme poverty?",
+    "choices": [
+      "Sub-Saharan Africa",
+      "North America",
+      "Western Europe",
+      "East Asia"
+    ],
+    "correctAnswer": 0,
+    "associatedODD": { "$oid": "2e376871260a4fb9865057ef" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "a7f7607ca86843c5aa107894" },
+    "title": "QUIZZ 1",
+    "question": "What is considered the international poverty line?",
+    "choices": [
+      "$5 per day",
+      "$3.20 per day",
+      "$1.90 per day",
+      "$10 per day"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "43a76c8ac25f4e81bb731df1" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "c790aefa759b4207947a097e" },
+    "title": "QUIZZ 1",
+    "question": "Which of these actions helps reduce poverty?",
+    "choices": [
+      "Investing in education",
+      "Increasing pollution",
+      "Raising military budgets",
+      "Restricting trade"
+    ],
+    "correctAnswer": 0,
+    "associatedODD": { "$oid": "72198fae75b948b5b6bcfc9b" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "d1818bf0ddea4552a23cb573" },
+    "title": "QUIZZ 1",
+    "question": "Microfinance is important for reducing poverty because it:",
+    "choices": [
+      "Encourages deforestation",
+      "Reduces healthcare",
+      "Provides small loans to the poor",
+      "Raises taxes"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "6ade3107f8bf4e748c6c0ce2" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "aead5d0d50ff4a6f9b377707" },
+    "title": "QUIZZ 2",
+    "question": "What does SDG 2 aim to achieve?",
+    "choices": [
+      "Increase military spending",
+      "End hunger and achieve food security",
+      "Expand mining",
+      "Promote fast food chains"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "686aeadc14f396840ce6b28c" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "fd6cb075a58e42338d41c202" },
+    "title": "QUIZZ 2",
+    "question": "Which practice contributes to food security?",
+    "choices": [
+      "Monoculture farming",
+      "Slash-and-burn agriculture",
+      "Sustainable agriculture",
+      "Overfishing"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "892275bafaec42a89db775ef" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "a5d8e458bc4743c095442a0c" },
+    "title": "QUIZZ 2",
+    "question": "Malnutrition mainly affects which group?",
+    "choices": [
+      "Adults",
+      "Teenagers",
+      "Children under 5",
+      "Athletes"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "c6447ef7451c44bc8fd701ec" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "a098c1436c2b4488b52ed492" },
+    "title": "QUIZZ 2",
+    "question": "Which organization fights global hunger?",
+    "choices": [
+      "IMF",
+      "UNESCO",
+      "WFP",
+      "WTO"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "219c56677047411583abed33" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "f94eca76447b4fcbad2e9524" },
+    "title": "QUIZZ 2",
+    "question": "Which crop is a staple food in many developing countries?",
+    "choices": [
+      "Coffee",
+      "Wheat",
+      "Cocoa",
+      "Cotton"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "ccd0fafbdd8441a38c819c7e" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "ad05cc8dea43472086838689" },
+    "title": "QUIZZ 3",
+    "question": "What is a key goal of SDG 3?",
+    "choices": [
+      "Reduce child mortality",
+      "Ensure healthy lives and promote well-being for all",
+      "Increase fossil fuel use",
+      "Expand military spending"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "1161ea5756de4d35b1eb383b" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "5e447476f8634cdebcd506f9" },
+    "title": "QUIZZ 3",
+    "question": "Which action supports SDG 3?",
+    "choices": [
+      "Ignoring vaccinations",
+      "Promoting healthy lifestyles",
+      "Building more factories",
+      "Cutting healthcare funding"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "42cc5dcd264b4ce98f939984" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "d7c08f2723e2402aa45eaec6" },
+    "title": "QUIZZ 3",
+    "question": "SDG 3 is important because:",
+    "choices": [
+      "It increases pollution",
+      "It improves health outcomes",
+      "It reduces education",
+      "It raises taxes"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "f661cf913d9a4863886b8a66" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "7148a57944b14810adfe8f68" },
+    "title": "QUIZZ 3",
+    "question": "What challenge is related to SDG 3?",
+    "choices": [
+      "Lack of access to healthcare",
+      "Overfishing",
+      "Deforestation",
+      "Space exploration"
+    ],
+    "correctAnswer": 0,
+    "associatedODD": { "$oid": "4fbd96cec50d4366ba3c336a" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "226b0373b79d4ca8bb7dec34" },
+    "title": "QUIZZ 3",
+    "question": "Which sector impacts SDG 3 the most?",
+    "choices": [
+      "Healthcare",
+      "Agriculture",
+      "Education",
+      "Mining"
+    ],
+    "correctAnswer": 0,
+    "associatedODD": { "$oid": "399bc97041784e83a02264fc" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "30d0fea285d547ceb57c4624" },
+    "title": "QUIZZ 4",
+    "question": "What is a key goal of SDG 4?",
+    "choices": [
+      "Increase access to quality education",
+      "Expand fossil fuel subsidies",
+      "Promote unhealthy diets",
+      "Reduce access to clean water"
+    ],
+    "correctAnswer": 0,
+    "associatedODD": { "$oid": "725faf16c63848a4a316b1a5" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "a46edb651adc499ba324674d" },
+    "title": "QUIZZ 4",
+    "question": "Which action supports SDG 4?",
+    "choices": [
+      "Building more schools",
+      "Cutting education budgets",
+      "Promoting child labor",
+      "Reducing teacher training"
+    ],
+    "correctAnswer": 0,
+    "associatedODD": { "$oid": "1828a50042a44153905c1243" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "717789432d3e4beba338f426" },
+    "title": "QUIZZ 4",
+    "question": "SDG 4 is important because:",
+    "choices": [
+      "It increases illiteracy",
+      "It promotes lifelong learning opportunities",
+      "It reduces access to education",
+      "It raises pollution"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "5cbbc136d47b46068306f449" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "66c48ca518b649f4895a62b2" },
+    "title": "QUIZZ 4",
+    "question": "What challenge is related to SDG 4?",
+    "choices": [
+      "Lack of access to quality education",
+      "Overfishing",
+      "Deforestation",
+      "Space exploration"
+    ],
+    "correctAnswer": 0,
+    "associatedODD": { "$oid": "b512cb6ad1b94f9a9b7b3385" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "01629a7f80044c7e8f7cd924" },
+    "title": "QUIZZ 4",
+    "question": "Which sector impacts SDG 4 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "5147b77355434098acfff844" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "0e2611e70fa746df81cb6d97" },
+    "title": "QUIZZ 5",
+    "question": "What is a key goal of SDG 5?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "987d7b6617c24174bfb18bb9" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "cf28bafacead4106a4aedaf0" },
+    "title": "QUIZZ 5",
+    "question": "Which action supports SDG 5?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "300c3257b4ce4c1fb615b10d" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "5faa785abdbc4f74b11dcb58" },
+    "title": "QUIZZ 5",
+    "question": "SDG 5 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "9e51fd1371644cb79494cc4b" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "f579b44adc734d40b4174e1b" },
+    "title": "QUIZZ 5",
+    "question": "What challenge is related to SDG 5?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "be98d561cc0b48fd8b6260c7" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "f66cfeafd1a64d6cb313e637" },
+    "title": "QUIZZ 5",
+    "question": "Which sector impacts SDG 5 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "7e8ecb3e081c4c059d8619c7" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "5aa843dd11864e7fb70339e4" },
+    "title": "QUIZZ 6",
+    "question": "What is a key goal of SDG 6?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "f9435e80152d408097690e85" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "45f9099ef8bb4786a70ccf1d" },
+    "title": "QUIZZ 6",
+    "question": "Which action supports SDG 6?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "cf91cc2b71354ba1a09b8f90" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "19974c2d805d433b9bda5d16" },
+    "title": "QUIZZ 6",
+    "question": "SDG 6 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "f7bfeef7f82747cf9a79a6cc" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "e94bbfbab3954375b7d359e7" },
+    "title": "QUIZZ 6",
+    "question": "What challenge is related to SDG 6?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "e3bff262af754754990ca2bd" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "f7584ddb1c5c491493280d88" },
+    "title": "QUIZZ 6",
+    "question": "Which sector impacts SDG 6 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "d8e6c99262eb4fb89c78fdca" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "60444e0f79c14642b21431bf" },
+    "title": "QUIZZ 7",
+    "question": "What is a key goal of SDG 7?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "92aaef7a522a48189b0634f6" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "22a5c7c39df2425aa64fb32b" },
+    "title": "QUIZZ 7",
+    "question": "Which action supports SDG 7?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "b5b684daf1b54cc98aae0b5e" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "aaf6d554d6e84b0aa258f751" },
+    "title": "QUIZZ 7",
+    "question": "SDG 7 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "5ec3db12d5224755b35fc214" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "f7a52965954549cb805e13dc" },
+    "title": "QUIZZ 7",
+    "question": "What challenge is related to SDG 7?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "36fb6f6c196842e49a2a0f47" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "72d95505acec457bb4e69d45" },
+    "title": "QUIZZ 7",
+    "question": "Which sector impacts SDG 7 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "0b70e9af66494bac9d1c5daf" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "61220a2a198a441faad860c5" },
+    "title": "QUIZZ 8",
+    "question": "What is a key goal of SDG 8?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "a2f37cca1e9f4a569007ffb0" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "c8f35951f8d5483ebe5c5f46" },
+    "title": "QUIZZ 8",
+    "question": "Which action supports SDG 8?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "d16fea96002e426a992be52a" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "63d1e1a58fbf4512846867a2" },
+    "title": "QUIZZ 8",
+    "question": "SDG 8 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "18a43fc08adc4511937578a7" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "a89c2488b1ff469b84f79ed1" },
+    "title": "QUIZZ 8",
+    "question": "What challenge is related to SDG 8?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "19c2c38550654118a33097a1" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "5cf21da449af45758b58eea8" },
+    "title": "QUIZZ 8",
+    "question": "Which sector impacts SDG 8 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "2a5ee20d36584e1f8443bca5" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "c6c0379ecdd94d199348a8aa" },
+    "title": "QUIZZ 9",
+    "question": "What is a key goal of SDG 9?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "45c9d6dc3d614dd2a4f38474" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "2d683e1193414aac9bc6555c" },
+    "title": "QUIZZ 9",
+    "question": "Which action supports SDG 9?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "c1b9febd8b054d49a0e95729" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "b013282eff584cb0a151974f" },
+    "title": "QUIZZ 9",
+    "question": "SDG 9 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "a7fd509da87e4eaa93702319" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "1e9f1989c24e4b439e37d630" },
+    "title": "QUIZZ 9",
+    "question": "What challenge is related to SDG 9?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "8b2ce4993c714f76a1c65132" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "f48114193e934e9db15f573d" },
+    "title": "QUIZZ 9",
+    "question": "Which sector impacts SDG 9 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "a44409e66995461587aa2f77" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "35f297c18e9e4b78b6730e8e" },
+    "title": "QUIZZ 10",
+    "question": "What is a key goal of SDG 10?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "1a49ab89064e4d9ca5491d0d" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "ce3c214f5b1c4c9886a1a03c" },
+    "title": "QUIZZ 10",
+    "question": "Which action supports SDG 10?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "b2ae5f6139414933ae44981a" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "64c1dcc3a10e4473a7455622" },
+    "title": "QUIZZ 10",
+    "question": "SDG 10 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "2eb16b1ad64b4f358fc6c0a5" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "73dc17ed18e94a36833f89c6" },
+    "title": "QUIZZ 10",
+    "question": "What challenge is related to SDG 10?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "dde046e7058b4b10ae3b2cc1" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "443bdab7338d4a82a375172e" },
+    "title": "QUIZZ 10",
+    "question": "Which sector impacts SDG 10 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "66bc19957ec847db826f2803" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "1519018ce27a4835af63bf59" },
+    "title": "QUIZZ 11",
+    "question": "What is a key goal of SDG 11?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "d48b171704a748bdbffa800b" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "125b16638bae4f0f814afd41" },
+    "title": "QUIZZ 11",
+    "question": "Which action supports SDG 11?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "474c372bdbac45b18bc99153" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "b96ce1bbb907420e97639b9f" },
+    "title": "QUIZZ 11",
+    "question": "SDG 11 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "c801e688d2bd49249e1fde91" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "ac6fb7bb8b7f41c185930029" },
+    "title": "QUIZZ 11",
+    "question": "What challenge is related to SDG 11?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "e845f8a15dbc4d928c4f99bf" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "dd5a2fe960a649488e78d103" },
+    "title": "QUIZZ 11",
+    "question": "Which sector impacts SDG 11 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "003536cd82e94fea8c1b921f" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "a9c07895934847c8b2ace111" },
+    "title": "QUIZZ 12",
+    "question": "What is a key goal of SDG 12?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "e327825f1a30458eb036a8a4" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "fab40ad7ae7645d3beca203f" },
+    "title": "QUIZZ 12",
+    "question": "Which action supports SDG 12?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "4b8b905d5bb841ad8cbe3a57" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "126c0eba8c5245c3937aa3cb" },
+    "title": "QUIZZ 12",
+    "question": "SDG 12 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "0ca6beca8874442fa6712936" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "bbdc915d15af4bb78a50758a" },
+    "title": "QUIZZ 12",
+    "question": "What challenge is related to SDG 12?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "cc413f6a61744fb1acbb99fa" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "a5d06019bf5f47009e9f4188" },
+    "title": "QUIZZ 12",
+    "question": "Which sector impacts SDG 12 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "a1bc3ac4bd984b53a5c1451f" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6584cf4bce47494199734865" },
+    "title": "QUIZZ 13",
+    "question": "What is a key goal of SDG 13?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "45a2815b2a5b416d90f4c0dc" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "f745f70d3cc643d28ae569cf" },
+    "title": "QUIZZ 13",
+    "question": "Which action supports SDG 13?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "b6aa1a4adf6a4de8a2805f0f" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "5c9daa08d4b54489bfba8f1c" },
+    "title": "QUIZZ 13",
+    "question": "SDG 13 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "5df32cff4da24de8b80b6522" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "75c1eab6ada247efb5e65c08" },
+    "title": "QUIZZ 13",
+    "question": "What challenge is related to SDG 13?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "12947dd1fb4f4cf0a683425e" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "fac6ca52ff34456288c5cc3d" },
+    "title": "QUIZZ 13",
+    "question": "Which sector impacts SDG 13 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "6e121c8938ed4ab08e0a97fc" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "ad8446ce5fd541bf99c41719" },
+    "title": "QUIZZ 14",
+    "question": "What is a key goal of SDG 14?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "698aa60c400f48cdb4e1599f" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "04401a81b7cd43fe96927141" },
+    "title": "QUIZZ 14",
+    "question": "Which action supports SDG 14?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "72e5f19a35e0424c97b416af" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "eb02393b26bc491180d88a8c" },
+    "title": "QUIZZ 14",
+    "question": "SDG 14 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "7dd8e3fd3f02450ab208c07a" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "a76ae0d0f0634ba7988b0e5f" },
+    "title": "QUIZZ 14",
+    "question": "What challenge is related to SDG 14?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "81555eae962d42dcb5182aec" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "13e1589f105b4b708f355ba8" },
+    "title": "QUIZZ 14",
+    "question": "Which sector impacts SDG 14 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "7feb409dc94e4fe59c64b479" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "a99e9b806c3a48cca13836b4" },
+    "title": "QUIZZ 15",
+    "question": "What is a key goal of SDG 15?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "c61cc86438b14e3eb9fa7a11" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "9de25d1f792c4ff8842237c9" },
+    "title": "QUIZZ 15",
+    "question": "Which action supports SDG 15?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "b50733a3537546a29be9ef37" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "3d0e881bba1d4bbdad40d136" },
+    "title": "QUIZZ 15",
+    "question": "SDG 15 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "c390808c7b0f4cf99923285d" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "73384cfcf13a4d7a9e282ee4" },
+    "title": "QUIZZ 15",
+    "question": "What challenge is related to SDG 15?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "8ea872315d9746d5a55be419" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "88b1bbbd45884bc897ed3a1a" },
+    "title": "QUIZZ 15",
+    "question": "Which sector impacts SDG 15 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "5ec5bb7f0fb14572b155954d" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "4d05c3ae368644b9949af395" },
+    "title": "QUIZZ 16",
+    "question": "What is a key goal of SDG 16?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "7320f3a7da5848d497a91b3c" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "fb6868e12c7c4b868b7a7a27" },
+    "title": "QUIZZ 16",
+    "question": "Which action supports SDG 16?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "4055e1d659354077968bc7fb" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "f33e71ab6e414bd5be226146" },
+    "title": "QUIZZ 16",
+    "question": "SDG 16 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "070a218b132b49378d7cae6a" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "b6059a717b5f4cefbe0e1ad1" },
+    "title": "QUIZZ 16",
+    "question": "What challenge is related to SDG 16?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "8d0b4f72c18c436c86707f8a" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "ec7d1d089b034923b4e3e5cb" },
+    "title": "QUIZZ 16",
+    "question": "Which sector impacts SDG 16 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "a52413da0d104502a57d9c10" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "b1579a2e97344b92bd7486e4" },
+    "title": "QUIZZ 17",
+    "question": "What is a key goal of SDG 17?",
+    "choices": [
+      "Option A",
+      "Correct Answer",
+      "Option C",
+      "Option D"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "d4623e57b81d457e9e21f5c4" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "eaecca59af2c4272bb5384b7" },
+    "title": "QUIZZ 17",
+    "question": "Which action supports SDG 17?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Right",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "4353bec6d4ab4341931bb572" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "427384b731a94f73a2cdbb82" },
+    "title": "QUIZZ 17",
+    "question": "SDG 17 is important because:",
+    "choices": [
+      "No",
+      "Yes",
+      "No",
+      "No"
+    ],
+    "correctAnswer": 1,
+    "associatedODD": { "$oid": "ad2594e055f44d3c8b5fdfe8" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "d6b926f150f04a86af27775f" },
+    "title": "QUIZZ 17",
+    "question": "What challenge is related to SDG 17?",
+    "choices": [
+      "Fake",
+      "Fake",
+      "True",
+      "Fake"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "92b49b293db34da686926baa" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "aace24cbff834e70b3af94d0" },
+    "title": "QUIZZ 17",
+    "question": "Which sector impacts SDG 17 the most?",
+    "choices": [
+      "Wrong",
+      "Wrong",
+      "Correct",
+      "Wrong"
+    ],
+    "correctAnswer": 2,
+    "associatedODD": { "$oid": "d107af686e8d4a529d695119" },
+    "points": 10,
+    "difficulty": "EASY",
+    "isActive": true,
+    "createdAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "updatedAt": { "$date": "2025-07-23T23:43:18.444273Z" },
+    "__v": 0
+  }
+]

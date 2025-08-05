@@ -19,30 +19,37 @@ import Users from "./pages/adminSection/Users"
 import History from "./pages/adminSection/History"
 import Export from "./pages/adminSection/Export"
 import SdgManagement from "./pages/adminSection/SdgManagement"
+import VerifyNotice from "./pages/verifyNotice";
+import Verify from "./pages/verify"
 
 // Protected Route Component
 import { useAuth } from "./contexts/AuthContext"
 
-function ProtectedRoute({ children, adminOnly = false }) {
-  const { isAuthenticated, isAdmin, loading } = useAuth()
+function ProtectedRoute({ children, adminOnly = false, userOnly = false }) {
+  const { isAuthenticated, isAdmin, loading } = useAuth();
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-zinc-900 via-zinc-900 to-black flex items-center justify-center">
         <div className="text-white text-xl">Loading...</div>
       </div>
-    )
+    );
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/login" replace />;
   }
 
   if (adminOnly && !isAdmin) {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/dashboard" replace />;
   }
 
-  return children
+  // NEW: Prevent admins from accessing user-only pages
+  if (userOnly && isAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return children;
 }
 
 function App() {
@@ -54,12 +61,14 @@ function App() {
           <Route path="/" element={<Portfolio />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verify-notice" element={<VerifyNotice />} />
+          <Route path="/verify/:token" element={<Verify />} />
 
           {/* Protected routes */}
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute userOnly>
                 <Dashboard />
               </ProtectedRoute>
             }
@@ -67,7 +76,7 @@ function App() {
           <Route
             path="/wheel"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute userOnly>
                 <WheelGame />
               </ProtectedRoute>
             }
@@ -75,7 +84,7 @@ function App() {
           <Route
             path="/leaderboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute userOnly>
                 <Leaderboard />
               </ProtectedRoute>
             }
@@ -83,7 +92,7 @@ function App() {
           <Route
             path="/community"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute userOnly>
                 <CommunityVoting />
               </ProtectedRoute>
             }

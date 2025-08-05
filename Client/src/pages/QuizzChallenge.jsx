@@ -19,11 +19,17 @@ export default function QuizzChallengeAdmin() {
   const [quizzes, setQuizzes] = useState([])
   const [quizModalOpen, setQuizModalOpen] = useState(false)
   const [quizEdit, setQuizEdit] = useState(null)
+  const [quizPage, setQuizPage] = useState(1)
+  const quizzesPerPage = 10
+  const quizPageCount = Math.ceil(quizzes.length / quizzesPerPage)
 
   // Challenges
   const [challenges, setChallenges] = useState([])
   const [challengeModalOpen, setChallengeModalOpen] = useState(false)
   const [challengeEdit, setChallengeEdit] = useState(null)
+  const [challengePage, setChallengePage] = useState(1)
+  const challengesPerPage = 10
+  const challengePageCount = Math.ceil(challenges.length / challengesPerPage)
 
   // Form states
   const [quizForm, setQuizForm] = useState({
@@ -263,7 +269,7 @@ export default function QuizzChallengeAdmin() {
                     </tr>
                   </thead>
                   <tbody>
-                    {quizzes.map((quiz) => (
+                    {quizzes.slice((quizPage-1)*quizzesPerPage, quizPage*quizzesPerPage).map((quiz) => (
                       <tr key={quiz._id} className="border-b border-zinc-800 hover:bg-zinc-800/60 transition-colors">
                         <td className="px-4 py-3 font-medium text-white">{quiz.title}</td>
                         <td className="px-4 py-3 text-zinc-300 max-w-xs truncate">{quiz.question}</td>
@@ -350,6 +356,14 @@ export default function QuizzChallengeAdmin() {
                   <p className="text-zinc-400">Create your first quiz to get started</p>
                 </div>
               )}
+              {/* Pagination Controls for Quizzes */}
+              {quizPageCount > 1 && (
+                <div className="flex justify-center items-center mt-4 space-x-2">
+                  <Button size="sm" variant="outline" onClick={() => setQuizPage(quizPage-1)} disabled={quizPage === 1}>Previous</Button>
+                  <span className="text-zinc-400">Page {quizPage} of {quizPageCount}</span>
+                  <Button size="sm" variant="outline" onClick={() => setQuizPage(quizPage+1)} disabled={quizPage === quizPageCount}>Next</Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
@@ -382,7 +396,7 @@ export default function QuizzChallengeAdmin() {
                     </tr>
                   </thead>
                   <tbody>
-                    {challenges.map((challenge) => (
+                    {challenges.slice((challengePage-1)*challengesPerPage, challengePage*challengesPerPage).map((challenge) => (
                       <tr
                         key={challenge._id}
                         className="border-b border-zinc-800 hover:bg-zinc-800/60 transition-colors"
@@ -438,6 +452,14 @@ export default function QuizzChallengeAdmin() {
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">No challenges yet</h3>
                   <p className="text-zinc-400">Create your first challenge to get started</p>
+                </div>
+              )}
+              {/* Pagination Controls for Challenges */}
+              {challengePageCount > 1 && (
+                <div className="flex justify-center items-center mt-4 space-x-2">
+                  <Button size="sm" variant="outline" onClick={() => setChallengePage(challengePage-1)} disabled={challengePage === 1}>Previous</Button>
+                  <span className="text-zinc-400">Page {challengePage} of {challengePageCount}</span>
+                  <Button size="sm" variant="outline" onClick={() => setChallengePage(challengePage+1)} disabled={challengePage === challengePageCount}>Next</Button>
                 </div>
               )}
             </CardContent>

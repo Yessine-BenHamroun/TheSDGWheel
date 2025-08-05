@@ -12,8 +12,10 @@
     "debug:build": "node --inspect-brk=0.0.0.0:9229 node_modules/.bin/vite build"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@radix-ui/react-checkbox": "^1.3.2",
     "@radix-ui/react-dialog": "^1.1.14",
+    "animejs": "^4.1.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.5.4",

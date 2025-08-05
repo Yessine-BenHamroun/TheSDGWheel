@@ -14,6 +14,7 @@ import { SDGWheel } from "../components/sdg-wheel"
 import { MouseFollower } from "../components/mouse-follower"
 import { ScrollProgress } from "../components/scroll-progress"
 import { useToast } from "../hooks/use-toast"
+import UserNavbar from "../components/UserNavbar"
 
 export default function WheelGame() {
   const { user, isAuthenticated } = useAuth()
@@ -32,7 +33,22 @@ export default function WheelGame() {
 
   useEffect(() => {
     loadODDs()
+    loadLastSpin()
   }, [])
+
+  const loadLastSpin = async () => {
+    if (!isAuthenticated) return
+    
+    try {
+      const lastSpin = await ApiService.getLastWheelSpin()
+      if (lastSpin && lastSpin.odd) {
+        setSelectedODD(lastSpin.odd)
+        setCurrentChallenge(lastSpin.challenge)
+      }
+    } catch (error) {
+      console.error("Failed to load last spin:", error)
+    }
+  }
 
   const loadODDs = async () => {
     try {
@@ -40,26 +56,26 @@ export default function WheelGame() {
       setOdds(oddsData)
     } catch (error) {
       console.error("Failed to load ODDs:", error)
-      // Fallback to default ODDs
-      setOdds([
-        { oddId: 1, name: { en: "No Poverty" }, color: "#E5243B" },
-        { oddId: 2, name: { en: "Zero Hunger" }, color: "#DDA63A" },
-        { oddId: 3, name: { en: "Good Health" }, color: "#4C9F38" },
-        { oddId: 4, name: { en: "Quality Education" }, color: "#C5192D" },
-        { oddId: 5, name: { en: "Gender Equality" }, color: "#FF3A21" },
-        { oddId: 6, name: { en: "Clean Water" }, color: "#26BDE2" },
-        { oddId: 7, name: { en: "Clean Energy" }, color: "#FCC30B" },
-        { oddId: 8, name: { en: "Decent Work" }, color: "#A21942" },
-        { oddId: 9, name: { en: "Innovation" }, color: "#FD6925" },
-        { oddId: 10, name: { en: "Reduced Inequalities" }, color: "#DD1367" },
-        { oddId: 11, name: { en: "Sustainable Cities" }, color: "#FD9D24" },
-        { oddId: 12, name: { en: "Responsible Consumption" }, color: "#BF8B2E" },
-        { oddId: 13, name: { en: "Climate Action" }, color: "#3F7E44" },
-        { oddId: 14, name: { en: "Life Below Water" }, color: "#0A97D9" },
-        { oddId: 15, name: { en: "Life on Land" }, color: "#56C02B" },
-        { oddId: 16, name: { en: "Peace & Justice" }, color: "#00689D" },
-        { oddId: 17, name: { en: "Partnerships" }, color: "#19486A" },
-      ])
+             // Fallback to default ODDs - matching SDG wheel data
+       setOdds([
+         { oddId: 1, name: { en: "No Poverty" }, color: "#E5243B" },
+         { oddId: 2, name: { en: "Zero Hunger" }, color: "#DDA63A" },
+         { oddId: 3, name: { en: "Good Health" }, color: "#4C9F38" },
+         { oddId: 4, name: { en: "Quality Education" }, color: "#C5192D" },
+         { oddId: 5, name: { en: "Gender Equality" }, color: "#FF3A21" },
+         { oddId: 6, name: { en: "Clean Water" }, color: "#26BDE2" },
+         { oddId: 7, name: { en: "Clean Energy" }, color: "#FCC30B" },
+         { oddId: 8, name: { en: "Decent Work" }, color: "#A21942" },
+         { oddId: 9, name: { en: "Innovation" }, color: "#FD6925" },
+         { oddId: 10, name: { en: "Reduced Inequalities" }, color: "#DD1367" },
+         { oddId: 11, name: { en: "Sustainable Cities" }, color: "#FD9D24" },
+         { oddId: 12, name: { en: "Responsible Consumption" }, color: "#BF8B2E" },
+         { oddId: 13, name: { en: "Climate Action" }, color: "#3F7E44" },
+         { oddId: 14, name: { en: "Life Below Water" }, color: "#0A97D9" },
+         { oddId: 15, name: { en: "Life on Land" }, color: "#56C02B" },
+         { oddId: 16, name: { en: "Peace & Justice" }, color: "#00689D" },
+         { oddId: 17, name: { en: "Partnerships" }, color: "#19486A" },
+       ])
     }
   }
 
@@ -73,20 +89,24 @@ export default function WheelGame() {
       return
     }
 
-    setIsSpinning(true)
-
     try {
       // Get weighted random ODD from backend
       const spinResult = await ApiService.spinWheel()
       const { odd, challenge } = spinResult
 
+      // Set the selected ODD immediately and start spinning
       setSelectedODD(odd)
       setCurrentChallenge(challenge)
+      setIsSpinning(true)
 
-      toast({
-        title: "ODD Selected!",
-        description: `You got ODD ${odd.oddId}: ${odd.name.en}`,
-      })
+      // Show toast after wheel animation completes
+      setTimeout(() => {
+        toast({
+          title: "ODD Selected!",
+          description: `You got ODD ${odd.oddId}: ${odd.name.en}`,
+        })
+      }, 4000) // Wait for wheel animation to complete
+      
     } catch (error) {
       console.error("Spin wheel error:", error)
       toast({
@@ -94,8 +114,6 @@ export default function WheelGame() {
         description: error.message || "Failed to spin the wheel",
         variant: "destructive",
       })
-    } finally {
-      setIsSpinning(false)
     }
   }
 
@@ -162,6 +180,7 @@ export default function WheelGame() {
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 via-zinc-900 to-black text-white">
       <MouseFollower />
       <ScrollProgress />
+      <UserNavbar />
 
       {/* Background Effects */}
       <div className="absolute inset-0 z-0">
@@ -170,7 +189,7 @@ export default function WheelGame() {
         <div className="absolute bottom-20 left-1/3 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8">
+             <div className="relative z-10 container mx-auto px-4 py-8 pt-24">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
@@ -187,7 +206,21 @@ export default function WheelGame() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Wheel */}
           <div className="flex flex-col items-center space-y-8">
-            <SDGWheel />
+                         <SDGWheel 
+               isSpinning={isSpinning}
+               selectedSDG={selectedODD}
+               onSpinComplete={(sdgId) => {
+                 console.log("Wheel stopped on SDG:", sdgId)
+                 setIsSpinning(false)
+                 
+                 // Verify the selected ODD matches the wheel result
+                 if (selectedODD && selectedODD.oddId === sdgId) {
+                   console.log("Wheel and database ODD match!")
+                 } else {
+                   console.warn("Wheel and database ODD mismatch:", { wheelSDG: sdgId, databaseODD: selectedODD?.oddId })
+                 }
+               }}
+             />
 
             <Button
               onClick={handleSpin}

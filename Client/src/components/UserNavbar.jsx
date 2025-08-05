@@ -1,0 +1,223 @@
+"use client"
+
+import { useNavigate, useLocation } from "react-router-dom"
+import { useAuth } from "../contexts/AuthContext"
+import {
+  Activity,
+  Bell,
+  Command,
+  Database,
+  Globe,
+  Hexagon,
+  LogOut,
+  Search,
+  Settings,
+  User,
+  Menu,
+  X,
+} from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useToast } from "@/hooks/use-toast"
+import { useState } from "react"
+
+// Component for nav items
+function NavItem({ icon: Icon, label, active, onClick, href, mobile = false, onMobileClick }) {
+  const navigate = useNavigate()
+  
+  const handleClick = () => {
+    if (onClick) {
+      onClick()
+    } else if (href) {
+      navigate(href)
+    }
+    
+    // Close mobile menu if this is a mobile nav item
+    if (mobile && onMobileClick) {
+      onMobileClick()
+    }
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      className={`justify-start ${mobile ? 'w-full' : ''} ${active ? "bg-zinc-800/70 text-purple-400" : "text-zinc-400 hover:text-white"}`}
+      onClick={handleClick}
+    >
+      <Icon className="mr-2 h-4 w-4" />
+      {label}
+    </Button>
+  )
+}
+
+export default function UserNavbar() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { toast } = useToast()
+  const { user, logout } = useAuth()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const handleLogout = () => {
+    logout() // Call the logout from auth context
+    toast({
+      title: "Logged out successfully",
+      description: "You have been logged out of the system.",
+    })
+    navigate("/login")
+  }
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-[9999] bg-zinc-900/95 backdrop-blur-md border-b border-zinc-700/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo and Brand */}
+          <div className="flex items-center space-x-4">
+            <Hexagon className="h-8 w-8 text-purple-500 flex-shrink-0" />
+            <span className="text-xl font-bold hidden sm:block">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                The SDG Wheel
+              </span>
+            </span>
+            <span className="text-lg font-bold sm:hidden">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                SDG
+              </span>
+            </span>
+          </div>
+
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center space-x-1">
+            <NavItem 
+              icon={Command} 
+              label="Dashboard" 
+              active={location.pathname === "/dashboard"} 
+              href="/dashboard" 
+            />
+            <NavItem 
+              icon={Activity} 
+              label="Spin The Wheel" 
+              active={location.pathname === "/wheel"} 
+              href="/wheel" 
+            />
+            <NavItem 
+              icon={Database} 
+              label="Leaderboard" 
+              active={location.pathname === "/leaderboard"} 
+              href="/leaderboard" 
+            />
+            <NavItem 
+              icon={Globe} 
+              label="Community" 
+              active={location.pathname === "/community"} 
+              href="/community" 
+            />
+            <NavItem icon={Settings} label="Settings" />
+          </div>
+
+          {/* Right side actions */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* Search - Hidden on mobile */}
+            <div className="hidden lg:flex items-center space-x-1 bg-zinc-800/50 rounded-full px-3 py-1.5 border border-zinc-700/50 backdrop-blur-sm">
+              <Search className="h-4 w-4 text-zinc-400" />
+              <input
+                type="text"
+                placeholder="Search systems..."
+                className="bg-transparent border-none focus:outline-none text-sm w-40 placeholder:text-zinc-500"
+              />
+            </div>
+
+            {/* Notification Button */}
+            <Button variant="ghost" size="icon" className="relative text-zinc-400 hover:text-white">
+              <Bell className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 h-2 w-2 bg-purple-500 rounded-full animate-pulse"></span>
+            </Button>
+
+            {/* Logout Button */}
+            <Button variant="ghost" size="icon" onClick={handleLogout} className="text-zinc-400 hover:text-white">
+              <LogOut className="h-5 w-5" />
+            </Button>
+
+            {/* Avatar */}
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.username || "User"} />
+              <AvatarFallback className="bg-zinc-700 text-purple-400 text-sm">
+                {user?.username ? user.username.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
+              </AvatarFallback>
+            </Avatar>
+
+            {/* Mobile menu button */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleMobileMenu}
+              className="md:hidden text-zinc-400 hover:text-white"
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-zinc-700/50 bg-zinc-900/95 backdrop-blur-md">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+                          <NavItem 
+              icon={Command} 
+              label="Dashboard" 
+              active={location.pathname === "/dashboard"} 
+              href="/dashboard" 
+              mobile={true}
+              onMobileClick={() => setIsMobileMenuOpen(false)}
+            />
+            <NavItem 
+              icon={Activity} 
+              label="Spin The Wheel" 
+              active={location.pathname === "/wheel"} 
+              href="/wheel" 
+              mobile={true}
+              onMobileClick={() => setIsMobileMenuOpen(false)}
+            />
+            <NavItem 
+              icon={Database} 
+              label="Leaderboard" 
+              active={location.pathname === "/leaderboard"} 
+              href="/leaderboard" 
+              mobile={true}
+              onMobileClick={() => setIsMobileMenuOpen(false)}
+            />
+            <NavItem 
+              icon={Globe} 
+              label="Community" 
+              active={location.pathname === "/community"} 
+              href="/community" 
+              mobile={true}
+              onMobileClick={() => setIsMobileMenuOpen(false)}
+            />
+            <NavItem 
+              icon={Settings} 
+              label="Settings" 
+              mobile={true}
+              onMobileClick={() => setIsMobileMenuOpen(false)}
+            />
+              
+              {/* Mobile Search */}
+              <div className="flex items-center space-x-1 bg-zinc-800/50 rounded-full px-3 py-1.5 border border-zinc-700/50 backdrop-blur-sm mt-2">
+                <Search className="h-4 w-4 text-zinc-400" />
+                <input
+                  type="text"
+                  placeholder="Search systems..."
+                  className="bg-transparent border-none focus:outline-none text-sm flex-1 placeholder:text-zinc-500"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
+  )
+} 

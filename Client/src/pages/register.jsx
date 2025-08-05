@@ -11,6 +11,7 @@ import { MouseFollower } from "../components/mouse-follower"
 import { ScrollProgress } from "../components/scroll-progress"
 import { useAuth } from "../contexts/AuthContext"
 import ApiService from "../services/api"
+import { sendVerificationEmail } from "../services/emailService"
 
 const countries = [
   "Afghanistan",
@@ -102,6 +103,9 @@ const countries = [
   "Vietnam",
 ]
 
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
 export default function Register() {
   const [currentStep, setCurrentStep] = useState(1)
   const [showPassword, setShowPassword] = useState(false)
@@ -119,6 +123,8 @@ export default function Register() {
   const { toast } = useToast()
   const navigate = useNavigate()
   const { register } = useAuth()
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -126,6 +132,17 @@ export default function Register() {
       ...prev,
       [name]: value,
     }))
+    // Real-time validation
+    if (name === "email") {
+      setEmailError(emailPattern.test(value) ? "" : "Invalid email address");
+    }
+    if (name === "password") {
+      setPasswordError(
+        passwordPattern.test(value)
+          ? ""
+          : "Password must be at least 8 characters, include uppercase, lowercase, number, and special character."
+      );
+    }
   }
 
   const handleAvatarChange = (e) => {
@@ -143,18 +160,31 @@ export default function Register() {
   const handleStep1Submit = (e) => {
     e.preventDefault()
 
+    if (!emailPattern.test(formData.email)) {
+      setEmailError("Invalid email address");
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!passwordPattern.test(formData.password)) {
+      setPasswordError(
+        "Password must be at least 8 characters, include uppercase, lowercase, number, and special character."
+      );
+      toast({
+        title: "Weak Password",
+        description:
+          "Password must be at least 8 characters, include uppercase, lowercase, number, and special character.",
+        variant: "destructive",
+      });
+      return;
+    }
     if (formData.password !== formData.confirmPassword) {
       toast({
         title: "Password mismatch",
         description: "Please make sure your passwords match.",
-      })
-      return
-    }
-
-    if (formData.password.length < 6) {
-      toast({
-        title: "Password too short",
-        description: "Password must be at least 6 characters long.",
       })
       return
     }
@@ -191,18 +221,31 @@ export default function Register() {
       const response = await register(registrationData)
 
       console.log('Registration successful:', response)
+      console.log('Response structure:', response)
+
+      // Send verification email using EmailJS
+      try {
+        const verificationToken = response.verificationToken || response.user?.verificationToken
+        console.log('Using verification token:', verificationToken)
+        
+        if (!verificationToken) {
+          console.error('No verification token found in response')
+          throw new Error('No verification token received from server')
+        }
+        
+        await sendVerificationEmail(formData.email, verificationToken)
+        console.log('Verification email sent successfully')
+      } catch (emailError) {
+        console.error('Failed to send verification email:', emailError)
+        // Don't block registration if email fails
+      }
 
       toast({
         title: "Account created successfully!",
-        description: `Welcome, ${response.user.username}! You're now registered.`,
+        description: `Welcome, ${formData.username}! Please check your email to verify your account before logging in.`,
       })
 
-      // Redirection selon le rôle
-      if (response.user.role === "admin") {
-        navigate("/admin")
-      } else {
-        navigate("/dashboard")
-      }
+      navigate("/verify-notice")
 
     } catch (error) {
       console.error('Registration error:', error)
@@ -386,6 +429,9 @@ export default function Register() {
                           required
                         />
                       </div>
+                      {emailError && (
+                        <span className="text-xs text-red-500">{emailError}</span>
+                      )}
                     </div>
 
                     {/* Password Field */}
@@ -413,6 +459,9 @@ export default function Register() {
                           {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                         </button>
                       </div>
+                      {passwordError && (
+                        <span className="text-xs text-red-500">{passwordError}</span>
+                      )}
                     </div>
 
                     {/* Confirm Password Field */}

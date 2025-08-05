@@ -597,9 +597,11 @@ exports.spinWheel = async (req, res, next) => {
   try {
     const odds = await ODD.find({});
     if (!odds.length) return res.status(404).json({ message: 'No ODDs found' });
+    
     // Sélection aléatoire simple (pondération possible ici)
     const randomIndex = Math.floor(Math.random() * odds.length);
     const chosenODD = odds[randomIndex];
+    
     // Log l'action
     await ActivityLog.create({
       type: 'wheel_spin',
@@ -609,7 +611,21 @@ exports.spinWheel = async (req, res, next) => {
       target: chosenODD._id,
       targetModel: 'ODD',
     });
-    res.json({ odd: chosenODD });
+    
+    // Get a random challenge for this ODD
+    const Challenge = require('../models/Challenge');
+    const challenges = await Challenge.find({ odd: chosenODD._id });
+    let challenge = null;
+    
+    if (challenges.length > 0) {
+      const randomChallengeIndex = Math.floor(Math.random() * challenges.length);
+      challenge = challenges[randomChallengeIndex];
+    }
+    
+    res.json({ 
+      odd: chosenODD,
+      challenge: challenge
+    });
   } catch (error) {
     next(error);
   }
