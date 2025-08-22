@@ -14,7 +14,8 @@ class ApiService {
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`
     const config = {
-      headers: this.getAuthHeaders(),
+      // Only set default headers if custom headers aren't provided
+      headers: options.headers || this.getAuthHeaders(),
       ...options,
     }
 
@@ -94,6 +95,25 @@ class ApiService {
     return this.request('/odds/spin', { method: 'POST' });
   }
 
+  async getSpinStatus() {
+    return this.request('/odds/spin/status');
+  }
+
+  async submitQuizAnswer(answer) {
+    return this.request('/odds/quiz/answer', {
+      method: 'POST',
+      body: JSON.stringify({ answer })
+    });
+  }
+
+  async acceptChallenge() {
+    return this.request('/odds/challenge/accept', { method: 'POST' });
+  }
+
+  async declineChallenge() {
+    return this.request('/odds/challenge/decline', { method: 'POST' });
+  }
+
   async getLastWheelSpin() {
     return this.request('/activity-logs/last-wheel-spin');
   }
@@ -129,6 +149,37 @@ class ApiService {
 
   async getChallengeProofs(id) {
     return this.request(`/challenges/${id}/proofs`)
+  }
+
+  // Challenge proof management
+  async submitChallengeProof(formData) {
+    // For FormData, we need to handle headers differently
+    const token = localStorage.getItem("token")
+    
+    return this.request('/challenges/proof/submit', {
+      method: 'POST',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+        // Don't set Content-Type for FormData - browser will set it with boundary
+      },
+      body: formData
+    });
+  }
+
+  async getPendingChallenges() {
+    return this.request('/challenges/pending');
+  }
+
+  // Admin proof verification
+  async getPendingProofs() {
+    return this.request('/challenges/proofs/pending');
+  }
+
+  async verifyProof(challengeId, isApproved, adminNotes) {
+    return this.request('/challenges/proof/verify', {
+      method: 'POST',
+      body: JSON.stringify({ challengeId, isApproved, adminNotes })
+    });
   }
 
   // Proof endpoints

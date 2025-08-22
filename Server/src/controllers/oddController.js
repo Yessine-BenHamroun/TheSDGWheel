@@ -595,36 +595,228 @@ const getWeightedRandomODD = async (req, res, next) => {
 
 exports.spinWheel = async (req, res, next) => {
   try {
+    const DailySpin = require('../models/DailySpin');
+    const Quiz = require('../models/Quiz');
+    const Challenge = require('../models/Challenge');
+    
+    // Check if user can spin today
+    const canSpin = await DailySpin.canUserSpinToday(req.user._id);
+    if (!canSpin) {
+      return res.status(429).json({ 
+        message: 'You have already spun the wheel today. Come back tomorrow!',
+        nextSpinTime: new Date(Date.now() + 24 * 60 * 60 * 1000) // Tomorrow
+      });
+    }
+    
+    // Get all ODDs for random selection
     const odds = await ODD.find({});
     if (!odds.length) return res.status(404).json({ message: 'No ODDs found' });
     
-    // Sélection aléatoire simple (pondération possible ici)
+    // Random selection of ODD
     const randomIndex = Math.floor(Math.random() * odds.length);
     const chosenODD = odds[randomIndex];
     
-    // Log l'action
+    // Randomly choose scenario: 50% quiz, 50% challenge
+    const scenarioType = Math.random() < 0.5 ? 'QUIZ' : 'CHALLENGE';
+    
+    let item = null;
+    let itemType = '';
+    
+    if (scenarioType === 'QUIZ') {
+      // Get random quiz for this ODD
+      const quiz = await Quiz.getRandomByODD(chosenODD._id);
+      if (!quiz) {
+        // Fallback to challenge if no quiz found
+        item = await Challenge.getRandomByODD(chosenODD._id);
+        itemType = 'CHALLENGE';
+      } else {
+        item = quiz;
+        itemType = 'QUIZ';
+      }
+    } else {
+      // Get random challenge for this ODD
+      const challenge = await Challenge.getRandomByODD(chosenODD._id);
+      if (!challenge) {
+        // Fallback to quiz if no challenge found
+        item = await Quiz.getRandomByODD(chosenODD._id);
+        itemType = 'QUIZ';
+      } else {
+        item = challenge;
+        itemType = 'CHALLENGE';
+      }
+    }
+    
+    if (!item) {
+      return res.status(404).json({ 
+        message: 'No quizzes or challenges found for this ODD' 
+      });
+    }
+    
+    // Record the spin in daily tracking
+    await DailySpin.recordSpin(req.user._id, chosenODD._id, itemType, item._id);
+    
+    // Log the action
     await ActivityLog.create({
       type: 'wheel_spin',
       user: req.user._id,
       action: 'Wheel spun',
-      details: `Landed on ODD ${chosenODD.oddId}: ${chosenODD.name.en}`,
+      details: `Landed on ODD ${chosenODD.oddId}: ${chosenODD.name.en} - Got ${itemType}`,
       target: chosenODD._id,
       targetModel: 'ODD',
     });
     
-    // Get a random challenge for this ODD
-    const Challenge = require('../models/Challenge');
-    const challenges = await Challenge.find({ odd: chosenODD._id });
-    let challenge = null;
-    
-    if (challenges.length > 0) {
-      const randomChallengeIndex = Math.floor(Math.random() * challenges.length);
-      challenge = challenges[randomChallengeIndex];
-    }
-    
     res.json({ 
       odd: chosenODD,
-      challenge: challenge
+      scenarioType: itemType,
+      quiz: itemType === 'QUIZ' ? item : null,
+      challenge: itemType === 'CHALLENGE' ? item : null,
+      canSpinAgain: false,
+      nextSpinTime: new Date(Date.now() + 24 * 60 * 60 * 1000)
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get today's spin status for user
+exports.getTodaysSpinStatus = async (req, res, next) => {
+  try {
+    const DailySpin = require('../models/DailySpin');
+    const PendingChallenge = require('../models/PendingChallenge');
+    
+    const todaysSpin = await DailySpin.getTodaysSpin(req.user._id);
+    const canSpin = await DailySpin.canUserSpinToday(req.user._id);
+    const pendingChallenges = await PendingChallenge.getUserPendingChallenges(req.user._id);
+    
+    res.json({
+      canSpinToday: canSpin,
+      todaysSpin: todaysSpin,
+      pendingChallenges: pendingChallenges,
+      nextSpinTime: canSpin ? null : new Date(Date.now() + 24 * 60 * 60 * 1000)
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Submit quiz answer
+exports.submitQuizAnswer = async (req, res, next) => {
+  try {
+    const DailySpin = require('../models/DailySpin');
+    const User = require('../models/User');
+    const { answer } = req.body;
+    
+    // Get today's spin
+    const todaysSpin = await DailySpin.getTodaysSpin(req.user._id);
+    if (!todaysSpin || todaysSpin.scenarioType !== 'QUIZ' || todaysSpin.isCompleted) {
+      return res.status(400).json({ message: 'No active quiz found for today' });
+    }
+    
+    // Check if answer is correct
+    const isCorrect = todaysSpin.quizId.correctAnswer === answer;
+    const pointsAwarded = isCorrect ? 20 : 0;
+    
+    // Update daily spin record
+    todaysSpin.quizAnswer = answer;
+    todaysSpin.isQuizCorrect = isCorrect;
+    todaysSpin.isCompleted = true;
+    todaysSpin.pointsAwarded = pointsAwarded;
+    await todaysSpin.save();
+    
+    // Award points to user if correct
+    if (isCorrect) {
+      await User.findByIdAndUpdate(req.user._id, {
+        $inc: { totalPoints: pointsAwarded }
+      });
+    }
+    
+    // Log the action
+    await ActivityLog.create({
+      type: 'quiz_completion',
+      user: req.user._id,
+      action: isCorrect ? 'Quiz answered correctly' : 'Quiz answered incorrectly',
+      details: `Quiz for ODD ${todaysSpin.selectedODD.oddId} - ${isCorrect ? 'Correct' : 'Incorrect'} answer`,
+      target: todaysSpin.quizId._id,
+      targetModel: 'Quiz',
+    });
+    
+    res.json({
+      isCorrect: isCorrect,
+      correctAnswer: todaysSpin.quizId.correctAnswer,
+      pointsAwarded: pointsAwarded,
+      explanation: `The correct answer was: ${todaysSpin.quizId.choices[todaysSpin.quizId.correctAnswer]}`
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Accept challenge
+exports.acceptChallenge = async (req, res, next) => {
+  try {
+    const DailySpin = require('../models/DailySpin');
+    const PendingChallenge = require('../models/PendingChallenge');
+    
+    // Get today's spin
+    const todaysSpin = await DailySpin.getTodaysSpin(req.user._id);
+    if (!todaysSpin || todaysSpin.scenarioType !== 'CHALLENGE') {
+      return res.status(400).json({ message: 'No active challenge found for today' });
+    }
+    
+    // Accept the challenge
+    const pendingChallenge = await PendingChallenge.acceptChallenge(todaysSpin._id, req.user._id);
+    
+    // Update daily spin
+    todaysSpin.challengeAccepted = true;
+    await todaysSpin.save();
+    
+    // Log the action
+    await ActivityLog.create({
+      type: 'challenge_accepted',
+      user: req.user._id,
+      action: 'Challenge accepted',
+      details: `Challenge for ODD ${todaysSpin.selectedODD.oddId} accepted`,
+      target: todaysSpin.challengeId._id,
+      targetModel: 'Challenge',
+    });
+    
+    res.json({
+      message: 'Challenge accepted! You can upload proof anytime.',
+      pendingChallenge: pendingChallenge
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Decline challenge
+exports.declineChallenge = async (req, res, next) => {
+  try {
+    const DailySpin = require('../models/DailySpin');
+    
+    // Get today's spin
+    const todaysSpin = await DailySpin.getTodaysSpin(req.user._id);
+    if (!todaysSpin || todaysSpin.scenarioType !== 'CHALLENGE') {
+      return res.status(400).json({ message: 'No active challenge found for today' });
+    }
+    
+    // Mark challenge as declined
+    todaysSpin.challengeAccepted = false;
+    todaysSpin.isCompleted = true;
+    await todaysSpin.save();
+    
+    // Log the action
+    await ActivityLog.create({
+      type: 'challenge_declined',
+      user: req.user._id,
+      action: 'Challenge declined',
+      details: `Challenge for ODD ${todaysSpin.selectedODD.oddId} declined`,
+      target: todaysSpin.challengeId._id,
+      targetModel: 'Challenge',
+    });
+    
+    res.json({
+      message: 'Challenge declined. See you tomorrow for another spin!'
     });
   } catch (error) {
     next(error);
@@ -643,5 +835,9 @@ module.exports = {
   seedDefaultODDs,
   resetODDs,
   getWeightedRandomODD,
-  spinWheel: exports.spinWheel
+  spinWheel: exports.spinWheel,
+  getTodaysSpinStatus: exports.getTodaysSpinStatus,
+  submitQuizAnswer: exports.submitQuizAnswer,
+  acceptChallenge: exports.acceptChallenge,
+  declineChallenge: exports.declineChallenge
 };

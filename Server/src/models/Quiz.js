@@ -49,4 +49,17 @@ const quizSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Index for performance
+quizSchema.index({ associatedODD: 1 });
+quizSchema.index({ difficulty: 1 });
+quizSchema.index({ isActive: 1 });
+
+// Static method to get random quiz by ODD
+quizSchema.statics.getRandomByODD = function(oddId) {
+  return this.aggregate([
+    { $match: { associatedODD: oddId, isActive: true } },
+    { $sample: { size: 1 } }
+  ]).then(results => results[0] || null);
+};
+
 module.exports = mongoose.model('Quiz', quizSchema); 
