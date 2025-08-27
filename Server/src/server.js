@@ -3,6 +3,8 @@ require('dotenv').config();
 const app = require('./app');
 const config = require('./config/config');
 const { connectDB, disconnectDB } = require('./config/database');
+const { startScheduler } = require('./utils/scheduler');
+const socketService = require('./services/socketService');
 
 const PORT = config.port;
 
@@ -15,10 +17,16 @@ const startServer = async () => {
       console.log(`🚀 Sustainability Platform API running on port ${PORT}`);
       console.log(`📊 Environment: ${config.nodeEnv}`);
       console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
-      
+
       if (config.nodeEnv === 'development') {
         console.log(`📖 API docs: http://localhost:${PORT}/api`);
       }
+
+      // Initialize Socket.IO
+      socketService.initialize(server);
+
+      // Start the daily cleanup scheduler
+      startScheduler();
     });
 
     // Graceful shutdown handling

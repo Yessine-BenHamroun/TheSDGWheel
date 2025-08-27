@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
+import NotificationDropdown from "./NotificationDropdown"
 
 // Component for nav items
 function NavItem({ icon: Icon, label, active, onClick, href, mobile = false, onMobileClick }) {
@@ -131,11 +132,8 @@ export default function UserNavbar() {
               />
             </div>
 
-            {/* Notification Button */}
-            <Button variant="ghost" size="icon" className="relative text-zinc-400 hover:text-white">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-2 w-2 bg-purple-500 rounded-full animate-pulse"></span>
-            </Button>
+            {/* Notifications */}
+            <NotificationDropdown />
 
             {/* Logout Button */}
             <Button variant="ghost" size="icon" onClick={handleLogout} className="text-zinc-400 hover:text-white">

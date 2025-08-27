@@ -28,6 +28,9 @@ export default function WheelGame() {
   const [pendingChallenges, setPendingChallenges] = useState([])
   const [canSpinToday, setCanSpinToday] = useState(true)
   const [nextSpinTime, setNextSpinTime] = useState(null)
+
+  // Store spin result temporarily until wheel animation completes
+  const [pendingSpinResult, setPendingSpinResult] = useState(null)
   
   // Quiz state
   const [selectedAnswer, setSelectedAnswer] = useState(null)
@@ -137,34 +140,22 @@ export default function WheelGame() {
 
     try {
       setIsSpinning(true)
-      
+
       // Get spin result from backend
       const spinResult = await ApiService.spinWheel()
       const { odd, scenarioType, quiz, challenge } = spinResult
 
       console.log("🎲 Backend spin result:", spinResult)
 
-      // Set the selected ODD and start spinning animation
+      // Store the result temporarily - don't show scenario until wheel stops
+      setPendingSpinResult({ odd, scenarioType, quiz, challenge })
+
+      // Only set the selected ODD for wheel animation
       setSelectedODD(odd)
-      setCurrentScenario(scenarioType)
-      
-      if (scenarioType === 'QUIZ') {
-        setCurrentQuiz(quiz)
-      } else {
-        setCurrentChallenge(challenge)
-      }
 
       // Update spin status
       setCanSpinToday(false)
       setNextSpinTime(spinResult.nextSpinTime)
-
-      // Show success message after wheel animation
-      setTimeout(() => {
-        toast({
-          title: "ODD Selected!",
-          description: `You got ODD ${odd.oddId}: ${odd.name.en}`,
-        })
-      }, 4000)
       
     } catch (error) {
       console.error("Spin error:", error)
@@ -288,7 +279,7 @@ export default function WheelGame() {
       const formData = new FormData()
       formData.append('challengeId', selectedChallengeForProof._id)
       formData.append('description', proofText)
-      
+
       if (proofFile) {
         formData.append('proofFile', proofFile)
       }
@@ -363,7 +354,7 @@ export default function WheelGame() {
         )}
 
         {/* Pending Challenges Alert */}
-        {pendingChallenges.length > 0 && (
+        {pendingChallenges.filter(challenge => challenge.status === 'PENDING').length > 0 && (
           <div className="mb-8">
             <Card className="bg-blue-900/20 border-blue-500/50">
               <CardHeader>
@@ -371,13 +362,15 @@ export default function WheelGame() {
               </CardHeader>
               <CardContent>
                 <p className="text-blue-300 mb-4">
-                  You have {pendingChallenges.length} accepted challenge(s) waiting for proof submission:
+                  You have {pendingChallenges.filter(challenge => challenge.status === 'PENDING').length} accepted challenge(s) waiting for proof submission:
                 </p>
                 <div className="space-y-2">
-                  {pendingChallenges.map((challenge) => (
+                  {pendingChallenges
+                    .filter(challenge => challenge.status === 'PENDING')
+                    .map((challenge) => (
                     <div key={challenge._id} className="flex items-center justify-between bg-blue-900/30 p-3 rounded-lg">
                       <div>
-                        <h4 className="font-semibold text-blue-200">{challenge.challengeId?.title}</h4>
+                        <h4 className="font-semibold text-blue-200">{challenge.challenge?.title}</h4>
                         <p className="text-sm text-blue-300">
                           Accepted: {new Date(challenge.acceptedAt).toLocaleDateString()}
                         </p>
@@ -398,17 +391,71 @@ export default function WheelGame() {
           </div>
         )}
 
+        {/* Submitted Proofs Alert */}
+        {pendingChallenges.filter(challenge => challenge.status === 'PROOF_SUBMITTED').length > 0 && (
+          <div className="mb-8">
+            <Card className="bg-yellow-900/20 border-yellow-500/50">
+              <CardHeader>
+                <CardTitle className="text-yellow-400">Proofs Under Review</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-yellow-300 mb-4">
+                  You have {pendingChallenges.filter(challenge => challenge.status === 'PROOF_SUBMITTED').length} proof(s) waiting for admin verification:
+                </p>
+                <div className="space-y-2">
+                  {pendingChallenges
+                    .filter(challenge => challenge.status === 'PROOF_SUBMITTED')
+                    .map((challenge) => (
+                    <div key={challenge._id} className="flex items-center justify-between bg-yellow-900/30 p-3 rounded-lg">
+                      <div>
+                        <h4 className="font-semibold text-yellow-200">{challenge.challenge?.title}</h4>
+                        <p className="text-sm text-yellow-300">
+                          Submitted: {new Date(challenge.proofSubmittedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Badge variant="outline" className="border-yellow-500 text-yellow-400">
+                        Under Review
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Game Area */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Wheel */}
           <div className="flex flex-col items-center space-y-8">
-            <SDGWheel 
+            <SDGWheel
               isSpinning={isSpinning}
               selectedSDG={selectedODD}
               onSpinComplete={(sdgId) => {
                 console.log("🎯 Wheel stopped on SDG:", sdgId)
                 console.log("🎯 Backend selected ODD:", selectedODD?.oddId)
                 setIsSpinning(false)
+
+                // Apply the pending spin result now that wheel animation is complete
+                if (pendingSpinResult) {
+                  const { scenarioType, quiz, challenge, odd } = pendingSpinResult
+                  setCurrentScenario(scenarioType)
+
+                  if (scenarioType === 'QUIZ') {
+                    setCurrentQuiz(quiz)
+                  } else {
+                    setCurrentChallenge(challenge)
+                  }
+
+                  // Show success message
+                  toast({
+                    title: "ODD Selected!",
+                    description: `You got ODD ${odd.oddId}: ${odd.name.en}`,
+                  })
+
+                  // Clear pending result
+                  setPendingSpinResult(null)
+                }
               }}
             />
 
@@ -571,27 +618,50 @@ export default function WheelGame() {
                             <h3 className="text-lg font-bold">Challenge Accepted! 💪</h3>
                             <p className="text-sm">Complete the challenge and submit proof to earn 20 points</p>
                           </div>
-                          <Button
-                            onClick={() => {
-                              // Find the pending challenge for today's accepted challenge
-                              const todaysPendingChallenge = pendingChallenges.find(pc => 
-                                pc.challenge?._id === currentChallenge._id
+                          {(() => {
+                            const todaysPendingChallenge = pendingChallenges.find(pc =>
+                              pc.challenge?._id === currentChallenge._id
+                            );
+
+                            if (todaysPendingChallenge?.status === 'PROOF_SUBMITTED') {
+                              return (
+                                <Button
+                                  disabled
+                                  className="bg-yellow-600/50 text-yellow-200 cursor-not-allowed opacity-75"
+                                >
+                                  <CheckCircle className="mr-2 h-4 w-4" />
+                                  Pending Review
+                                </Button>
                               );
-                              if (todaysPendingChallenge) {
-                                handleOpenProofModal(todaysPendingChallenge)
-                              } else {
-                                toast({
-                                  title: "Error",
-                                  description: "Could not find pending challenge. Please refresh the page.",
-                                  variant: "destructive",
-                                })
-                              }
-                            }}
-                            className="bg-blue-600 hover:bg-blue-700"
-                          >
-                            <Upload className="mr-2 h-4 w-4" />
-                            Submit Proof
-                          </Button>
+                            } else if (todaysPendingChallenge?.status === 'PENDING') {
+                              return (
+                                <Button
+                                  onClick={() => handleOpenProofModal(todaysPendingChallenge)}
+                                  className="bg-blue-600 hover:bg-blue-700"
+                                >
+                                  <Upload className="mr-2 h-4 w-4" />
+                                  Submit Proof
+                                </Button>
+                              );
+                            } else {
+                              return (
+                                <Button
+                                  onClick={() => {
+                                    toast({
+                                      title: "Error",
+                                      description: "Could not find pending challenge. Please refresh the page.",
+                                      variant: "destructive",
+                                    })
+                                  }}
+                                  variant="outline"
+                                  className="border-zinc-700 text-zinc-300"
+                                >
+                                  <Upload className="mr-2 h-4 w-4" />
+                                  Submit Proof
+                                </Button>
+                              );
+                            }
+                          })()}
                         </div>
                       )}
 
@@ -677,10 +747,10 @@ export default function WheelGame() {
                 
                 <div className="mb-4 p-3 bg-zinc-700/50 rounded-lg">
                   <h4 className="font-semibold text-zinc-200">
-                    {selectedChallengeForProof.challengeId?.title || "Challenge"}
+                    {selectedChallengeForProof.challenge?.title || "Challenge"}
                   </h4>
                   <p className="text-sm text-zinc-400 mt-1">
-                    {selectedChallengeForProof.challengeId?.description || "Complete this challenge and provide proof"}
+                    {selectedChallengeForProof.challenge?.description || "Complete this challenge and provide proof"}
                   </p>
                 </div>
 

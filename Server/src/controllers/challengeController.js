@@ -1,6 +1,8 @@
 const Challenge = require('../models/Challenge');
 const ODD = require('../models/ODD');
 const ActivityLog = require('../models/ActivityLog');
+const Notification = require('../models/Notification');
+const socketService = require('../services/socketService');
 
 const getAllChallenges = async (req, res, next) => {
   try {
@@ -159,34 +161,59 @@ const submitChallengeProof = async (req, res, next) => {
     const PendingChallenge = require('../models/PendingChallenge');
     const Proof = require('../models/Proof');
     const { challengeId, description } = req.body;
-    
+
+    // Validate challengeId format
+    if (!challengeId || !challengeId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: 'Invalid challenge ID format' });
+    }
+
     // Get file info if uploaded
     const file = req.file;
     let fileUrl = null;
-    
+
     if (file) {
       // Create file URL (adjust path as needed for your setup)
       fileUrl = `/uploads/proofs/${file.filename}`;
     }
-    
+
     // Find the pending challenge
     const pendingChallenge = await PendingChallenge.findOne({
       _id: challengeId,
-      user: req.user._id,
-      status: 'PENDING'
+      user: req.user._id
     }).populate('challenge');
-    
+
     if (!pendingChallenge) {
-      return res.status(404).json({ message: 'Pending challenge not found' });
+      return res.status(404).json({ message: 'Challenge not found' });
+    }
+
+    // Check if proof has already been submitted
+    if (pendingChallenge.status === 'PROOF_SUBMITTED') {
+      return res.status(400).json({ message: 'Proof has already been submitted for this challenge' });
+    }
+
+    // Check if challenge is in correct status
+    if (pendingChallenge.status !== 'PENDING') {
+      return res.status(400).json({ message: `Cannot submit proof for challenge with status: ${pendingChallenge.status}` });
     }
     
+    // Validate that we have either description or file (prefer file upload)
+    if (!file && (!description || description.trim() === '')) {
+      return res.status(400).json({ message: 'Either file upload or description is required for proof submission' });
+    }
+
+    // Determine media type
+    let mediaType = 'DOCUMENT'; // Default for text-only proofs
+    if (file) {
+      mediaType = file.mimetype.startsWith('video/') ? 'VIDEO' : 'IMAGE';
+    }
+
     // Create proof record
     const proof = new Proof({
       user: req.user._id,
       challenge: pendingChallenge.challenge._id,
-      mediaType: file ? (file.mimetype.startsWith('video/') ? 'VIDEO' : 'IMAGE') : 'DOCUMENT',
-      url: fileUrl,
-      description: description,
+      mediaType: mediaType,
+      url: fileUrl, // Can be null for text-only proofs
+      description: description || '',
       status: 'PENDING'
     });
     
@@ -243,14 +270,51 @@ const getPendingProofs = async (req, res, next) => {
 const verifyProof = async (req, res, next) => {
   try {
     const PendingChallenge = require('../models/PendingChallenge');
+    const Proof = require('../models/Proof');
     const User = require('../models/User');
     const { challengeId, isApproved, adminNotes } = req.body;
-    
-    const pendingChallenge = await PendingChallenge.findOne({
+
+    console.log('🔍 VerifyProof request:', {
+      challengeId,
+      isApproved,
+      adminNotes: adminNotes?.substring(0, 50),
+      bodyKeys: Object.keys(req.body)
+    });
+
+    // Validate required fields
+    if (!challengeId) {
+      return res.status(400).json({ message: 'challengeId is required' });
+    }
+
+    if (typeof isApproved !== 'boolean') {
+      return res.status(400).json({ message: 'isApproved must be a boolean' });
+    }
+
+    // First, try to find by challengeId (if it's a PendingChallenge ID)
+    let pendingChallenge = await PendingChallenge.findOne({
       _id: challengeId,
       status: 'PROOF_SUBMITTED'
     }).populate(['user', 'challenge', 'proof']);
-    
+
+    console.log('🔍 Found by challengeId:', !!pendingChallenge);
+
+    // If not found, assume challengeId is actually a proofId and find the corresponding PendingChallenge
+    if (!pendingChallenge) {
+      console.log('🔍 Trying to find proof by ID:', challengeId);
+      const proof = await Proof.findById(challengeId);
+      console.log('🔍 Found proof:', !!proof);
+
+      if (proof) {
+        console.log('🔍 Looking for PendingChallenge with user:', proof.user, 'challenge:', proof.challenge);
+        pendingChallenge = await PendingChallenge.findOne({
+          user: proof.user,
+          challenge: proof.challenge,
+          status: 'PROOF_SUBMITTED'
+        }).populate(['user', 'challenge', 'proof']);
+        console.log('🔍 Found PendingChallenge by proof lookup:', !!pendingChallenge);
+      }
+    }
+
     if (!pendingChallenge) {
       return res.status(404).json({ message: 'Pending challenge not found' });
     }
@@ -280,7 +344,25 @@ const verifyProof = async (req, res, next) => {
         target: pendingChallenge.proof._id,
         targetModel: 'Proof',
       });
-      
+
+      // Create notification for user
+      const notification = await Notification.createNotification(
+        pendingChallenge.user._id,
+        'PROOF_APPROVED',
+        '🎉 Challenge Completed!',
+        `Your proof for "${pendingChallenge.challenge.title}" has been approved! You earned 20 points.`,
+        {
+          challengeId: pendingChallenge.challenge._id,
+          challengeTitle: pendingChallenge.challenge.title,
+          pointsAwarded: 20,
+          proofId: pendingChallenge.proof._id
+        },
+        'HIGH'
+      );
+
+      // Send real-time notification
+      await socketService.sendNotificationToUser(pendingChallenge.user._id, notification);
+
       res.json({
         message: 'Proof verified successfully! 20 points awarded to user.',
         pointsAwarded: 20
@@ -305,7 +387,25 @@ const verifyProof = async (req, res, next) => {
         target: pendingChallenge.proof._id,
         targetModel: 'Proof',
       });
-      
+
+      // Create notification for user
+      const notification = await Notification.createNotification(
+        pendingChallenge.user._id,
+        'PROOF_REJECTED',
+        '❌ Proof Rejected',
+        `Your proof for "${pendingChallenge.challenge.title}" was not approved. ${adminNotes ? `Reason: ${adminNotes}` : 'Please try again with better evidence.'}`,
+        {
+          challengeId: pendingChallenge.challenge._id,
+          challengeTitle: pendingChallenge.challenge.title,
+          rejectionReason: adminNotes,
+          proofId: pendingChallenge.proof._id
+        },
+        'HIGH'
+      );
+
+      // Send real-time notification
+      await socketService.sendNotificationToUser(pendingChallenge.user._id, notification);
+
       res.json({
         message: 'Proof rejected.',
         reason: adminNotes

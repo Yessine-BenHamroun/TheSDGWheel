@@ -57,7 +57,10 @@ pendingChallengeSchema.statics.getUserPendingChallenges = function(userId) {
   return this.find({
     user: userId,
     status: { $in: ['PENDING', 'PROOF_SUBMITTED'] }
-  }).populate(['challenge', 'proof']);
+  }).populate([
+    { path: 'challenge', select: 'title description' },
+    { path: 'proof' }
+  ]);
 };
 
 // Static method to accept a challenge

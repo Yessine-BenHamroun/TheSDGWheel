@@ -27,6 +27,7 @@ router.use('/badges', badgeRoutes);
 router.use('/odds', oddRoutes);
 router.use('/activity-logs', require('./activityLogs'));
 router.use('/quizzes', require('./quizzes'));
+router.use('/notifications', require('./notifications'));
 
 // API info endpoint
 router.get('/', (req, res) => {

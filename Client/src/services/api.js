@@ -118,6 +118,37 @@ class ApiService {
     return this.request('/activity-logs/last-wheel-spin');
   }
 
+  // Notification endpoints
+  async getUserNotifications(page = 1, limit = 20) {
+    return this.request(`/notifications?page=${page}&limit=${limit}`);
+  }
+
+  async getUnreadNotificationsCount() {
+    return this.request('/notifications/unread/count');
+  }
+
+  async getUnreadNotifications() {
+    return this.request('/notifications/unread');
+  }
+
+  async markNotificationAsRead(notificationId) {
+    return this.request(`/notifications/${notificationId}/read`, {
+      method: 'PATCH'
+    });
+  }
+
+  async markAllNotificationsAsRead() {
+    return this.request('/notifications/read-all', {
+      method: 'PATCH'
+    });
+  }
+
+  async deleteNotification(notificationId) {
+    return this.request(`/notifications/${notificationId}`, {
+      method: 'DELETE'
+    });
+  }
+
   // Challenge endpoints
   async getAllChallenges() {
     return this.request("/challenges")

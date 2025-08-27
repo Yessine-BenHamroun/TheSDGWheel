@@ -2,6 +2,7 @@
 
 import { Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
+import { NotificationProvider } from "./contexts/NotificationContext"
 import { Toaster } from "./components/ui/toaster"
 
 // Import pages
@@ -55,7 +56,8 @@ function ProtectedRoute({ children, adminOnly = false, userOnly = false }) {
 function App() {
   return (
     <AuthProvider>
-      <div className="App">
+      <NotificationProvider>
+        <div className="App">
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Portfolio />} />
@@ -160,7 +162,8 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Toaster />
-      </div>
+        </div>
+      </NotificationProvider>
     </AuthProvider>
   )
 }

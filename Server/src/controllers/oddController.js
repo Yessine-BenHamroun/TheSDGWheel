@@ -598,11 +598,15 @@ exports.spinWheel = async (req, res, next) => {
     const DailySpin = require('../models/DailySpin');
     const Quiz = require('../models/Quiz');
     const Challenge = require('../models/Challenge');
-    
+    const { cleanupOldChallenges } = require('../utils/scheduler');
+
+    // Clean up any old challenges for this user before spinning
+    await cleanupOldChallenges(req.user._id);
+
     // Check if user can spin today
     const canSpin = await DailySpin.canUserSpinToday(req.user._id);
     if (!canSpin) {
-      return res.status(429).json({ 
+      return res.status(429).json({
         message: 'You have already spun the wheel today. Come back tomorrow!',
         nextSpinTime: new Date(Date.now() + 24 * 60 * 60 * 1000) // Tomorrow
       });
@@ -683,11 +687,15 @@ exports.getTodaysSpinStatus = async (req, res, next) => {
   try {
     const DailySpin = require('../models/DailySpin');
     const PendingChallenge = require('../models/PendingChallenge');
-    
+    const { cleanupOldChallenges } = require('../utils/scheduler');
+
+    // Clean up any old challenges for this user before checking status
+    await cleanupOldChallenges(req.user._id);
+
     const todaysSpin = await DailySpin.getTodaysSpin(req.user._id);
     const canSpin = await DailySpin.canUserSpinToday(req.user._id);
     const pendingChallenges = await PendingChallenge.getUserPendingChallenges(req.user._id);
-    
+
     res.json({
       canSpinToday: canSpin,
       todaysSpin: todaysSpin,

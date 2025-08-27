@@ -27,6 +27,12 @@ export default function AdminDashboard() {
   const [challenges, setChallenges] = useState([])
   const [odds, setOdds] = useState([])
 
+  // Rejection dialog state
+  const [showRejectDialog, setShowRejectDialog] = useState(false)
+  const [selectedProofForRejection, setSelectedProofForRejection] = useState(null)
+  const [rejectionReason, setRejectionReason] = useState("")
+  const [isSubmittingRejection, setIsSubmittingRejection] = useState(false)
+
   // Redirect if not admin
   useEffect(() => {
     if (!isAdmin) {
@@ -74,21 +80,65 @@ export default function AdminDashboard() {
     }
   }
 
-  const handleValidateProof = async (proofId, status, rejectionReason = "") => {
+  const handleApproveProof = async (proof) => {
     try {
-      await ApiService.updateProofStatus(proofId, { status, rejectionReason })
-      setPendingProofs((prev) => prev.filter((proof) => proof._id !== proofId))
+      // Use the new verification system that sends notifications
+      await ApiService.verifyProof(proof._id, true, "")
+      setPendingProofs((prev) => prev.filter((p) => p._id !== proof._id))
       toast({
-        title: "Proof validated",
-        description: `Proof has been ${status.toLowerCase()}`,
+        title: "Proof Approved",
+        description: `${proof.user?.username} will receive 20 points and a notification`,
       })
     } catch (error) {
-      console.error("Validate proof error:", error)
+      console.error("Approve proof error:", error)
       toast({
         title: "Error",
-        description: error.message || "Failed to validate proof",
+        description: error.message || "Failed to approve proof",
         variant: "destructive",
       })
+    }
+  }
+
+  const handleRejectProof = (proof) => {
+    setSelectedProofForRejection(proof)
+    setRejectionReason("")
+    setShowRejectDialog(true)
+  }
+
+  const handleSubmitRejection = async () => {
+    if (!selectedProofForRejection || !rejectionReason.trim()) {
+      toast({
+        title: "Error",
+        description: "Please provide a reason for rejection",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      setIsSubmittingRejection(true)
+      // Use the new verification system that sends notifications
+      await ApiService.verifyProof(selectedProofForRejection._id, false, rejectionReason.trim())
+      setPendingProofs((prev) => prev.filter((p) => p._id !== selectedProofForRejection._id))
+
+      toast({
+        title: "Proof Rejected",
+        description: `${selectedProofForRejection.user?.username} will receive a notification with your feedback`,
+      })
+
+      // Close dialog
+      setShowRejectDialog(false)
+      setSelectedProofForRejection(null)
+      setRejectionReason("")
+    } catch (error) {
+      console.error("Reject proof error:", error)
+      toast({
+        title: "Error",
+        description: error.message || "Failed to reject proof",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmittingRejection(false)
     }
   }
 
@@ -309,6 +359,11 @@ export default function AdminDashboard() {
                             <div className="text-center">
                               <div className="text-4xl mb-2">{proof.mediaType === "VIDEO" ? "🎥" : "📄"}</div>
                               <p className="text-sm text-zinc-400">{proof.mediaType} Proof</p>
+                              {proof.description && (
+                                <p className="text-xs text-zinc-500 mt-2 max-w-xs">
+                                  {proof.description.substring(0, 100)}...
+                                </p>
+                              )}
                             </div>
                           </div>
                         )}
@@ -317,7 +372,7 @@ export default function AdminDashboard() {
                         <Button
                           size="sm"
                           className="bg-green-600 hover:bg-green-700 flex-1"
-                          onClick={() => handleValidateProof(proof._id, "APPROVED")}
+                          onClick={() => handleApproveProof(proof)}
                         >
                           <Check className="h-4 w-4 mr-2" />
                           Approve
@@ -326,7 +381,7 @@ export default function AdminDashboard() {
                           size="sm"
                           variant="destructive"
                           className="flex-1"
-                          onClick={() => handleValidateProof(proof._id, "REJECTED", "Does not meet requirements")}
+                          onClick={() => handleRejectProof(proof)}
                         >
                           <X className="h-4 w-4 mr-2" />
                           Reject
@@ -523,6 +578,77 @@ export default function AdminDashboard() {
           </Tabs>
         </div>
       </div>
+
+      {/* Rejection Reason Dialog */}
+      {showRejectDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-zinc-800 border border-zinc-700 rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Reject Proof Submission
+            </h3>
+
+            {selectedProofForRejection && (
+              <div className="mb-4 p-3 bg-zinc-700/50 rounded-lg">
+                <p className="text-sm text-zinc-300">
+                  <strong>Challenge:</strong> {selectedProofForRejection.challenge?.title}
+                </p>
+                <p className="text-sm text-zinc-300">
+                  <strong>User:</strong> {selectedProofForRejection.user?.username}
+                </p>
+              </div>
+            )}
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
+                Reason for rejection <span className="text-red-400">*</span>
+              </label>
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="Please provide a clear reason why this proof doesn't meet the requirements..."
+                className="w-full h-24 px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                maxLength={500}
+              />
+              <p className="text-xs text-zinc-400 mt-1">
+                {rejectionReason.length}/500 characters
+              </p>
+            </div>
+
+            <div className="flex space-x-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowRejectDialog(false)
+                  setSelectedProofForRejection(null)
+                  setRejectionReason("")
+                }}
+                className="flex-1 border-zinc-600 text-zinc-300 hover:bg-zinc-700"
+                disabled={isSubmittingRejection}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleSubmitRejection}
+                className="flex-1"
+                disabled={isSubmittingRejection || !rejectionReason.trim()}
+              >
+                {isSubmittingRejection ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Rejecting...
+                  </>
+                ) : (
+                  <>
+                    <X className="h-4 w-4 mr-2" />
+                    Reject Proof
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

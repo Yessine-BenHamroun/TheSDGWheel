@@ -18,7 +18,12 @@ const proofSchema = new mongoose.Schema({
   },
   url: {
     type: String,
-    required: true
+    required: false
+  },
+  description: {
+    type: String,
+    required: false,
+    maxlength: 1000
   },
   status: {
     type: String,
@@ -47,6 +52,14 @@ const proofSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true
+});
+
+// Custom validation to ensure either url or description is provided
+proofSchema.pre('validate', function(next) {
+  if (!this.url && (!this.description || this.description.trim() === '')) {
+    this.invalidate('proof', 'Either file upload (url) or description is required');
+  }
+  next();
 });
 
 // Index for performance
