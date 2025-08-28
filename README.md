@@ -35,34 +35,6 @@ npm run dev
 
 The frontend will be available at: http://localhost:3000
 
-## 🔧 Configuration
-
-### Backend Environment Variables (.env)
-The backend uses the following environment variables:
-
-```env
-# MongoDB Configuration
-MONGODB_URI=mongodb://localhost:27017/ODD_Wheel
-
-# Server Configuration
-PORT=3001
-NODE_ENV=development
-
-# JWT Configuration
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRES_IN=7d
-
-# Admin Configuration
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=admin123
-```
-
-### Frontend Environment Variables (.env)
-The frontend uses:
-
-```env
-VITE_API_URL=http://localhost:3001/api
-```
 
 ## 📁 Project Structure
 
@@ -195,15 +167,6 @@ npm install
 - Component code splitting
 - Efficient state management
 - Database indexing
-
-## 🎯 Next Steps
-
-Potential improvements and features:
-- Real-time notifications
-- Social features and team challenges
-- Advanced analytics dashboard
-- Mobile app development
-- Integration with external SDG data sources
 
 ---
 
