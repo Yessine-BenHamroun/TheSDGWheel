@@ -206,11 +206,48 @@ class ApiService {
     return this.request('/challenges/proofs/pending');
   }
 
-  async verifyProof(challengeId, isApproved, adminNotes) {
-    return this.request('/challenges/proof/verify', {
-      method: 'POST',
-      body: JSON.stringify({ challengeId, isApproved, adminNotes })
+  async verifyProof(proofId, isApproved, adminNotes) {
+    // Use the direct proof status update endpoint
+    const status = isApproved ? 'APPROVED' : 'REJECTED';
+    const requestData = {
+      status,
+      rejectionReason: adminNotes
+    };
+
+    console.log("🔗 [API SERVICE] Sending proof verification request:", {
+      proofId,
+      isApproved,
+      status,
+      adminNotes,
+      endpoint: `/proofs/${proofId}/status`,
+      method: 'PUT',
+      requestData,
+      timestamp: new Date().toISOString()
     });
+
+    try {
+      const response = await this.request(`/proofs/${proofId}/status`, {
+        method: 'PUT',
+        body: JSON.stringify(requestData)
+      });
+
+      console.log("✅ [API SERVICE] Proof verification successful:", {
+        proofId,
+        status,
+        response,
+        timestamp: new Date().toISOString()
+      });
+
+      return response;
+    } catch (error) {
+      console.error("❌ [API SERVICE] Proof verification failed:", {
+        proofId,
+        status,
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
+      throw error;
+    }
   }
 
   // Proof endpoints
@@ -310,6 +347,10 @@ class ApiService {
     })
   }
 
+  async getSDGSpinStats() {
+    return this.request("/odds/spin-stats")
+  }
+
   async createMultipleODDs(oddsData) {
     return this.request("/odds/bulk", {
       method: "POST",
@@ -375,6 +416,12 @@ class ApiService {
     const query = new URLSearchParams(params).toString();
     return this.request(`/activity-logs${query ? '?' + query : ''}`);
   }
+
+  async getMyActivityLogs(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return this.request(`/activity-logs/my-logs${query ? '?' + query : ''}`);
+  }
+
   async createActivityLog(logData) {
     return this.request("/activity-logs", {
       method: "POST",

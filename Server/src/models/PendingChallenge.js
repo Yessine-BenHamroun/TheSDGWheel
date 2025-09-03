@@ -52,15 +52,27 @@ pendingChallengeSchema.index({ user: 1, status: 1 });
 pendingChallengeSchema.index({ challenge: 1 });
 pendingChallengeSchema.index({ status: 1 });
 
-// Static method to get user's pending challenges
+// Static method to get user's pending challenges (including recent completed ones)
 pendingChallengeSchema.statics.getUserPendingChallenges = function(userId) {
+  // Get all active challenges (PENDING, PROOF_SUBMITTED) and recent completed ones (VERIFIED, REJECTED from last 7 days)
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
   return this.find({
     user: userId,
-    status: { $in: ['PENDING', 'PROOF_SUBMITTED'] }
+    $or: [
+      // Active challenges
+      { status: { $in: ['PENDING', 'PROOF_SUBMITTED'] } },
+      // Recent completed challenges (last 7 days)
+      {
+        status: { $in: ['VERIFIED', 'REJECTED'] },
+        updatedAt: { $gte: sevenDaysAgo }
+      }
+    ]
   }).populate([
-    { path: 'challenge', select: 'title description' },
+    { path: 'challenge', select: 'title description points' },
     { path: 'proof' }
-  ]);
+  ]).sort({ updatedAt: -1 });
 };
 
 // Static method to accept a challenge

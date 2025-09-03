@@ -20,6 +20,7 @@ import Users from "./pages/adminSection/Users"
 import History from "./pages/adminSection/History"
 import Export from "./pages/adminSection/Export"
 import SdgManagement from "./pages/adminSection/SdgManagement"
+import ProofModeration from "./pages/ProofModeration"
 import VerifyNotice from "./pages/verifyNotice";
 import Verify from "./pages/verify"
 
@@ -154,6 +155,14 @@ function App() {
             element={
               <ProtectedRoute adminOnly>
                 <SdgManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/proof-moderation"
+            element={
+              <ProtectedRoute adminOnly>
+                <ProofModeration />
               </ProtectedRoute>
             }
           />

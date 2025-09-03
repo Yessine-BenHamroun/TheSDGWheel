@@ -48,7 +48,12 @@ const getLeaderboard = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10;
     const leaderboard = await User.getLeaderboard(limit);
     
-    res.json({ leaderboard });
+    // Return in multiple formats for frontend compatibility
+    res.json({ 
+      leaderboard,
+      data: leaderboard,
+      users: leaderboard 
+    });
   } catch (error) {
     next(error);
   }

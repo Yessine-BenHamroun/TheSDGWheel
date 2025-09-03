@@ -831,6 +831,97 @@ exports.declineChallenge = async (req, res, next) => {
   }
 };
 
+// Get spin statistics for all ODDs
+exports.getSpinStats = async (req, res, next) => {
+  try {
+    const DailySpin = require('../models/DailySpin');
+    const ActivityLog = require('../models/ActivityLog');
+    
+    // Get all ODDs
+    const odds = await ODD.find({}).sort({ oddId: 1 });
+    console.log(`Found ${odds.length} ODDs in database`);
+    
+    // Check total spin count for debugging
+    const totalSpins = await DailySpin.countDocuments({});
+    console.log(`Total spins in DailySpin: ${totalSpins}`);
+    
+    // If DailySpin is empty, fall back to ActivityLog
+    if (totalSpins === 0) {
+      console.log('No DailySpin records found, using ActivityLog...');
+      
+      const stats = await Promise.all(odds.map(async (odd) => {
+        // Count wheel spins for this ODD from ActivityLog
+        const spinCount = await ActivityLog.countDocuments({ 
+          type: 'wheel_spin',
+          target: odd._id
+        });
+        
+        return {
+          id: odd._id,
+          oddId: odd.oddId,
+          title: odd.name,
+          name: odd.name,
+          description: odd.description || { 
+            en: `Sustainable Development Goal ${odd.oddId}: ${odd.name.en}`, 
+            fr: `Objectif de développement durable ${odd.oddId}: ${odd.name.fr}` 
+          },
+          color: odd.color,
+          totalSpins: spinCount,
+          spinCount: spinCount,
+          quizSpins: 0, // Can't differentiate from ActivityLog easily
+          challengeSpins: 0
+        };
+      }));
+      
+      console.log(`Returning ${stats.length} SDG stats from ActivityLog`);
+      return res.json({ 
+        data: stats,
+        stats: stats 
+      });
+    }
+    
+    // Use DailySpin records if available
+    const stats = await Promise.all(odds.map(async (odd) => {
+      const spinCount = await DailySpin.countDocuments({ selectedODD: odd._id });
+      const quizCount = await DailySpin.countDocuments({ 
+        selectedODD: odd._id, 
+        scenarioType: 'QUIZ' 
+      });
+      const challengeCount = await DailySpin.countDocuments({ 
+        selectedODD: odd._id, 
+        scenarioType: 'CHALLENGE' 
+      });
+      
+      return {
+        id: odd._id,
+        oddId: odd.oddId,
+        title: odd.name,
+        name: odd.name,
+        description: odd.description || { 
+          en: `Sustainable Development Goal ${odd.oddId}: ${odd.name.en}`, 
+          fr: `Objectif de développement durable ${odd.oddId}: ${odd.name.fr}` 
+        },
+        color: odd.color,
+        totalSpins: spinCount,
+        spinCount: spinCount,
+        quizSpins: quizCount,
+        challengeSpins: challengeCount
+      };
+    }));
+    
+    console.log(`Returning ${stats.length} SDG stats from DailySpin`);
+    
+    // Return data in the format expected by frontend
+    res.json({ 
+      data: stats,
+      stats: stats 
+    });
+  } catch (error) {
+    console.error('Error in getSpinStats:', error);
+    next(error);
+  }
+};
+
 module.exports = {
   getAllODDs,
   getODDById,
@@ -845,6 +936,7 @@ module.exports = {
   getWeightedRandomODD,
   spinWheel: exports.spinWheel,
   getTodaysSpinStatus: exports.getTodaysSpinStatus,
+  getSpinStats: exports.getSpinStats,
   submitQuizAnswer: exports.submitQuizAnswer,
   acceptChallenge: exports.acceptChallenge,
   declineChallenge: exports.declineChallenge

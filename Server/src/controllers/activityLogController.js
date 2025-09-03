@@ -24,6 +24,27 @@ exports.getLogs = async (req, res, next) => {
   }
 };
 
+exports.getMyLogs = async (req, res, next) => {
+  try {
+    const filters = { user: req.user._id };
+    if (req.query.type) filters.type = req.query.type;
+    
+    const limit = req.query.limit ? parseInt(req.query.limit) : 50;
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const skip = (page - 1) * limit;
+    
+    const logs = await ActivityLog.find(filters)
+      .populate('user', 'username avatar')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+      
+    res.json({ logs });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.getLastWheelSpin = async (req, res, next) => {
   try {
     const userId = req.user.id;

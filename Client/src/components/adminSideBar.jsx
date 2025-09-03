@@ -40,7 +40,7 @@ export function AdminSidebar() {
       label: "Proof Moderation",
       tab: "proofs",
       icon: FileCheck,
-      route: "/admin-dashboard",
+      route: "/admin/proof-moderation",
       color: "text-orange-400",
     },
     {

@@ -79,21 +79,37 @@ const updateProofStatus = async (req, res, next) => {
 
     const proof = await Proof.findById(id)
       .populate('challenge', 'points associatedODD');
-    
+
     if (!proof) {
       return res.status(404).json({ error: 'Proof not found' });
     }
 
     await proof.updateStatus(status, rejectionReason, req.user._id);
 
+    // Update corresponding pending challenge status if it exists
+    const PendingChallenge = require('../models/PendingChallenge');
+    const pendingChallenge = await PendingChallenge.findOne({
+      user: proof.user,
+      challenge: proof.challenge._id,
+      proof: proof._id
+    });
+
+    if (pendingChallenge) {
+      if (status === 'APPROVED') {
+        await pendingChallenge.verify(rejectionReason || '');
+      } else if (status === 'REJECTED') {
+        await pendingChallenge.reject(rejectionReason || '');
+      }
+    }
+
     // If approved, update user progress and points
     if (status === 'APPROVED') {
       const challenge = proof.challenge;
-      
+
       // Update user progress
       await UserProgress.updateProgress(
-        proof.user, 
-        challenge.associatedODD, 
+        proof.user,
+        challenge.associatedODD,
         challenge.points
       );
 

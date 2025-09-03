@@ -104,10 +104,10 @@ userSchema.methods.updateLevel = function() {
 };
 
 // Static method to get leaderboard
-userSchema.statics.getLeaderboard = function(limit = 10) {
+userSchema.statics.getLeaderboard = function(limit = 50) {
   return this.find({ isActive: true })
-    .select('username avatar totalPoints level')
-    .sort({ totalPoints: -1 })
+    .select('username avatar totalPoints level badges country')
+    .sort({ totalPoints: -1, username: 1 })
     .limit(limit);
 };
 

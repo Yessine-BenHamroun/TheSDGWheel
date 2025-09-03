@@ -424,6 +424,61 @@ export default function WheelGame() {
           </div>
         )}
 
+        {/* Completed Challenges Alert */}
+        {pendingChallenges.filter(challenge => ['VERIFIED', 'REJECTED'].includes(challenge.status)).length > 0 && (
+          <div className="mb-8">
+            <Card className="bg-zinc-900/20 border-zinc-500/50">
+              <CardHeader>
+                <CardTitle className="text-zinc-300">Recent Challenge Results</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-zinc-400 mb-4">
+                  Recent challenge completion results:
+                </p>
+                <div className="space-y-2">
+                  {pendingChallenges
+                    .filter(challenge => ['VERIFIED', 'REJECTED'].includes(challenge.status))
+                    .map((challenge) => (
+                    <div key={challenge._id} className={`flex items-center justify-between p-3 rounded-lg ${
+                      challenge.status === 'VERIFIED'
+                        ? 'bg-green-900/30 border border-green-500/30'
+                        : 'bg-red-900/30 border border-red-500/30'
+                    }`}>
+                      <div>
+                        <h4 className={`font-semibold ${
+                          challenge.status === 'VERIFIED' ? 'text-green-200' : 'text-red-200'
+                        }`}>
+                          {challenge.challenge?.title}
+                        </h4>
+                        <p className={`text-sm ${
+                          challenge.status === 'VERIFIED' ? 'text-green-300' : 'text-red-300'
+                        }`}>
+                          {challenge.status === 'VERIFIED'
+                            ? `Approved on ${new Date(challenge.verifiedAt).toLocaleDateString()} - ${challenge.pointsAwarded || 20} points earned!`
+                            : `Rejected on ${new Date(challenge.updatedAt).toLocaleDateString()}`
+                          }
+                        </p>
+                        {challenge.status === 'REJECTED' && challenge.adminNotes && (
+                          <p className="text-xs text-red-400 mt-1">
+                            Admin feedback: {challenge.adminNotes}
+                          </p>
+                        )}
+                      </div>
+                      <Badge className={
+                        challenge.status === 'VERIFIED'
+                          ? 'bg-green-600/50 text-green-200'
+                          : 'bg-red-600/50 text-red-200'
+                      }>
+                        {challenge.status === 'VERIFIED' ? 'Approved ✅' : 'Rejected ❌'}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Game Area */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Wheel */}
@@ -631,6 +686,26 @@ export default function WheelGame() {
                                 >
                                   <CheckCircle className="mr-2 h-4 w-4" />
                                   Pending Review
+                                </Button>
+                              );
+                            } else if (todaysPendingChallenge?.status === 'VERIFIED') {
+                              return (
+                                <Button
+                                  disabled
+                                  className="bg-green-600/50 text-green-200 cursor-not-allowed opacity-75"
+                                >
+                                  <CheckCircle className="mr-2 h-4 w-4" />
+                                  Proof Approved ✅
+                                </Button>
+                              );
+                            } else if (todaysPendingChallenge?.status === 'REJECTED') {
+                              return (
+                                <Button
+                                  disabled
+                                  className="bg-red-600/50 text-red-200 cursor-not-allowed opacity-75"
+                                >
+                                  <XCircle className="mr-2 h-4 w-4" />
+                                  Proof Rejected ❌
                                 </Button>
                               );
                             } else if (todaysPendingChallenge?.status === 'PENDING') {
