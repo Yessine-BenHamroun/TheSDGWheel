@@ -6,6 +6,7 @@ const activityLogSchema = new mongoose.Schema({
     required: true,
     enum: [
       'user_registration',
+      'email_verification',
       'challenge_completion',
       'challenge_accepted',
       'challenge_declined',

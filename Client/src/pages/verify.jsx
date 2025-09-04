@@ -1,41 +1,81 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle, XCircle, Loader } from "lucide-react";
+import { CheckCircle, XCircle, Loader, ArrowRight } from "lucide-react";
 import ApiService from "../services/api";
 
 export default function Verify() {
-  const { token } = useParams();
+  const { token: paramToken } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState("loading"); // loading, success, error
   const [message, setMessage] = useState("");
+  const [userInfo, setUserInfo] = useState(null);
+  const hasVerified = useRef(false); // Prevent duplicate verification calls
 
   useEffect(() => {
     const verifyEmail = async () => {
+      // Prevent duplicate calls (React Strict Mode runs effects twice)
+      if (hasVerified.current) {
+        console.log('🔄 Verification already attempted, skipping...');
+        return;
+      }
+      
+      hasVerified.current = true;
+      
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/verify/${token}`);
-        const data = await response.json();
-
-        if (response.ok) {
-          setStatus("success");
-          setMessage(data.message || "Email verified successfully!");
-        } else {
+        // Get token from URL params or query parameters
+        const token = paramToken || searchParams.get('token');
+        
+        console.log('🔍 Attempting verification with token:', token);
+        
+        if (!token) {
           setStatus("error");
-          setMessage(data.message || "Verification failed. Please try again.");
+          setMessage("No verification token provided. Please check your email link.");
+          return;
+        }
+
+        // Call the API service for verification
+        console.log('📡 Making API call to verify email...');
+        const response = await ApiService.verifyEmail(token);
+        
+        console.log('📊 Full API response:', response);
+        console.log('✅ Response success property:', response.success);
+        console.log('📝 Response message:', response.message);
+        console.log('👤 Response user:', response.user);
+
+        // Check for success more thoroughly
+        if (response && (response.success === true || response.success === "true")) {
+          setStatus("success");
+          setMessage(response.message || "Email verified successfully! Your account is now active.");
+          setUserInfo(response.user);
+          console.log('✅ Email verified successfully:', response.user);
+        } else {
+          console.log('❌ Verification response indicates failure');
+          setStatus("error");
+          setMessage(response.message || response.error || "Verification failed. Please try again.");
         }
       } catch (error) {
+        console.error('❌ Verification error:', error);
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          name: error.name
+        });
         setStatus("error");
-        setMessage("Verification failed. Please try again.");
+        setMessage(error.message || "Network error occurred. Please try again.");
       }
     };
 
-    if (token) {
-      verifyEmail();
-    }
-  }, [token]);
+    verifyEmail();
+  }, [paramToken, searchParams]);
 
   const handleGoToLogin = () => {
     navigate("/login");
+  };
+
+  const handleGoToDashboard = () => {
+    navigate("/user-dashboard");
   };
 
   return (
@@ -70,32 +110,75 @@ export default function Verify() {
             {status === "success" && (
               <>
                 <div className="flex justify-center mb-6">
-                  <CheckCircle className="w-12 h-12 text-green-500" />
+                  <CheckCircle className="w-20 h-20 text-green-500" />
                 </div>
-                <h1 className="text-2xl font-bold mb-4 text-green-500">Email Verified!</h1>
-                <p className="text-zinc-400 mb-6">{message}</p>
-                <button
-                  onClick={handleGoToLogin}
-                  className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 rounded text-white font-semibold transition"
-                >
-                  Go to Login
-                </button>
+                <h1 className="text-4xl font-bold mb-4 text-green-500">🎉 Verification Complete!</h1>
+                <p className="text-green-400 mb-2 font-semibold">{message}</p>
+                {userInfo && (
+                  <p className="text-zinc-300 mb-6">Welcome to SDG Wheel, <span className="font-bold text-green-400">{userInfo.username}</span>! Your account is now fully activated.</p>
+                )}
+                <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 mb-6">
+                  <p className="text-green-300 text-sm">
+                    ✅ Your email has been successfully verified<br/>
+                    ✅ Your account is now active<br/>
+                    ✅ You can now access all features
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <button
+                    onClick={handleGoToDashboard}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-emerald-500 hover:to-green-500 rounded-lg text-white font-semibold transition flex items-center justify-center gap-2 shadow-lg hover:shadow-green-500/25"
+                  >
+                    Start Exploring Dashboard
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleGoToLogin}
+                    className="w-full px-6 py-2 border border-green-600 hover:border-green-500 rounded-lg text-green-300 hover:text-green-200 font-semibold transition"
+                  >
+                    Go to Login Page
+                  </button>
+                </div>
               </>
             )}
 
             {status === "error" && (
               <>
                 <div className="flex justify-center mb-6">
-                  <XCircle className="w-12 h-12 text-red-500" />
+                  <XCircle className="w-16 h-16 text-red-500" />
                 </div>
-                <h1 className="text-2xl font-bold mb-4 text-red-500">Verification Failed</h1>
+                <h1 className="text-3xl font-bold mb-4 text-red-500">Verification Issue</h1>
                 <p className="text-zinc-400 mb-6">{message}</p>
-                <button
-                  onClick={handleGoToLogin}
-                  className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 rounded text-white font-semibold transition"
-                >
-                  Go to Login
-                </button>
+                
+                {/* Show different content based on the error message */}
+                {message.includes("already been verified") ? (
+                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 mb-6">
+                    <p className="text-blue-300 text-sm">
+                      ℹ️ Your account is already verified and ready to use!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
+                    <p className="text-red-300 text-sm">
+                      Please try the following:<br/>
+                      • Check if you used the latest verification email<br/>
+                      • Make sure you copied the complete link<br/>
+                      • Try logging in - your account might already be verified
+                    </p>
+                  </div>
+                )}
+                
+                <div className="space-y-3">
+                  <button
+                    onClick={handleGoToLogin}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 rounded-lg text-white font-semibold transition"
+                  >
+                    Try Logging In
+                  </button>
+                  <p className="text-sm text-zinc-500">
+                    Still having issues? Contact support or try registering again.
+                  </p>
+                </div>
               </>
             )}
           </div>

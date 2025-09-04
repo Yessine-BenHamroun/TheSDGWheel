@@ -32,6 +32,20 @@ router.get('/pending/all',
   proofController.getPendingProofs
 );
 
+// Get approved proofs for audit/logs (admin only)
+router.get('/approved/all', 
+  authenticateToken, 
+  requireAdmin, 
+  proofController.getApprovedProofs
+);
+
+// Get proof audit logs (admin only)
+router.get('/audit/logs', 
+  authenticateToken, 
+  requireAdmin, 
+  proofController.getProofAuditLogs
+);
+
 // Vote for proof
 router.post('/:id/vote', authenticateToken, proofController.voteForProof);
 

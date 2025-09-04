@@ -16,11 +16,9 @@ import Leaderboard from "./pages/leaderboard"
 import CommunityVoting from "./pages/voting"
 import QuizzChallengeAdmin from "./pages/QuizzChallenge"
 import Statistics from "./pages/adminSection/Statistics"
-import Users from "./pages/adminSection/Users"
 import History from "./pages/adminSection/History"
 import Export from "./pages/adminSection/Export"
 import SdgManagement from "./pages/adminSection/SdgManagement"
-import ProofModeration from "./pages/ProofModeration"
 import VerifyNotice from "./pages/verifyNotice";
 import Verify from "./pages/verify"
 
@@ -127,14 +125,6 @@ function App() {
             }
           />
           <Route
-            path="/adminSection/Users"
-            element={
-              <ProtectedRoute adminOnly>
-                <Users />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/adminSection/History"
             element={
               <ProtectedRoute adminOnly>
@@ -155,14 +145,6 @@ function App() {
             element={
               <ProtectedRoute adminOnly>
                 <SdgManagement />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/proof-moderation"
-            element={
-              <ProtectedRoute adminOnly>
-                <ProofModeration />
               </ProtectedRoute>
             }
           />

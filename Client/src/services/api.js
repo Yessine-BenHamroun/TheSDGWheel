@@ -67,6 +67,21 @@ class ApiService {
     })
   }
 
+  // Email verification
+  async verifyEmail(token) {
+    return this.request(`/auth/verify?token=${token}`, {
+      method: "GET",
+    })
+  }
+
+  // Resend verification email
+  async resendVerification(email) {
+    return this.request("/auth/resend-verification", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    })
+  }
+
   // User endpoints
   async getProfile() {
     return this.request("/users/profile")
@@ -427,6 +442,34 @@ class ApiService {
       method: "POST",
       body: JSON.stringify(logData),
     });
+  }
+
+  // Export endpoints
+  async exportData(exportOptions) {
+    console.log("📤 [API SERVICE] Exporting data:", exportOptions);
+    
+    try {
+      const response = await this.request('/export/data', {
+        method: 'POST',
+        body: JSON.stringify(exportOptions)
+      });
+
+      console.log("✅ [API SERVICE] Export successful:", {
+        totalRecords: response.totalRecords,
+        exportTypes: response.exportTypes,
+        format: response.format,
+        timestamp: new Date().toISOString()
+      });
+
+      return response;
+    } catch (error) {
+      console.error("❌ [API SERVICE] Export failed:", {
+        error: error.message,
+        exportOptions,
+        timestamp: new Date().toISOString()
+      });
+      throw error;
+    }
   }
 }
 

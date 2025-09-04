@@ -79,6 +79,15 @@ proofSchema.statics.getPendingProofs = function() {
     .sort({ createdAt: 1 });
 };
 
+// Static method to get approved proofs for audit/logs
+proofSchema.statics.getApprovedProofs = function(filters = {}) {
+  return this.find({ status: 'APPROVED', ...filters })
+    .populate('user', 'username avatar email')
+    .populate('challenge', 'title points associatedODD')
+    .populate('reviewedBy', 'username')
+    .sort({ reviewedAt: -1 });
+};
+
 // Method to add vote
 proofSchema.methods.addVote = function(userId) {
   if (this.voters.includes(userId)) {

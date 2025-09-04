@@ -65,15 +65,81 @@ const register = async (req, res, next) => {
 };
 
 const verifyEmail = async (req, res) => {
-  const { token } = req.params;
-  const user = await User.findOne({ verificationToken: token });
-  if (!user) {
-    return res.status(400).json({ message: 'Invalid or expired verification token.' });
+  try {
+    // Get token from query parameter (for URL like: /verify?token=abc123)
+    let { token } = req.query;
+    
+    // Also support token from URL params (for URL like: /verify/abc123)
+    if (!token) {
+      token = req.params.token;
+    }
+
+    console.log('🔍 Email verification attempt with token:', token);
+
+    if (!token) {
+      return res.json({ 
+        success: false,
+        message: 'Verification token is required.' 
+      });
+    }
+
+    // Find user with the verification token
+    const user = await User.findOne({ verificationToken: token });
+
+    if (!user) {
+      console.log('❌ Verification failed - Invalid or expired token:', token);
+      return res.json({ 
+        success: false,
+        message: 'Invalid or expired verification token. Please request a new verification email.' 
+      });
+    }
+
+    // Check if user is already verified
+    if (user.isActive) {
+      console.log('⚠️ User already verified:', user.email);
+      return res.json({ 
+        success: true,
+        message: 'This account has already been verified. You can log in now.',
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email
+        }
+      });
+    }
+
+    // Activate the user
+    user.isActive = true;
+    user.verificationToken = undefined; // Remove the token
+    await user.save();
+
+    console.log('✅ Email verified successfully for user:', user.email);
+
+    // Log the verification in ActivityLog
+    await ActivityLog.create({
+      type: 'email_verification',
+      user: user._id,
+      action: 'Email verified',
+      details: `User ${user.username} (${user.email}) verified their email address`
+    });
+
+    res.json({ 
+      success: true,
+      message: 'Email verified successfully! You can now log in to your account.',
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Email verification error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'An error occurred during verification. Please try again.' 
+    });
   }
-  user.isActive = true;
-  user.verificationToken = undefined;
-  await user.save();
-  res.json({ message: 'Email verified successfully. You can now log in.' });
 };
 
 const login = async (req, res, next) => {
@@ -90,7 +156,13 @@ const login = async (req, res, next) => {
     }
 
     if (!user.isActive) {
-      return res.status(403).json({ message: 'Please verify your email before logging in.' });
+      console.log('🚫 Login blocked for unverified user:', email);
+      return res.status(403).json({ 
+        success: false,
+        message: 'Please verify your email before logging in.',
+        needsVerification: true,
+        email: user.email
+      });
     }
 
     // Check password
@@ -159,10 +231,65 @@ const refreshToken = async (req, res, next) => {
   }
 };
 
+const resendVerification = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required.'
+      });
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found with this email address.'
+      });
+    }
+
+    if (user.isActive) {
+      return res.status(400).json({
+        success: false,
+        message: 'This email is already verified.'
+      });
+    }
+
+    // Generate new verification token if needed
+    if (!user.verificationToken) {
+      user.verificationToken = crypto.randomBytes(32).toString('hex');
+      await user.save();
+    }
+
+    console.log('🔄 Resending verification email to:', email);
+
+    // TODO: Send verification email here
+    // await sendVerificationEmail(user.email, user.verificationToken);
+
+    res.json({
+      success: true,
+      message: 'Verification email sent successfully. Please check your inbox.',
+      verificationToken: user.verificationToken // Include for frontend email sending
+    });
+
+  } catch (error) {
+    console.error('❌ Resend verification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to resend verification email. Please try again.'
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
   createAdmin,
   refreshToken,
-  verifyEmail
+  verifyEmail,
+  resendVerification
 };

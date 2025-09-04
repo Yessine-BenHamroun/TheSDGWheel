@@ -20,6 +20,18 @@ const challengeSchema = new mongoose.Schema({
     ref: 'ODD',
     required: true
   },
+  points: {
+    type: Number,
+    required: true,
+    default: 25,
+    min: 1,
+    max: 100
+  },
+  difficulty: {
+    type: String,
+    enum: ['easy', 'medium', 'hard', 'expert'],
+    default: 'medium'
+  },
   isActive: {
     type: Boolean,
     default: true

@@ -35,6 +35,10 @@ const pendingChallengeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Proof'
   },
+  proofLog: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ProofLog'
+  },
   pointsAwarded: {
     type: Number,
     default: 0
@@ -71,7 +75,8 @@ pendingChallengeSchema.statics.getUserPendingChallenges = function(userId) {
     ]
   }).populate([
     { path: 'challenge', select: 'title description points' },
-    { path: 'proof' }
+    { path: 'proof' },
+    { path: 'proofLog' }
   ]).sort({ updatedAt: -1 });
 };
 
@@ -105,8 +110,9 @@ pendingChallengeSchema.statics.acceptChallenge = async function(dailySpinId, use
 };
 
 // Method to submit proof
-pendingChallengeSchema.methods.submitProof = function(proofId) {
+pendingChallengeSchema.methods.submitProof = function(proofId, proofLogId = null) {
   this.proof = proofId;
+  if (proofLogId) this.proofLog = proofLogId;
   this.status = 'PROOF_SUBMITTED';
   this.proofSubmittedAt = new Date();
   return this.save();

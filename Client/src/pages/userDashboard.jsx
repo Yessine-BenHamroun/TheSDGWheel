@@ -83,6 +83,13 @@ export default function Dashboard() {
         ApiService.getLeaderboard()
       ])
 
+      console.log('📊 Dashboard data loaded:', {
+        stats: statsResponse,
+        progress: progressResponse,
+        activities: activityResponse,
+        badges: badgesResponse
+      })
+
       setUserStats(statsResponse)
       setUserProgress(progressResponse.progress || [])
       setPendingChallenges(spinStatusResponse.pendingChallenges || [])

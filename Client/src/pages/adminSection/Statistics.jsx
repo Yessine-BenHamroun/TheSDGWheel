@@ -13,60 +13,77 @@ import ApiService from "@/services/api"
 export default function Statistics() {
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({
-    mostPlayedODDs: [
-      { id: 13, name: "Climate Action", plays: 1247, percentage: 28.5 },
-      { id: 4, name: "Quality Education", plays: 892, percentage: 20.4 },
-      { id: 5, name: "Gender Equality", plays: 756, percentage: 17.3 },
-      { id: 6, name: "Clean Water", plays: 634, percentage: 14.5 },
-      { id: 15, name: "Life on Land", plays: 523, percentage: 12.0 },
-    ],
-    mostCompletedChallenges: [
-      { title: "Plant a tree", completions: 456, type: "Challenge" },
-      { title: "Understanding the SDGs", completions: 389, type: "Quiz" },
-      { title: "Reduce water consumption", completions: 312, type: "Challenge" },
-      { title: "Climate Change Basics", completions: 287, type: "Quiz" },
-      { title: "Sustainable Transportation", completions: 234, type: "Challenge" },
-    ],
-    participants: 1247,
-    totalPoints: 45678,
-    monthlyGrowth: 18.5,
-    averageScore: 78.3,
+    mostPlayedODDs: [],
+    mostCompletedChallenges: [],
+    participants: 0,
+    totalPoints: 0,
+    monthlyGrowth: 0,
+    averageScore: 0,
+    newToday: 0
   })
 
   useEffect(() => {
     async function fetchStats() {
       setLoading(true)
       try {
+        // Fetch comprehensive stats from ProofLogs
+        const comprehensiveStats = await ApiService.getComprehensiveStats();
+        
+        // Fetch user stats for participant info
         const userStats = await ApiService.getUserStats();
-        // Calcul croissance journalière
+        
+        // Calculate daily growth
         let dailyGrowth = 0;
         if (userStats.daily && userStats.daily.length > 1) {
           const today = userStats.daily[userStats.daily.length - 1].count;
           const yesterday = userStats.daily[userStats.daily.length - 2].count;
           dailyGrowth = yesterday > 0 ? ((today - yesterday) / yesterday) * 100 : 0;
         }
-        // Calcul croissance mensuelle (depuis le 1er du mois)
+        
+        // Calculate monthly growth (since first day of month)
         let monthlyGrowth = 0;
         if (userStats.daily && userStats.daily.length > 1) {
           const firstDay = userStats.daily[0].count;
           const lastDay = userStats.daily[userStats.daily.length - 1].count;
           monthlyGrowth = firstDay > 0 ? ((lastDay - firstDay) / firstDay) * 100 : 0;
         }
-        // Calcul du nombre de nouveaux participants aujourd'hui
+        
+        // Calculate new participants today
         let newToday = 0;
         if (userStats.daily && userStats.daily.length > 1) {
           const today = userStats.daily[userStats.daily.length - 1].count;
           const yesterday = userStats.daily[userStats.daily.length - 2].count;
           newToday = today - yesterday;
         }
-        setStats(prev => ({
-          ...prev,
-          participants: userStats.total,
-          newToday,
+        
+        setStats({
+          mostPlayedODDs: comprehensiveStats.mostPlayedODDs || [],
+          mostCompletedChallenges: comprehensiveStats.mostCompletedChallenges || [],
+          participants: userStats.total || 0,
+          totalPoints: comprehensiveStats.totalPoints || 0,
           monthlyGrowth: monthlyGrowth.toFixed(2),
-        }))
-      } catch (e) {
-        // fallback ou erreur
+          averageScore: comprehensiveStats.averageScore || 0,
+          newToday
+        })
+        
+        console.log('📊 Stats loaded successfully:', {
+          mostPlayedODDs: comprehensiveStats.mostPlayedODDs?.length || 0,
+          mostCompletedChallenges: comprehensiveStats.mostCompletedChallenges?.length || 0,
+          participants: userStats.total || 0,
+          totalPoints: comprehensiveStats.totalPoints || 0
+        })
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+        // Keep the current state or set to empty values
+        setStats({
+          mostPlayedODDs: [],
+          mostCompletedChallenges: [],
+          participants: 0,
+          totalPoints: 0,
+          monthlyGrowth: 0,
+          averageScore: 0,
+          newToday: 0
+        })
       } finally {
         setLoading(false)
       }
@@ -198,26 +215,34 @@ export default function Statistics() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {stats.mostPlayedODDs.map((odd, index) => (
-                  <div key={odd.id} className="flex items-center justify-between p-4 bg-zinc-900 border border-zinc-700 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center justify-center w-8 h-8 bg-blue-500/20 text-blue-400 rounded-full text-sm font-bold">
-                        {index + 1}
+                {stats.mostPlayedODDs.length > 0 ? (
+                  stats.mostPlayedODDs.map((odd, index) => (
+                    <div key={odd.id} className="flex items-center justify-between p-4 bg-zinc-900 border border-zinc-700 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-center w-8 h-8 bg-blue-500/20 text-blue-400 rounded-full text-sm font-bold">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <p className="font-medium text-white">
+                            ODD {odd.id}: {odd.name}
+                          </p>
+                          <p className="text-sm text-zinc-400">{odd.plays} plays</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-white">
-                          ODD {odd.id}: {odd.name}
-                        </p>
-                        <p className="text-sm text-zinc-400">{odd.plays} plays</p>
+                      <div className="text-right">
+                        <Badge variant="outline" className="bg-blue-500/20 text-blue-400 border-blue-500/50">
+                          {odd.percentage}%
+                        </Badge>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <Badge variant="outline" className="bg-blue-500/20 text-blue-400 border-blue-500/50">
-                        {odd.percentage}%
-                      </Badge>
-                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-zinc-400">
+                    <Globe className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No ODD data available yet</p>
+                    <p className="text-sm">Start completing challenges to see statistics</p>
                   </div>
-                ))}
+                )}
               </div>
             </CardContent>
           </Card>
@@ -233,29 +258,37 @@ export default function Statistics() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {stats.mostCompletedChallenges.map((challenge, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-zinc-900 border border-zinc-700 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center justify-center w-8 h-8 bg-green-500/20 text-green-400 rounded-full text-sm font-bold">
-                        {index + 1}
+                {stats.mostCompletedChallenges.length > 0 ? (
+                  stats.mostCompletedChallenges.map((challenge, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 bg-zinc-900 border border-zinc-700 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-center w-8 h-8 bg-green-500/20 text-green-400 rounded-full text-sm font-bold">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <p className="font-medium text-white">{challenge.title}</p>
+                          <p className="text-sm text-zinc-400">{challenge.completions} completions</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-white">{challenge.title}</p>
-                        <p className="text-sm text-zinc-400">{challenge.completions} completions</p>
-                      </div>
+                      <Badge
+                        variant="outline"
+                        className={
+                          challenge.type === "Quiz"
+                            ? "bg-purple-500/20 text-purple-400 border-purple-500/50"
+                            : "bg-green-500/20 text-green-400 border-green-500/50"
+                        }
+                      >
+                        {challenge.type}
+                      </Badge>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className={
-                        challenge.type === "Quiz"
-                          ? "bg-purple-500/20 text-purple-400 border-purple-500/50"
-                          : "bg-green-500/20 text-green-400 border-green-500/50"
-                      }
-                    >
-                      {challenge.type}
-                    </Badge>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-zinc-400">
+                    <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No challenge data available yet</p>
+                    <p className="text-sm">Start completing challenges to see statistics</p>
                   </div>
-                ))}
+                )}
               </div>
             </CardContent>
           </Card>

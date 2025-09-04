@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AdminSidebar } from "@/components/AdminSidebar"
 import { MouseFollower } from "@/components/mouse-follower"
 import { ScrollProgress } from "@/components/scroll-progress"
@@ -8,13 +8,50 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Download, FileText, Database, Users, Target, FileCheck, BarChart3, Settings } from "lucide-react"
+import { Download, FileText, Database, Users, Target, FileCheck, BarChart3, Settings, AlertCircle } from "lucide-react"
+import api from "@/services/api"
+import { 
+  convertMultipleDatasets, 
+  downloadMultipleFiles, 
+  getFileSizeEstimate 
+} from "@/utils/exportUtils"
 
 export default function Export() {
   const [selectedExports, setSelectedExports] = useState([])
   const [exportFormat, setExportFormat] = useState("csv")
   const [dateRange, setDateRange] = useState("all")
+  const [customDateRange, setCustomDateRange] = useState({ start: '', end: '' })
   const [isExporting, setIsExporting] = useState(false)
+  const [exportStatus, setExportStatus] = useState({ type: '', message: '' })
+  const [realDataStats, setRealDataStats] = useState({})
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchRealDataStats()
+  }, [])
+
+  const fetchRealDataStats = async () => {
+    try {
+      setLoading(true)
+      // For now, we'll use placeholder stats
+      // In a real app, you'd fetch actual counts from your API
+      setRealDataStats({
+        users: { count: 0, size: '0 KB' },
+        challenges: { count: 0, size: '0 KB' },
+        proofs: { count: 0, size: '0 KB' },
+        votes: { count: 0, size: '0 KB' },
+        wheel_spins: { count: 0, size: '0 KB' },
+        activity_logs: { count: 0, size: '0 KB' },
+        statistics: { count: 0, size: '0 KB' },
+        odds: { count: 17, size: '45 KB' }, // Static for ODDs
+      })
+    } catch (error) {
+      console.error('Failed to fetch data stats:', error)
+      setExportStatus({ type: 'error', message: 'Failed to fetch data statistics' })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const exportOptions = [
     {
@@ -23,8 +60,8 @@ export default function Export() {
       description: "User profiles, registration dates, countries, points, levels",
       icon: Users,
       color: "blue",
-      estimatedSize: "2.3 MB",
-      recordCount: "1,247 users",
+      estimatedSize: realDataStats.users?.size || "0 KB",
+      recordCount: `${realDataStats.users?.count || 0} users`,
     },
     {
       id: "challenges",
@@ -32,8 +69,8 @@ export default function Export() {
       description: "All challenges, quizzes, completions, and submissions",
       icon: Target,
       color: "green",
-      estimatedSize: "1.8 MB",
-      recordCount: "456 challenges",
+      estimatedSize: realDataStats.challenges?.size || "0 KB",
+      recordCount: `${realDataStats.challenges?.count || 0} challenges`,
     },
     {
       id: "proofs",
@@ -41,8 +78,8 @@ export default function Export() {
       description: "User proof submissions, validation status, media files",
       icon: FileCheck,
       color: "orange",
-      estimatedSize: "15.7 MB",
-      recordCount: "3,892 proofs",
+      estimatedSize: realDataStats.proofs?.size || "0 KB",
+      recordCount: `${realDataStats.proofs?.count || 0} proofs`,
     },
     {
       id: "votes",
@@ -50,8 +87,8 @@ export default function Export() {
       description: "Community voting data, ratings, and feedback",
       icon: BarChart3,
       color: "purple",
-      estimatedSize: "890 KB",
-      recordCount: "2,156 votes",
+      estimatedSize: realDataStats.votes?.size || "0 KB",
+      recordCount: `${realDataStats.votes?.count || 0} votes`,
     },
     {
       id: "wheel_spins",
@@ -59,8 +96,8 @@ export default function Export() {
       description: "SDG wheel spin results, timestamps, and outcomes",
       icon: Settings,
       color: "pink",
-      estimatedSize: "1.2 MB",
-      recordCount: "5,678 spins",
+      estimatedSize: realDataStats.wheel_spins?.size || "0 KB",
+      recordCount: `${realDataStats.wheel_spins?.count || 0} spins`,
     },
     {
       id: "activity_logs",
@@ -68,8 +105,8 @@ export default function Export() {
       description: "Complete activity history, user actions, system events",
       icon: FileText,
       color: "cyan",
-      estimatedSize: "4.5 MB",
-      recordCount: "12,345 activities",
+      estimatedSize: realDataStats.activity_logs?.size || "0 KB",
+      recordCount: `${realDataStats.activity_logs?.count || 0} activities`,
     },
     {
       id: "statistics",
@@ -77,7 +114,7 @@ export default function Export() {
       description: "Aggregated statistics, performance metrics, analytics",
       icon: BarChart3,
       color: "yellow",
-      estimatedSize: "567 KB",
+      estimatedSize: realDataStats.statistics?.size || "0 KB",
       recordCount: "Monthly reports",
     },
     {
@@ -86,8 +123,8 @@ export default function Export() {
       description: "Sustainable Development Goals setup and weights",
       icon: Database,
       color: "red",
-      estimatedSize: "45 KB",
-      recordCount: "17 ODDs",
+      estimatedSize: realDataStats.odds?.size || "45 KB",
+      recordCount: `${realDataStats.odds?.count || 17} ODDs`,
     },
   ]
 
@@ -107,39 +144,96 @@ export default function Export() {
     if (selectedExports.length === 0) return
 
     setIsExporting(true)
+    setExportStatus({ type: 'info', message: 'Preparing export...' })
 
-    // Simulate export process
-    await new Promise((resolve) => setTimeout(resolve, 3000))
+    try {
+      // Prepare the export request
+      let dateFilter = undefined
+      if (dateRange !== 'all') {
+        if (dateRange === 'custom') {
+          if (customDateRange.start && customDateRange.end) {
+            dateFilter = {
+              start: customDateRange.start,
+              end: customDateRange.end
+            }
+          }
+        } else {
+          dateFilter = dateRange
+        }
+      }
 
-    // Create and download a sample CSV
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      "Export Type,Records,Date\n" +
-      selectedExports
-        .map((id) => {
-          const option = exportOptions.find((opt) => opt.id === id)
-          return `${option.title},${option.recordCount},${new Date().toISOString()}`
+      const exportRequest = {
+        exportTypes: selectedExports,
+        format: exportFormat,
+        dateRange: dateFilter
+      }
+
+      console.log('🚀 Starting export with:', exportRequest)
+
+      // Call the backend API
+      const result = await api.exportData(exportRequest)
+      
+      if (!result || !result.data) {
+        throw new Error('No data received from server')
+      }
+
+      console.log('✅ Export data received:', Object.keys(result.data))
+      setExportStatus({ type: 'info', message: 'Processing data for download...' })
+
+      // Convert the data to the requested format and prepare for download
+      const files = convertMultipleDatasets(result.data, exportFormat, 'sustainability_export')
+      
+      if (!files || files.length === 0) {
+        throw new Error('No files generated from export data')
+      }
+
+      console.log('📁 Generated files:', files.map(f => f.filename))
+      setExportStatus({ type: 'info', message: `Downloading ${files.length} file(s)...` })
+
+      // Download the files
+      const downloadSuccess = await downloadMultipleFiles(files)
+      
+      if (downloadSuccess) {
+        setExportStatus({ 
+          type: 'success', 
+          message: `Successfully exported ${files.length} file(s) with ${selectedExports.length} dataset(s)` 
         })
-        .join("\n")
-
-    const encodedUri = encodeURI(csvContent)
-    const link = document.createElement("a")
-    link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `sustainability_export_${new Date().toISOString().split("T")[0]}.${exportFormat}`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-
-    setIsExporting(false)
+      } else {
+        throw new Error('Download failed')
+      }
+      
+    } catch (error) {
+      console.error('❌ Export failed:', error)
+      setExportStatus({ 
+        type: 'error', 
+        message: `Export failed: ${error.message}` 
+      })
+    } finally {
+      setIsExporting(false)
+      // Clear status after 5 seconds
+      setTimeout(() => setExportStatus({ type: '', message: '' }), 5000)
+    }
   }
 
   const getTotalSize = () => {
+    if (loading) return '0'
+    
     return selectedExports
       .reduce((total, id) => {
         const option = exportOptions.find((opt) => opt.id === id)
-        const size = Number.parseFloat(option.estimatedSize)
-        const unit = option.estimatedSize.includes("MB") ? 1 : 0.001
-        return total + size * unit
+        if (!option || !option.estimatedSize) return total
+        
+        const sizeStr = option.estimatedSize.toString()
+        const size = parseFloat(sizeStr)
+        
+        if (sizeStr.includes("MB")) {
+          return total + size
+        } else if (sizeStr.includes("KB")) {
+          return total + (size / 1024)
+        } else if (sizeStr.includes("GB")) {
+          return total + (size * 1024)
+        }
+        return total
       }, 0)
       .toFixed(1)
   }
@@ -201,7 +295,13 @@ export default function Export() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {loading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-400"></div>
+                    <span className="ml-3 text-zinc-400">Loading data statistics...</span>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {exportOptions.map((option) => {
                     const Icon = option.icon
                     const isSelected = selectedExports.includes(option.id)
@@ -251,6 +351,7 @@ export default function Export() {
                     )
                   })}
                 </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -272,7 +373,6 @@ export default function Export() {
                   >
                     <option value="csv">CSV (Comma Separated)</option>
                     <option value="json">JSON (JavaScript Object)</option>
-                    <option value="xlsx">Excel (XLSX)</option>
                   </select>
                 </div>
 
@@ -290,6 +390,29 @@ export default function Export() {
                     <option value="last_year">Last Year</option>
                     <option value="custom">Custom Range</option>
                   </select>
+                  
+                  {dateRange === 'custom' && (
+                    <div className="mt-3 space-y-2">
+                      <div>
+                        <label className="block text-xs text-zinc-400 mb-1">Start Date</label>
+                        <input
+                          type="date"
+                          value={customDateRange.start}
+                          onChange={(e) => setCustomDateRange(prev => ({ ...prev, start: e.target.value }))}
+                          className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-md text-white focus:border-amber-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-zinc-400 mb-1">End Date</label>
+                        <input
+                          type="date"
+                          value={customDateRange.end}
+                          onChange={(e) => setCustomDateRange(prev => ({ ...prev, end: e.target.value }))}
+                          className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-md text-white focus:border-amber-500"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {selectedExports.length > 0 && (
@@ -314,7 +437,7 @@ export default function Export() {
 
                 <Button
                   onClick={handleExport}
-                  disabled={selectedExports.length === 0 || isExporting}
+                  disabled={selectedExports.length === 0 || isExporting || loading}
                   className="w-full bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700 disabled:opacity-50"
                 >
                   {isExporting ? (
@@ -329,6 +452,20 @@ export default function Export() {
                     </>
                   )}
                 </Button>
+
+                {/* Export Status */}
+                {exportStatus.message && (
+                  <div className={`p-3 rounded-lg border flex items-center space-x-2 ${
+                    exportStatus.type === 'success' 
+                      ? 'bg-green-500/20 border-green-500/50 text-green-400'
+                      : exportStatus.type === 'error'
+                      ? 'bg-red-500/20 border-red-500/50 text-red-400'
+                      : 'bg-blue-500/20 border-blue-500/50 text-blue-400'
+                  }`}>
+                    <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-sm">{exportStatus.message}</span>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

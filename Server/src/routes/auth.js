@@ -16,6 +16,11 @@ router.post('/create-admin', authController.createAdmin);
 // Refresh token
 router.post('/refresh', authenticateToken, authController.refreshToken);
 
-router.get('/verify/:token', authController.verifyEmail);
+// Email verification routes - support both query parameter and URL parameter
+router.get('/verify', authController.verifyEmail); // For URL: /verify?token=abc123
+router.get('/verify/:token', authController.verifyEmail); // For URL: /verify/abc123
+
+// Resend verification email
+router.post('/resend-verification', authController.resendVerification);
 
 module.exports = router;

@@ -102,8 +102,11 @@ const proofUpdateStatusSchema = Joi.object({
   status: Joi.string().valid('APPROVED', 'REJECTED').required(),
   rejectionReason: Joi.string().when('status', {
     is: 'REJECTED',
-    then: Joi.required(),
-    otherwise: Joi.optional()
+    then: Joi.required().messages({
+      'any.required': 'Rejection reason is required when rejecting a proof',
+      'string.empty': 'Rejection reason cannot be empty when rejecting a proof'
+    }),
+    otherwise: Joi.allow('', null).optional()
   })
 });
 

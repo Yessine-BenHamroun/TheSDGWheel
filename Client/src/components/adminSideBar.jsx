@@ -8,7 +8,6 @@ import {
   BarChart3,
   FileCheck,
   Target,
-  Users,
   History,
   Download,
   TrendingUp,
@@ -63,13 +62,6 @@ export function AdminSidebar() {
       icon: TrendingUp,
       route: "/adminSection/Statistics",
       color: "text-pink-400",
-    },
-    {
-      label: "Users",
-      tab: "users",
-      icon: Users,
-      route: "/adminSection/Users",
-      color: "text-cyan-400",
     },
     {
       label: "History",
