@@ -106,6 +106,10 @@ class ApiService {
     return this.request('/users/stats');
   }
 
+  async getComprehensiveStats() {
+    return this.request('/users/comprehensive-stats');
+  }
+
   async spinWheel() {
     return this.request('/odds/spin', { method: 'POST' });
   }

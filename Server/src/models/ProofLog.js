@@ -110,4 +110,88 @@ proofLogSchema.methods.updateStatus = function(newStatus, reviewedBy = null, not
   return this.save();
 };
 
+// Static method to get most played ODDs
+proofLogSchema.statics.getMostPlayedODDs = async function(limit = 5) {
+  try {
+    const result = await this.aggregate([
+      {
+        $lookup: {
+          from: 'challenges',
+          localField: 'challenge',
+          foreignField: '_id',
+          as: 'challengeInfo'
+        }
+      },
+      { $unwind: '$challengeInfo' },
+      {
+        $lookup: {
+          from: 'odds',
+          localField: 'challengeInfo.odd',
+          foreignField: '_id',
+          as: 'oddInfo'
+        }
+      },
+      { $unwind: '$oddInfo' },
+      {
+        $group: {
+          _id: '$oddInfo._id',
+          oddNumber: { $first: '$oddInfo.number' },
+          oddTitle: { $first: '$oddInfo.title' },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } },
+      { $limit: limit }
+    ]);
+
+    return result.map(item => ({
+      id: item._id,
+      number: item.oddNumber,
+      title: item.oddTitle,
+      submissions: item.count
+    }));
+  } catch (error) {
+    console.error('Error getting most played ODDs:', error);
+    return [];
+  }
+};
+
+// Static method to get most completed challenges
+proofLogSchema.statics.getMostCompletedChallenges = async function(limit = 5) {
+  try {
+    const result = await this.aggregate([
+      { $match: { status: { $in: ['APPROVED', 'accepted'] } } },
+      {
+        $lookup: {
+          from: 'challenges',
+          localField: 'challenge',
+          foreignField: '_id',
+          as: 'challengeInfo'
+        }
+      },
+      { $unwind: '$challengeInfo' },
+      {
+        $group: {
+          _id: '$challenge',
+          title: { $first: '$challengeInfo.title' },
+          description: { $first: '$challengeInfo.description' },
+          completions: { $sum: 1 }
+        }
+      },
+      { $sort: { completions: -1 } },
+      { $limit: limit }
+    ]);
+
+    return result.map(item => ({
+      id: item._id,
+      title: item.title,
+      description: item.description,
+      completions: item.completions
+    }));
+  } catch (error) {
+    console.error('Error getting most completed challenges:', error);
+    return [];
+  }
+};
+
 module.exports = mongoose.model('ProofLog', proofLogSchema);

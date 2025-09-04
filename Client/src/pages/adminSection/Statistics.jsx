@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, Users, Target, Award, Download, Calendar, Globe, Zap } from "lucide-react"
-import ApiService from "@/services/api"
+import api from "@/services/api"
 
 export default function Statistics() {
   const [loading, setLoading] = useState(true)
@@ -21,56 +21,40 @@ export default function Statistics() {
     averageScore: 0,
     newToday: 0
   })
+  const styles = {
+      user_registration: "bg-green-500/20 text-green-400 border-green-500/50",
+    }
+    const labels = {
+      Challenge: "Challenge",
+
+    }
+
 
   useEffect(() => {
     async function fetchStats() {
       setLoading(true)
       try {
-        // Fetch comprehensive stats from ProofLogs
-        const comprehensiveStats = await ApiService.getComprehensiveStats();
-        
-        // Fetch user stats for participant info
-        const userStats = await ApiService.getUserStats();
-        
-        // Calculate daily growth
-        let dailyGrowth = 0;
-        if (userStats.daily && userStats.daily.length > 1) {
-          const today = userStats.daily[userStats.daily.length - 1].count;
-          const yesterday = userStats.daily[userStats.daily.length - 2].count;
-          dailyGrowth = yesterday > 0 ? ((today - yesterday) / yesterday) * 100 : 0;
-        }
-        
-        // Calculate monthly growth (since first day of month)
-        let monthlyGrowth = 0;
-        if (userStats.daily && userStats.daily.length > 1) {
-          const firstDay = userStats.daily[0].count;
-          const lastDay = userStats.daily[userStats.daily.length - 1].count;
-          monthlyGrowth = firstDay > 0 ? ((lastDay - firstDay) / firstDay) * 100 : 0;
-        }
-        
-        // Calculate new participants today
-        let newToday = 0;
-        if (userStats.daily && userStats.daily.length > 1) {
-          const today = userStats.daily[userStats.daily.length - 1].count;
-          const yesterday = userStats.daily[userStats.daily.length - 2].count;
-          newToday = today - yesterday;
-        }
+        // Fetch comprehensive stats which now includes all needed data
+        const comprehensiveStats = await api.getComprehensiveStats();
         
         setStats({
           mostPlayedODDs: comprehensiveStats.mostPlayedODDs || [],
           mostCompletedChallenges: comprehensiveStats.mostCompletedChallenges || [],
-          participants: userStats.total || 0,
+          participants: comprehensiveStats.participants || 0, // Total users from comprehensive stats
           totalPoints: comprehensiveStats.totalPoints || 0,
-          monthlyGrowth: monthlyGrowth.toFixed(2),
+          monthlyGrowth: comprehensiveStats.monthlyGrowth || 0, // Monthly growth from comprehensive stats
           averageScore: comprehensiveStats.averageScore || 0,
-          newToday
+          newToday: comprehensiveStats.newToday || 0 // Users who joined today from comprehensive stats
         })
         
         console.log('📊 Stats loaded successfully:', {
           mostPlayedODDs: comprehensiveStats.mostPlayedODDs?.length || 0,
           mostCompletedChallenges: comprehensiveStats.mostCompletedChallenges?.length || 0,
-          participants: userStats.total || 0,
-          totalPoints: comprehensiveStats.totalPoints || 0
+          participants: comprehensiveStats.participants || 0,
+          totalPoints: comprehensiveStats.totalPoints || 0,
+          monthlyGrowth: comprehensiveStats.monthlyGrowth || 0,
+          averageScore: comprehensiveStats.averageScore || 0,
+          newToday: comprehensiveStats.newToday || 0
         })
       } catch (error) {
         console.error('Failed to fetch stats:', error);
@@ -203,8 +187,8 @@ export default function Statistics() {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Most Played ODDs */}
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-8 mb-8">
+          {/* Most Played ODDs
           <Card className="bg-zinc-900 border border-blue-900/60 shadow-lg">
             <CardHeader>
               <CardTitle className="text-blue-400 flex items-center">
@@ -245,9 +229,9 @@ export default function Statistics() {
                 )}
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
-          {/* Most Completed Challenges */}
+          /* Most Completed Challenges */
           <Card className="bg-zinc-900 border border-green-900/60 shadow-lg">
             <CardHeader>
               <CardTitle className="text-green-400 flex items-center">

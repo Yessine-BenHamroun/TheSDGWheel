@@ -192,23 +192,50 @@ const getComprehensiveStats = async (req, res, next) => {
     const mostCompletedChallenges = await ProofLog.getMostCompletedChallenges(5);
     console.log('🎯 [COMPREHENSIVE STATS] Most completed challenges:', mostCompletedChallenges);
 
-    // Get total users
+    // Get total users (participants - all users except admins)
     const totalUsers = await User.countDocuments({ role: 'user' });
+    console.log('👥 [COMPREHENSIVE STATS] Total participants:', totalUsers);
 
-    // Calculate total points from ProofLogs (use both status types)
-    const totalPointsResult = await ProofLog.aggregate([
-      { $match: { status: { $in: ['APPROVED', 'accepted'] } } },
-      { $group: { _id: null, totalPoints: { $sum: '$pointsAwarded' } } }
+    // Get users who joined today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const usersJoinedToday = await User.countDocuments({
+      role: 'user',
+      createdAt: { $gte: today, $lt: tomorrow }
+    });
+    console.log('📅 [COMPREHENSIVE STATS] Users joined today:', usersJoinedToday);
+
+    // Calculate total points of all users (from user totalPoints field)
+    const totalPointsResult = await User.aggregate([
+      { $match: { role: 'user' } },
+      { $group: { _id: null, totalPoints: { $sum: '$totalPoints' } } }
     ]);
     const totalPoints = totalPointsResult.length > 0 ? totalPointsResult[0].totalPoints : 0;
+    console.log('💰 [COMPREHENSIVE STATS] Total points of all users:', totalPoints);
 
-    // Calculate average score from approved proofs
-    const averageScoreResult = await ProofLog.aggregate([
-      { $match: { status: { $in: ['APPROVED', 'accepted'] }, pointsAwarded: { $gt: 0 } } },
-      { $group: { _id: null, avgScore: { $avg: '$pointsAwarded' } } }
-    ]);
-    const averageScore = averageScoreResult.length > 0 ? 
-      Math.round(averageScoreResult[0].avgScore) : 0;
+    // Calculate average score (total points / number of users)
+    const averageScore = totalUsers > 0 ? Math.round(totalPoints / totalUsers) : 0;
+    console.log('📊 [COMPREHENSIVE STATS] Average score per user:', averageScore);
+
+    // Calculate monthly growth (percentage of new registrations this month)
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const usersThisMonth = await User.countDocuments({
+      role: 'user',
+      createdAt: { $gte: firstDayOfMonth }
+    });
+    
+    const usersBeforeThisMonth = await User.countDocuments({
+      role: 'user',
+      createdAt: { $lt: firstDayOfMonth }
+    });
+    
+    const monthlyGrowth = usersBeforeThisMonth > 0 ? 
+      Math.round((usersThisMonth / usersBeforeThisMonth) * 100 * 100) / 100 : 
+      (usersThisMonth > 0 ? 100 : 0);
+    console.log('📈 [COMPREHENSIVE STATS] Monthly growth:', monthlyGrowth + '%');
 
     // Get total completed challenges count
     const totalCompletedChallenges = await ProofLog.countDocuments({ 
@@ -228,16 +255,26 @@ const getComprehensiveStats = async (req, res, next) => {
     const comprehensiveStats = {
       mostPlayedODDs,
       mostCompletedChallenges,
-      totalUsers,
-      totalPoints,
-      averageScore,
+      participants: totalUsers, // Total number of users (excluding admins)
+      totalPoints, // Total points of all users combined
+      averageScore, // Average points per user (totalPoints / totalUsers)
+      monthlyGrowth, // Percentage of new registrations this month
+      newToday: usersJoinedToday, // Users who joined today
       totalCompletedChallenges,
       activeChallengesCount,
       totalODDsCount,
       engagementRate
     };
 
-    console.log('✅ [COMPREHENSIVE STATS] Final stats:', comprehensiveStats);
+    console.log('✅ [COMPREHENSIVE STATS] Final stats:', {
+      ...comprehensiveStats,
+      debugInfo: {
+        totalUsersQueried: totalUsers,
+        totalPointsRaw: totalPointsResult,
+        usersThisMonth,
+        usersBeforeThisMonth
+      }
+    });
 
     res.json(comprehensiveStats);
   } catch (error) {
