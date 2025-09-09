@@ -14,6 +14,29 @@ router.put('/profile',
   userController.updateProfile
 );
 
+// Update user profile with avatar
+router.put('/profile/avatar', 
+  authenticateToken, 
+  userController.updateProfileWithAvatar
+);
+
+// Request email change
+router.post('/email/request-change', 
+  authenticateToken, 
+  userController.requestEmailChange
+);
+
+// Verify email change
+router.get('/email/verify-change', 
+  userController.verifyEmailChange
+);
+
+// Update user password
+router.put('/password', 
+  authenticateToken, 
+  userController.updatePassword
+);
+
 // Get leaderboard
 router.get('/leaderboard', userController.getLeaderboard);
 
@@ -44,5 +67,13 @@ router.get('/stats', (req, res, next) => {
 
 // Get comprehensive admin statistics
 router.get('/comprehensive-stats', authenticateToken, requireAdmin, userController.getComprehensiveStats);
+
+// Admin User Management Routes
+router.get('/all', authenticateToken, requireAdmin, userController.getAllUsers);
+router.get('/:userId', authenticateToken, requireAdmin, userController.getUserById);
+router.put('/:userId/status', authenticateToken, requireAdmin, userController.updateUserStatus);
+router.put('/:userId/role', authenticateToken, requireAdmin, userController.updateUserRole);
+router.put('/:userId', authenticateToken, requireAdmin, userController.updateUser);
+router.delete('/:userId', authenticateToken, requireAdmin, userController.deleteUser);
 
 module.exports = router;

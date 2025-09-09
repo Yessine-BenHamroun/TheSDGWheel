@@ -14,13 +14,21 @@ import AdminDashboard from "./pages/adminDashboard"
 import WheelGame from "./pages/wheelGame"
 import Leaderboard from "./pages/leaderboard"
 import CommunityVoting from "./pages/voting"
+import CommunityFeed from "./pages/CommunityFeed"
+import Settings from "./pages/Settings"
 import QuizzChallengeAdmin from "./pages/QuizzChallenge"
 import Statistics from "./pages/adminSection/Statistics"
 import History from "./pages/adminSection/History"
 import Export from "./pages/adminSection/Export"
 import SdgManagement from "./pages/adminSection/SdgManagement"
+import UserModeration from "./pages/adminSection/UserModeration"
+import ProofModeration from "./pages/ProofModeration"
 import VerifyNotice from "./pages/verifyNotice";
 import Verify from "./pages/verify"
+import ForgotPassword from "./pages/ForgotPassword"
+import VerifyResetCode from "./pages/VerifyResetCode"
+import ResetPassword from "./pages/ResetPassword"
+import ResetPasswordWithToken from "./pages/ResetPasswordWithToken"
 
 // Protected Route Component
 import { useAuth } from "./contexts/AuthContext"
@@ -64,6 +72,12 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/verify-notice" element={<VerifyNotice />} />
           <Route path="/verify/:token" element={<Verify />} />
+          
+          {/* Password Reset routes */}
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordWithToken />} />
+          <Route path="/verify-reset-code" element={<VerifyResetCode />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Protected routes */}
           <Route
@@ -95,6 +109,22 @@ function App() {
             element={
               <ProtectedRoute userOnly>
                 <CommunityVoting />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/community-feed"
+            element={
+              <ProtectedRoute userOnly>
+                <CommunityFeed />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute userOnly>
+                <Settings />
               </ProtectedRoute>
             }
           />
@@ -145,6 +175,22 @@ function App() {
             element={
               <ProtectedRoute adminOnly>
                 <SdgManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adminSection/UserModeration"
+            element={
+              <ProtectedRoute adminOnly>
+                <UserModeration />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/proof-moderation"
+            element={
+              <ProtectedRoute adminOnly>
+                <ProofModeration />
               </ProtectedRoute>
             }
           />

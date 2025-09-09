@@ -28,12 +28,13 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator: function(v) {
         if (!v) return true; // Allow null/empty values
-        // Allow both URLs and base64 data URLs
+        // Allow URLs, base64 data URLs, and local file paths
         const urlPattern = /^https?:\/\/.+/;
         const base64Pattern = /^data:image\/(jpeg|jpg|png|gif|webp);base64,/;
-        return urlPattern.test(v) || base64Pattern.test(v);
+        const filePathPattern = /^\/uploads\/.+\.(jpg|jpeg|png|gif|webp)$/i;
+        return urlPattern.test(v) || base64Pattern.test(v) || filePathPattern.test(v);
       },
-      message: 'Avatar must be a valid URL or base64 image data'
+      message: 'Avatar must be a valid URL, base64 image data, or uploaded file path'
     }
   },
   country: {

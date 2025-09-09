@@ -23,4 +23,15 @@ router.get('/verify/:token', authController.verifyEmail); // For URL: /verify/ab
 // Resend verification email
 router.post('/resend-verification', authController.resendVerification);
 
+// Logout current session
+router.post('/logout', authenticateToken, authController.logout);
+
+// Logout from all sessions (security feature)
+router.post('/logout-all', authenticateToken, authController.logoutAllSessions);
+
+// Password Reset routes
+router.post('/forgot-password', authController.forgotPassword);
+router.get('/reset-password/:token', authController.verifyResetToken); // Verify token when user clicks email link
+router.post('/reset-password', authController.resetPassword); // Reset password with new password
+
 module.exports = router;

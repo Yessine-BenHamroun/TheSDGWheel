@@ -22,6 +22,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
 import NotificationDropdown from "./NotificationDropdown"
+import { getAvatarUrl } from "@/utils/avatarUtils"
 
 // Component for nav items
 function NavItem({ icon: Icon, label, active, onClick, href, mobile = false, onMobileClick }) {
@@ -114,10 +115,15 @@ export default function UserNavbar() {
             <NavItem 
               icon={Globe} 
               label="Community" 
-              active={location.pathname === "/community"} 
-              href="/community" 
+              active={location.pathname === "/community-feed"} 
+              href="/community-feed" 
             />
-            <NavItem icon={Settings} label="Settings" />
+            <NavItem 
+              icon={Settings} 
+              label="Settings" 
+              active={location.pathname === "/settings"} 
+              href="/settings" 
+            />
           </div>
 
           {/* Right side actions */}
@@ -142,7 +148,10 @@ export default function UserNavbar() {
 
             {/* Avatar */}
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.username || "User"} />
+              <AvatarImage 
+                src={getAvatarUrl(user?.avatar)} 
+                alt={user?.username || "User"} 
+              />
               <AvatarFallback className="bg-zinc-700 text-purple-400 text-sm">
                 {user?.username ? user.username.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
               </AvatarFallback>
@@ -191,14 +200,16 @@ export default function UserNavbar() {
             <NavItem 
               icon={Globe} 
               label="Community" 
-              active={location.pathname === "/community"} 
-              href="/community" 
+              active={location.pathname === "/community-feed"} 
+              href="/community-feed" 
               mobile={true}
               onMobileClick={() => setIsMobileMenuOpen(false)}
             />
             <NavItem 
               icon={Settings} 
               label="Settings" 
+              active={location.pathname === "/settings"} 
+              href="/settings" 
               mobile={true}
               onMobileClick={() => setIsMobileMenuOpen(false)}
             />

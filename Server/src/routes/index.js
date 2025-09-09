@@ -9,6 +9,7 @@ const proofRoutes = require('./proofs');
 const badgeRoutes = require('./badges');
 const oddRoutes = require('./odds');
 const exportRoutes = require('./export');
+const communityRoutes = require('./community');
 
 // Health check endpoint
 router.get('/health', (req, res) => {
@@ -27,6 +28,7 @@ router.use('/proofs', proofRoutes);
 router.use('/badges', badgeRoutes);
 router.use('/odds', oddRoutes);
 router.use('/export', exportRoutes);
+router.use('/community', communityRoutes);
 router.use('/activity-logs', require('./activityLogs'));
 router.use('/quizzes', require('./quizzes'));
 router.use('/notifications', require('./notifications'));

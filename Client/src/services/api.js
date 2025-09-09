@@ -24,6 +24,20 @@ class ApiService {
       const data = await response.json()
 
       if (!response.ok) {
+        // Handle authentication errors
+        if (response.status === 401 || response.status === 403) {
+          // Token is invalid, expired, or blacklisted
+          if (data.error?.includes('invalidated') || 
+              data.error?.includes('expired') || 
+              data.error?.includes('Invalid token')) {
+            console.log('🔐 Token issue detected, triggering logout...')
+            // Trigger logout by dispatching custom event
+            window.dispatchEvent(new CustomEvent('auth-error', { 
+              detail: { reason: data.error, logout: true }
+            }))
+          }
+        }
+        
         throw new Error(data.message || data.error || `HTTP error! status: ${response.status}`)
       }
 
@@ -67,6 +81,41 @@ class ApiService {
     })
   }
 
+  async logout() {
+    return this.request("/auth/logout", {
+      method: "POST",
+    })
+  }
+
+  async logoutAllSessions() {
+    return this.request("/auth/logout-all", {
+      method: "POST",
+    })
+  }
+
+  // Forgot Password
+  async forgotPassword(email) {
+    return this.request("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    })
+  }
+
+  // Verify reset token (when user clicks email link)
+  async verifyResetToken(token) {
+    return this.request(`/auth/reset-password/${token}`, {
+      method: "GET",
+    })
+  }
+
+  // Reset password with token
+  async resetPasswordWithToken(data) {
+    return this.request("/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+  }
+
   // Email verification
   async verifyEmail(token) {
     return this.request(`/auth/verify?token=${token}`, {
@@ -91,6 +140,49 @@ class ApiService {
     return this.request("/users/profile", {
       method: "PUT",
       body: JSON.stringify(profileData),
+    })
+  }
+
+  async updateProfileWithAvatar(profileData, avatarFile) {
+    const formData = new FormData()
+    
+    // Add profile data to form
+    Object.keys(profileData).forEach(key => {
+      if (profileData[key] !== undefined && profileData[key] !== null) {
+        formData.append(key, profileData[key])
+      }
+    })
+    
+    // Add avatar file
+    if (avatarFile) {
+      formData.append('avatar', avatarFile)
+    }
+
+    const token = localStorage.getItem("token")
+    return this.request("/users/profile/avatar", {
+      method: "PUT",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    })
+  }
+
+  async requestEmailChange(emailData) {
+    return this.request("/users/email/request-change", {
+      method: "POST",
+      body: JSON.stringify(emailData),
+    })
+  }
+
+  async verifyEmailChange(token) {
+    return this.request(`/users/email/verify-change?token=${token}`, {
+      method: "GET",
+    })
+  }
+
+  async updatePassword(passwordData) {
+    return this.request("/users/password", {
+      method: "PUT",
+      body: JSON.stringify(passwordData),
     })
   }
 
@@ -474,6 +566,70 @@ class ApiService {
       });
       throw error;
     }
+  }
+
+  // Community Feed Methods
+  async getCommunityPosts() {
+    return this.request('/community/posts');
+  }
+
+  async getUserVotes() {
+    return this.request('/community/votes/user');
+  }
+
+  async voteOnPost(postId) {
+    return this.request(`/community/posts/${postId}/vote`, {
+      method: 'POST'
+    });
+  }
+
+  // User Moderation Methods
+  async getAllUsers(params = {}) {
+    const { page = 1, limit = 10, search = '', status = '', role = '' } = params;
+    const queryParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      ...(search && { search }),
+      ...(status && { status }),
+      ...(role && { role })
+    });
+    
+    return this.request(`/users/all?${queryParams}`);
+  }
+
+  async getUserById(userId) {
+    return this.request(`/users/${userId}`);
+  }
+
+  async updateUserStatus(userId, isActive) {
+    return this.request(`/users/${userId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ isActive })
+    });
+  }
+
+  async updateUserRole(userId, role) {
+    return this.request(`/users/${userId}/role`, {
+      method: 'PUT',
+      body: JSON.stringify({ role })
+    });
+  }
+
+  async updateUserProfile(userId, userData) {
+    return this.request(`/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData)
+    });
+  }
+
+  async deleteUser(userId) {
+    return this.request(`/users/${userId}`, {
+      method: 'DELETE'
+    });
+  }
+
+  async getUserStats() {
+    return this.request('/users/stats');
   }
 }
 

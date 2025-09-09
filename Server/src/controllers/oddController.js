@@ -620,8 +620,8 @@ exports.spinWheel = async (req, res, next) => {
     const randomIndex = Math.floor(Math.random() * odds.length);
     const chosenODD = odds[randomIndex];
     
-    // Randomly choose scenario: 50% quiz, 50% challenge
-    const scenarioType = Math.random() < 0.5 ? 'QUIZ' : 'CHALLENGE';
+    // Randomly choose scenario: 75% quiz, 25% challenge (3:1 ratio)
+    const scenarioType = Math.random() < 0.75 ? 'QUIZ' : 'CHALLENGE';
     
     let item = null;
     let itemType = '';

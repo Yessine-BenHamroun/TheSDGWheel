@@ -14,11 +14,13 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Users,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
+import { getAvatarUrl } from "@/utils/avatarUtils"
 
 export function AdminSidebar() {
   const { user, logout } = useAuth()
@@ -55,6 +57,13 @@ export function AdminSidebar() {
       icon: Settings,
       route: "/adminSection/SdgManagement",
       color: "text-purple-400",
+    },
+    {
+      label: "User Moderation",
+      tab: "users",
+      icon: Users,
+      route: "/adminSection/UserModeration",
+      color: "text-cyan-400",
     },
     {
       label: "Advanced Statistics",
@@ -126,7 +135,10 @@ export function AdminSidebar() {
       <div className="p-4 border-b border-zinc-700/50">
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10 ring-2 ring-purple-500/30">
-            <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.username} />
+            <AvatarImage 
+              src={getAvatarUrl(user?.avatar)} 
+              alt={user?.username} 
+            />
             <AvatarFallback className="bg-gradient-to-r from-purple-500 to-blue-600 text-white">
               {user?.username?.charAt(0).toUpperCase()}
             </AvatarFallback>

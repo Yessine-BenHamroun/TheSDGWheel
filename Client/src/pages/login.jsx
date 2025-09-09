@@ -210,9 +210,9 @@ export default function Login() {
                     />
                     <span className="text-sm text-zinc-400">Remember me</span>
                   </label>
-                  <button type="button" className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+                  <Link to="/forgot-password" className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
                     Forgot password?
-                  </button>
+                  </Link>
                 </div>
 
                 {/* Submit Button */}
@@ -238,11 +238,11 @@ export default function Login() {
               {/* Divider */}
               <div className="my-8 flex items-center">
                 <div className="flex-1 border-t border-zinc-700"></div>
-                <span className="px-4 text-sm text-zinc-500">Or continue with</span>
+                <span className="px-4 text-sm text-zinc-500">Don't have an account?</span>
                 <div className="flex-1 border-t border-zinc-700"></div>
               </div>
 
-              {/* Social Login */}
+              {/* Social Login
               <div className="grid grid-cols-1 gap-4">
                 <Button
                   variant="outline"
@@ -255,11 +255,11 @@ export default function Login() {
                   </span>
                   Google
                 </Button>
-              </div>
+              </div> */}
 
               {/* Sign Up Link */}
               <div className="mt-8 text-center">
-                <span className="text-zinc-400">Don't have an account? </span>
+                
                 <Link to="/register" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">
                   Create one here
                 </Link>

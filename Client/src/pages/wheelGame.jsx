@@ -15,6 +15,7 @@ import { MouseFollower } from "../components/mouse-follower"
 import { ScrollProgress } from "../components/scroll-progress"
 import { useToast } from "../hooks/use-toast"
 import UserNavbar from "../components/UserNavbar"
+import QuizModal from "../components/QuizModal"
 
 export default function WheelGame() {
   const { user, isAuthenticated } = useAuth()
@@ -36,6 +37,7 @@ export default function WheelGame() {
   const [selectedAnswer, setSelectedAnswer] = useState(null)
   const [quizSubmitted, setQuizSubmitted] = useState(false)
   const [quizResult, setQuizResult] = useState(null)
+  const [showQuizModal, setShowQuizModal] = useState(false)
   
   // Challenge state
   const [challengeDecision, setChallengeDecision] = useState(null) // 'accepted', 'declined', null
@@ -255,6 +257,24 @@ export default function WheelGame() {
         description: error.message || "Failed to decline challenge",
         variant: "destructive",
       })
+    }
+  }
+
+  // Quiz modal handlers
+  const handleQuizModalClose = () => {
+    setShowQuizModal(false)
+    setCurrentQuiz(null)
+    setSelectedAnswer(null)
+    setQuizSubmitted(false)
+    setQuizResult(null)
+  }
+
+  const handleQuizComplete = (result) => {
+    setQuizResult(result)
+    // Update user's points in the context if needed
+    if (result?.isCorrect && user) {
+      // The points are already updated on the backend
+      // You might want to refresh user data here if you display points
     }
   }
 
@@ -494,18 +514,20 @@ export default function WheelGame() {
                 // Apply the pending spin result now that wheel animation is complete
                 if (pendingSpinResult) {
                   const { scenarioType, quiz, challenge, odd } = pendingSpinResult
-                  setCurrentScenario(scenarioType)
-
+                  
                   if (scenarioType === 'QUIZ') {
                     setCurrentQuiz(quiz)
+                    setCurrentScenario(scenarioType)
+                    setShowQuizModal(true)
                   } else {
+                    setCurrentScenario(scenarioType)
                     setCurrentChallenge(challenge)
                   }
 
                   // Show success message
                   toast({
                     title: "ODD Selected!",
-                    description: `You got ODD ${odd.oddId}: ${odd.name.en}`,
+                    description: `You got ODD ${odd.oddId}: ${odd.name.en} - ${scenarioType}`,
                   })
 
                   // Clear pending result
@@ -539,85 +561,8 @@ export default function WheelGame() {
           {/* Scenario Display */}
           <div className="space-y-6">
             <AnimatePresence mode="wait">
-              {/* Quiz Scenario */}
-              {currentScenario === 'QUIZ' && currentQuiz && (
-                <motion.div
-                  key="quiz"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Card className="bg-zinc-800/50 border-zinc-700">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <CardTitle className="text-2xl text-white">Quiz Time! 🧠</CardTitle>
-                          <CardDescription className="text-lg">
-                            ODD {selectedODD?.oddId}: {selectedODD?.name?.en}
-                          </CardDescription>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Trophy className="h-4 w-4 text-yellow-500" />
-                          <span className="text-yellow-500 font-bold">20 points</span>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      {!quizSubmitted ? (
-                        <>
-                          <p className="text-zinc-300 text-lg font-medium">{currentQuiz.question}</p>
-                          
-                          <div className="space-y-3">
-                            {currentQuiz.options.map((option, index) => (
-                              <Button
-                                key={index}
-                                variant={selectedAnswer === index ? "default" : "outline"}
-                                className={`w-full justify-start text-left h-auto p-4 ${
-                                  selectedAnswer === index 
-                                    ? "bg-blue-600 hover:bg-blue-700" 
-                                    : "border-zinc-600 hover:border-zinc-500"
-                                }`}
-                                onClick={() => setSelectedAnswer(index)}
-                              >
-                                <span className="font-semibold mr-3">{String.fromCharCode(65 + index)}.</span>
-                                {option}
-                              </Button>
-                            ))}
-                          </div>
-
-                          <Button
-                            onClick={handleQuizSubmit}
-                            disabled={selectedAnswer === null}
-                            className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
-                          >
-                            Submit Answer
-                          </Button>
-                        </>
-                      ) : (
-                        <div className="text-center space-y-4">
-                          {quizResult?.isCorrect ? (
-                            <div className="text-green-400">
-                              <CheckCircle className="h-16 w-16 mx-auto mb-4" />
-                              <h3 className="text-xl font-bold">Correct! 🎉</h3>
-                              <p>You earned {quizResult.pointsAwarded} points!</p>
-                            </div>
-                          ) : (
-                            <div className="text-red-400">
-                              <XCircle className="h-16 w-16 mx-auto mb-4" />
-                              <h3 className="text-xl font-bold">Incorrect</h3>
-                              <p>The correct answer was: {currentQuiz.options[quizResult?.correctAnswer]}</p>
-                            </div>
-                          )}
-                          {currentQuiz.explanation && (
-                            <p className="text-zinc-400 text-sm mt-4">{currentQuiz.explanation}</p>
-                          )}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
+              {/* Quiz Scenario - Now handled by QuizModal */}
+              {/* Inline quiz display removed - using modal instead */}
 
               {/* Challenge Scenario */}
               {currentScenario === 'CHALLENGE' && currentChallenge && (
@@ -899,6 +844,15 @@ export default function WheelGame() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Quiz Modal */}
+        <QuizModal
+          quiz={currentQuiz}
+          odd={selectedODD}
+          isOpen={showQuizModal}
+          onClose={handleQuizModalClose}
+          onComplete={handleQuizComplete}
+        />
       </div>
     </div>
   )

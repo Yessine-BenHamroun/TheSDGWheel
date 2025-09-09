@@ -33,17 +33,64 @@ export function AuthProvider({ children }) {
     } else {
       setLoading(false)
     }
+
+    // Listen for authentication errors from API calls
+    const handleAuthError = (event) => {
+      console.log('🔐 [AUTH CONTEXT] Authentication error detected:', event.detail)
+      if (event.detail.logout) {
+        logout()
+      }
+    }
+
+    // Add event listener for auth errors
+    window.addEventListener('authError', handleAuthError)
+
+    // Cleanup event listener
+    return () => {
+      window.removeEventListener('authError', handleAuthError)
+    }
   }, [])
 
   const loadUserProfile = async () => {
     try {
       const profile = await ApiService.getProfile()
-      setUser(profile)
+      // Handle different response structures
+      let userData
+      if (profile.data) {
+        userData = profile.data
+      } else if (profile.user) {
+        userData = profile.user
+      } else {
+        userData = profile
+      }
+      setUser(userData)
     } catch (error) {
       console.error("Failed to load user profile:", error)
       localStorage.removeItem("token")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const refreshUserProfile = async () => {
+    try {
+      console.log('🔄 [AUTH CONTEXT] Refreshing user profile...')
+      const profile = await ApiService.getProfile()
+      // Handle different response structures
+      let userData
+      if (profile.data) {
+        userData = profile.data
+      } else if (profile.user) {
+        userData = profile.user
+      } else {
+        userData = profile
+      }
+      setUser(userData)
+      console.log('✅ [AUTH CONTEXT] User profile refreshed successfully')
+      return userData
+    } catch (error) {
+      console.error("❌ [AUTH CONTEXT] Failed to refresh user profile:", error)
+      throw error
     }
   }
 
@@ -77,10 +124,23 @@ export function AuthProvider({ children }) {
     }
   }
 
-  const logout = () => {
-    localStorage.removeItem("token")
-    setUser(null)
-    navigate("/login")
+  const logout = async (logoutAll = false) => {
+    try {
+      // Call backend logout to blacklist token
+      if (logoutAll) {
+        await ApiService.logoutAllSessions()
+      } else {
+        await ApiService.logout()
+      }
+    } catch (error) {
+      console.error("Logout API call failed:", error)
+      // Continue with local logout even if API call fails
+    } finally {
+      // Always clean up local state
+      localStorage.removeItem("token")
+      setUser(null)
+      navigate("/login")
+    }
   }
 
   const refreshToken = async () => {
@@ -107,6 +167,7 @@ export function AuthProvider({ children }) {
     register,
     logout,
     refreshToken,
+    refreshUserProfile,
     loading,
     getAuthHeaders,
     isAdmin: user?.role === "admin",

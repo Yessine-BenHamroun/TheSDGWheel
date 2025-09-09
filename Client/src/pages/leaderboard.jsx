@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { MouseFollower } from "../components/mouse-follower"
 import { ScrollProgress } from "../components/scroll-progress"
+import { getAvatarUrl } from "../utils/avatarUtils"
 import { useToast } from "../hooks/use-toast"
 import UserNavbar from "../components/UserNavbar"
 
@@ -26,6 +27,14 @@ export default function Leaderboard() {
   useEffect(() => {
     loadLeaderboardData()
   }, [])
+
+  // Calculate the current user's rank
+  const getUserRank = () => {
+    if (!user || !leaderboardData.length) return "--"
+    
+    const userIndex = leaderboardData.findIndex(u => u._id === user._id || u.username === user.username)
+    return userIndex !== -1 ? userIndex + 1 : "--"
+  }
 
   // Helper function to extract text from multilingual objects
   const getLocalizedText = (textObj, fallback = '') => {
@@ -237,7 +246,10 @@ export default function Leaderboard() {
                       <CardContent className="pt-6 pb-4">
                         <div className="text-center">
                           <Avatar className="h-16 w-16 mx-auto mb-3 ring-4 ring-gray-400/30">
-                            <AvatarImage src={leaderboardData[1].avatar || "/placeholder.svg"} alt={leaderboardData[1].username} />
+                            <AvatarImage 
+                              src={getAvatarUrl(leaderboardData[1].avatar)} 
+                              alt={leaderboardData[1].username} 
+                            />
                             <AvatarFallback className="bg-zinc-700 text-lg">
                               {leaderboardData[1].username?.charAt(0).toUpperCase()}
                             </AvatarFallback>
@@ -281,7 +293,10 @@ export default function Leaderboard() {
                       <CardContent className="pt-6 pb-4">
                         <div className="text-center">
                           <Avatar className="h-20 w-20 mx-auto mb-3 ring-4 ring-yellow-500/50">
-                            <AvatarImage src={leaderboardData[0].avatar || "/placeholder.svg"} alt={leaderboardData[0].username} />
+                            <AvatarImage 
+                              src={getAvatarUrl(leaderboardData[0].avatar)} 
+                              alt={leaderboardData[0].username} 
+                            />
                             <AvatarFallback className="bg-zinc-700 text-xl">
                               {leaderboardData[0].username?.charAt(0).toUpperCase()}
                             </AvatarFallback>
@@ -323,7 +338,10 @@ export default function Leaderboard() {
                       <CardContent className="pt-6 pb-4">
                         <div className="text-center">
                           <Avatar className="h-14 w-14 mx-auto mb-3 ring-4 ring-amber-600/30">
-                            <AvatarImage src={leaderboardData[2].avatar || "/placeholder.svg"} alt={leaderboardData[2].username} />
+                            <AvatarImage 
+                              src={getAvatarUrl(leaderboardData[2].avatar)} 
+                              alt={leaderboardData[2].username} 
+                            />
                             <AvatarFallback className="bg-zinc-700 text-base">
                               {leaderboardData[2].username?.charAt(0).toUpperCase()}
                             </AvatarFallback>
@@ -368,7 +386,10 @@ export default function Leaderboard() {
                           {getRankIcon(leader.rank || index + 4)}
                         </div>
                         <Avatar className="h-12 w-12">
-                          <AvatarImage src={leader.avatar || "/placeholder.svg"} alt={leader.username} />
+                          <AvatarImage 
+                            src={getAvatarUrl(leader.avatar)} 
+                            alt={leader.username} 
+                          />
                           <AvatarFallback className="bg-zinc-600">
                             {leader.username.charAt(0).toUpperCase()}
                           </AvatarFallback>
@@ -507,7 +528,10 @@ export default function Leaderboard() {
               <CardContent>
                 <div className="flex items-center space-x-4">
                   <Avatar className="h-16 w-16">
-                    <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.username} />
+                    <AvatarImage 
+                      src={getAvatarUrl(user.avatar)} 
+                      alt={user.username} 
+                    />
                     <AvatarFallback className="bg-zinc-700 text-lg">
                       {user.username?.charAt(0).toUpperCase()}
                     </AvatarFallback>
@@ -521,7 +545,7 @@ export default function Leaderboard() {
                     <div className="text-sm text-zinc-400">points</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-zinc-300">#--</div>
+                    <div className="text-lg font-bold text-zinc-300">#{getUserRank()}</div>
                     <div className="text-sm text-zinc-400">rank</div>
                   </div>
                   <Badge variant="outline" className={getLevelColor(user.level || "Explorer")}>

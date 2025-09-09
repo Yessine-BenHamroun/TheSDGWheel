@@ -213,7 +213,14 @@ export default function CommunityVoting() {
                   {/* User Info */}
                   <div className="flex items-center space-x-3 mb-4">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={proof.user?.avatar || "/placeholder.svg"} alt={proof.user?.username} />
+                      <AvatarImage 
+                        src={proof.user?.avatar ? (
+                          proof.user.avatar.startsWith('http') 
+                            ? proof.user.avatar 
+                            : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${proof.user.avatar}`
+                        ) : "/placeholder.svg"} 
+                        alt={proof.user?.username} 
+                      />
                       <AvatarFallback className="bg-zinc-600">
                         {proof.user?.username?.charAt(0).toUpperCase()}
                       </AvatarFallback>
