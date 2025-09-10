@@ -11,6 +11,7 @@ import { MouseFollower } from "../components/mouse-follower"
 import { ScrollProgress } from "../components/scroll-progress"
 import { useAuth } from "../contexts/AuthContext"
 import ApiService from "../services/api"
+import AlertService from "../services/alertService"
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
@@ -38,14 +39,14 @@ export default function Login() {
     console.log('Login form submitted with:', { email: formData.email, password: '[HIDDEN]' })
 
     try {
+      AlertService.loading("Signing In", "Please wait while we authenticate your credentials...");
+      
       const response = await login(formData)
       
       console.log('Login successful:', response)
 
-      toast({
-        title: "Login successful!",
-        description: `Welcome back, ${response.user.username}!`,
-      })
+      AlertService.close();
+      AlertService.success("Welcome Back!", `Great to see you again, ${response.user.username}!`);
 
       // Redirection selon le rôle
       if (response.user.role === "admin") {
@@ -56,11 +57,15 @@ export default function Login() {
 
     } catch (error) {
       console.error('Login error:', error)
-      toast({
-        title: "Login failed",
-        description: error.message || "Invalid email or password. Please try again.",
-        variant: "destructive",
-      })
+      AlertService.close();
+      
+      if (error.message.includes('401') || error.message.includes('Invalid')) {
+        AlertService.error("Login Failed", "Invalid email or password. Please check your credentials and try again.");
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        AlertService.networkError();
+      } else {
+        AlertService.error("Login Error", error.message || "An unexpected error occurred. Please try again.");
+      }
     } finally {
       setIsLoading(false)
     }

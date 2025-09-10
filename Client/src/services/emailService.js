@@ -103,4 +103,56 @@ The SDG Wheel Team`
       throw new Error('Failed to send password reset email. Please try again or contact support.');
     }
   }
+};
+
+export const sendMessageReply = async (recipientEmail, recipientName, subject, originalMessage, replyMessage) => {
+  console.log('Sending message reply via EmailJS:');
+  console.log('- To:', recipientEmail);
+  console.log('- Subject:', subject);
+  
+  try {
+    const response = await emailjs.send(
+      'theSDGWheel', // Your EmailJS service ID
+      'template_reply', // You'll need to create this template in EmailJS
+      {
+        to_email: recipientEmail,
+        to_name: recipientName,
+        subject: subject,
+        original_message: originalMessage,
+        reply_message: replyMessage,
+        company_email: 'support@sdgwheel.com',
+        website_url: window.location.origin
+      },
+      'NsnWWTJOjLjIvj5lw' // Your EmailJS public key
+    );
+    
+    console.log('Reply email sent successfully:', response);
+    return { success: true };
+    
+  } catch (error) {
+    console.error('Failed to send reply email:', error);
+    
+    // Fallback with a simpler template if the specific reply template doesn't exist
+    try {
+      const fallbackResponse = await emailjs.send(
+        'theSDGWheel',
+        'template_2f06614', // Using the verification template as fallback
+        {
+          to_email: recipientEmail,
+          to_name: recipientName,
+          message: `Subject: ${subject}\n\nHello ${recipientName},\n\nThank you for contacting The SDG Wheel. Here is our response to your message:\n\nYour Original Message:\n"${originalMessage}"\n\nOur Response:\n${replyMessage}\n\nIf you have any further questions, please don't hesitate to contact us again.\n\nBest regards,\nThe SDG Wheel Team`,
+          company_email: 'support@sdgwheel.com',
+          website_link: window.location.origin
+        },
+        'NsnWWTJOjLjIvj5lw'
+      );
+      
+      console.log('Fallback reply email sent:', fallbackResponse);
+      return { success: true };
+      
+    } catch (fallbackError) {
+      console.error('All reply email attempts failed:', fallbackError);
+      throw new Error('Failed to send reply email. Please try again or contact support.');
+    }
+  }
 }; 

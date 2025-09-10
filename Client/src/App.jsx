@@ -22,6 +22,7 @@ import History from "./pages/adminSection/History"
 import Export from "./pages/adminSection/Export"
 import SdgManagement from "./pages/adminSection/SdgManagement"
 import UserModeration from "./pages/adminSection/UserModeration"
+import MessageManagement from "./pages/adminSection/MessageManagement"
 import ProofModeration from "./pages/ProofModeration"
 import VerifyNotice from "./pages/verifyNotice";
 import Verify from "./pages/verify"
@@ -183,6 +184,14 @@ function App() {
             element={
               <ProtectedRoute adminOnly>
                 <UserModeration />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adminSection/MessageManagement"
+            element={
+              <ProtectedRoute adminOnly>
+                <MessageManagement />
               </ProtectedRoute>
             }
           />

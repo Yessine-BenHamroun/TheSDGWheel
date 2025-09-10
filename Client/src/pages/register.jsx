@@ -12,6 +12,7 @@ import { ScrollProgress } from "../components/scroll-progress"
 import { useAuth } from "../contexts/AuthContext"
 import ApiService from "../services/api"
 import { sendVerificationEmail } from "../services/emailService"
+import AlertService from "../services/alertService"
 
 const countries = [
   "Afghanistan",
@@ -196,16 +197,15 @@ export default function Register() {
     e.preventDefault()
 
     if (!formData.country) {
-      toast({
-        title: "Country required",
-        description: "Please select your country.",
-      })
+      AlertService.warning("Country Required", "Please select your country to complete registration.");
       return
     }
 
     setIsLoading(true)
 
     try {
+      AlertService.loading("Creating Account", "Please wait while we set up your account...");
+      
       // Prepare data for API
       const registrationData = {
         username: formData.username,
@@ -235,25 +235,31 @@ export default function Register() {
         
         await sendVerificationEmail(formData.email, verificationToken)
         console.log('Verification email sent successfully')
+        
+        AlertService.close();
+        AlertService.success("Account Created Successfully!", `Welcome to The SDG Wheel, ${formData.username}! We've sent a verification email to ${formData.email}. Please check your inbox and click the verification link to activate your account.`);
+        
       } catch (emailError) {
         console.error('Failed to send verification email:', emailError)
-        // Don't block registration if email fails
+        AlertService.close();
+        AlertService.warning("Account Created", `Your account has been created successfully, ${formData.username}! However, we couldn't send the verification email. Please contact support if you need help verifying your account.`);
       }
-
-      toast({
-        title: "Account created successfully!",
-        description: `Welcome, ${formData.username}! Please check your email to verify your account before logging in.`,
-      })
 
       navigate("/verify-notice")
 
     } catch (error) {
       console.error('Registration error:', error)
-      toast({
-        title: "Registration failed",
-        description: error.message || "Failed to create account. Please try again.",
-        variant: "destructive",
-      })
+      AlertService.close();
+      
+      if (error.message.includes('already exists') || error.message.includes('duplicate')) {
+        AlertService.error("Registration Failed", "An account with this email or username already exists. Please try with different credentials.");
+      } else if (error.message.includes('password')) {
+        AlertService.error("Password Error", "Password must be at least 6 characters long and contain at least one number and one letter.");
+      } else if (error.message.includes('email')) {
+        AlertService.error("Invalid Email", "Please enter a valid email address.");
+      } else {
+        AlertService.error("Registration Failed", error.message || "Failed to create account. Please check your information and try again.");
+      }
     } finally {
       setIsLoading(false)
     }

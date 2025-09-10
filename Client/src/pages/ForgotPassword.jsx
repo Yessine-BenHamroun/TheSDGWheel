@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { AlertCircle, CheckCircle, Mail, ArrowLeft } from "lucide-react"
 import api from "@/services/api"
 import { sendPasswordResetEmail } from "@/services/emailService"
+import AlertService from "@/services/alertService"
 
 export default function ForgotPassword() {
   const navigate = useNavigate()
@@ -23,18 +24,18 @@ export default function ForgotPassword() {
     e.preventDefault()
     
     if (!email.trim()) {
-      setMessage({ type: 'error', text: 'Please enter your email address' })
+      AlertService.warning("Email Required", "Please enter your email address to continue.");
       return
     }
 
     if (!email.includes('@')) {
-      setMessage({ type: 'error', text: 'Please enter a valid email address' })
+      AlertService.warning("Invalid Email", "Please enter a valid email address.");
       return
     }
 
     try {
       setLoading(true)
-      setMessage({ type: '', text: '' })
+      AlertService.loading("Sending Reset Link", "Please wait while we send you a password reset link...");
       
       console.log('🔐 [FORGOT PASSWORD] Sending reset request for:', email)
       const response = await api.forgotPassword(email)
@@ -50,17 +51,27 @@ export default function ForgotPassword() {
           console.log('✅ [EMAIL] Password reset email sent successfully')
         } catch (emailError) {
           console.error('❌ [EMAIL] Failed to send password reset email:', emailError)
-          setMessage({ type: 'error', text: 'Failed to send reset email. Please try again.' })
+          AlertService.close();
+          AlertService.error("Email Failed", "Failed to send reset email. Please try again or contact support.");
           return
         }
       }
       
+      AlertService.close();
       setEmailSent(true)
-      setMessage({ type: 'success', text: 'Reset link sent to your email! Please check your inbox and click the link.' })
+      AlertService.success("Reset Link Sent!", `We've sent a password reset link to ${email}. Please check your inbox and click the link to reset your password.`);
       
     } catch (error) {
       console.error('❌ [FORGOT PASSWORD] Error:', error)
-      setMessage({ type: 'error', text: error.message || 'Failed to send reset code. Please try again.' })
+      AlertService.close();
+      
+      if (error.message.includes('not found') || error.message.includes('No user')) {
+        AlertService.error("User Not Found", "No account found with this email address. Please check your email or register for a new account.");
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        AlertService.networkError();
+      } else {
+        AlertService.error("Reset Failed", error.message || "Failed to send reset link. Please try again.");
+      }
     } finally {
       setLoading(false)
     }

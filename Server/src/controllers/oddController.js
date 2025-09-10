@@ -620,8 +620,12 @@ exports.spinWheel = async (req, res, next) => {
     const randomIndex = Math.floor(Math.random() * odds.length);
     const chosenODD = odds[randomIndex];
     
-    // Randomly choose scenario: 75% quiz, 25% challenge (3:1 ratio)
-    const scenarioType = Math.random() < 0.75 ? 'QUIZ' : 'CHALLENGE';
+    // Randomly choose scenario: 66% quiz, 33% challenge (2:1 ratio)
+    // Inverted logic: values > 0.33 give QUIZ (66%), values <= 0.33 give CHALLENGE (33%)
+    const randomValue = Math.random();
+    const scenarioType = randomValue > 0.33 ? 'QUIZ' : 'CHALLENGE';
+    
+    console.log(`🎲 Random value: ${randomValue}, Scenario: ${scenarioType}, ODD: ${chosenODD.oddId}`);
     
     let item = null;
     let itemType = '';
@@ -629,8 +633,10 @@ exports.spinWheel = async (req, res, next) => {
     if (scenarioType === 'QUIZ') {
       // Get random quiz for this ODD
       const quiz = await Quiz.getRandomByODD(chosenODD._id);
+      console.log(`🧠 Quiz found for ODD ${chosenODD.oddId}:`, quiz ? 'YES' : 'NO');
       if (!quiz) {
         // Fallback to challenge if no quiz found
+        console.log(`⚠️ No quiz found for ODD ${chosenODD.oddId}, falling back to challenge`);
         item = await Challenge.getRandomByODD(chosenODD._id);
         itemType = 'CHALLENGE';
       } else {
@@ -640,8 +646,10 @@ exports.spinWheel = async (req, res, next) => {
     } else {
       // Get random challenge for this ODD
       const challenge = await Challenge.getRandomByODD(chosenODD._id);
+      console.log(`💪 Challenge found for ODD ${chosenODD.oddId}:`, challenge ? 'YES' : 'NO');
       if (!challenge) {
         // Fallback to quiz if no challenge found
+        console.log(`⚠️ No challenge found for ODD ${chosenODD.oddId}, falling back to quiz`);
         item = await Quiz.getRandomByODD(chosenODD._id);
         itemType = 'QUIZ';
       } else {
@@ -649,6 +657,8 @@ exports.spinWheel = async (req, res, next) => {
         itemType = 'CHALLENGE';
       }
     }
+    
+    console.log(`✅ Final result: ${itemType} for ODD ${chosenODD.oddId}`);
     
     if (!item) {
       return res.status(404).json({ 

@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle, XCircle, Loader, ArrowRight } from "lucide-react";
 import ApiService from "../services/api";
+import AlertService from "../services/alertService";
 
 export default function Verify() {
   const { token: paramToken } = useParams();
@@ -50,10 +51,16 @@ export default function Verify() {
           setMessage(response.message || "Email verified successfully! Your account is now active.");
           setUserInfo(response.user);
           console.log('✅ Email verified successfully:', response.user);
+          
+          // Show success alert
+          AlertService.success("Email Verified!", "Your email has been successfully verified. Your account is now active and you can start using The SDG Wheel!");
         } else {
           console.log('❌ Verification response indicates failure');
           setStatus("error");
           setMessage(response.message || response.error || "Verification failed. Please try again.");
+          
+          // Show error alert
+          AlertService.error("Verification Failed", response.message || response.error || "The verification link is invalid or has expired. Please try registering again or contact support.");
         }
       } catch (error) {
         console.error('❌ Verification error:', error);
@@ -64,6 +71,13 @@ export default function Verify() {
         });
         setStatus("error");
         setMessage(error.message || "Network error occurred. Please try again.");
+        
+        // Show network error alert
+        if (error.message && error.message.includes('fetch')) {
+          AlertService.networkError();
+        } else {
+          AlertService.error("Verification Error", error.message || "An unexpected error occurred during verification. Please try again or contact support.");
+        }
       }
     };
 

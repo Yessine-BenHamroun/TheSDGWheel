@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import ApiService from "../services/api"
+import AlertService from "../services/alertService"
 import { FileCheck, Target, TrendingUp, AlertCircle, Check, X, Plus, Edit, Trash2, Eye } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -13,12 +14,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AdminSidebar } from "@/components/AdminSidebar"
 import { MouseFollower } from "@/components/mouse-follower"
 import { ScrollProgress } from "@/components/scroll-progress"
-import { useToast } from "@/hooks/use-toast"
-
 export default function AdminDashboard() {
   const { user, isAdmin } = useAuth()
   const navigate = useNavigate()
-  const { toast } = useToast()
 
   const [activeTab, setActiveTab] = useState("overview")
   const [loading, setLoading] = useState(true)
@@ -101,11 +99,7 @@ export default function AdminDashboard() {
         stack: error.stack,
         timestamp: new Date().toISOString()
       })
-      toast({
-        title: "Error",
-        description: "Failed to load dashboard data",
-        variant: "destructive",
-      })
+      AlertService.error("Failed to Load Dashboard", "Unable to load dashboard data. Please try refreshing the page.");
     } finally {
       setLoading(false)
     }
@@ -136,10 +130,7 @@ export default function AdminDashboard() {
 
       setPendingProofs((prev) => prev.filter((p) => p._id !== proof._id))
 
-      toast({
-        title: "Proof Approved",
-        description: `${proof.user?.username} will receive ${proof.challenge?.points || 20} points and a notification`,
-      })
+      AlertService.success("Proof Approved!", `${proof.user?.username} will receive ${proof.challenge?.points || 20} points and a notification about the approval.`);
 
       console.log("🎉 [ADMIN DASHBOARD] Approval process completed successfully")
     } catch (error) {
@@ -150,11 +141,7 @@ export default function AdminDashboard() {
         timestamp: new Date().toISOString()
       })
 
-      toast({
-        title: "Error",
-        description: error.message || "Failed to approve proof",
-        variant: "destructive",
-      })
+      AlertService.error("Approval Failed", error.message || "Failed to approve proof. Please try again.");
     }
   }
 
@@ -188,11 +175,7 @@ export default function AdminDashboard() {
         reasonLength: rejectionReason.length
       })
 
-      toast({
-        title: "Error",
-        description: "Please provide a reason for rejection",
-        variant: "destructive",
-      })
+      AlertService.warning("Rejection Reason Required", "Please provide a clear reason for rejecting this proof submission.");
       return
     }
 
@@ -222,10 +205,7 @@ export default function AdminDashboard() {
 
       setPendingProofs((prev) => prev.filter((p) => p._id !== selectedProofForRejection._id))
 
-      toast({
-        title: "Proof Rejected",
-        description: `${selectedProofForRejection.user?.username} will receive a notification with your feedback`,
-      })
+      AlertService.success("Proof Rejected", `${selectedProofForRejection.user?.username} will receive a notification with your feedback about why the submission was rejected.`);
 
       // Close dialog
       setShowRejectDialog(false)
@@ -242,31 +222,31 @@ export default function AdminDashboard() {
         timestamp: new Date().toISOString()
       })
 
-      toast({
-        title: "Error",
-        description: error.message || "Failed to reject proof",
-        variant: "destructive",
-      })
+      AlertService.error("Rejection Failed", error.message || "Failed to reject proof. Please try again.");
     } finally {
       setIsSubmittingRejection(false)
     }
   }
 
   const handleDeleteChallenge = async (challengeId) => {
+    const challenge = challenges.find(c => c._id === challengeId);
+    const challengeTitle = challenge?.title || 'this challenge';
+
+    const isConfirmed = await AlertService.deleteConfirm(
+      "Delete Challenge",
+      `Are you sure you want to delete "${challengeTitle}"? This will permanently remove the challenge and cannot be undone.`,
+      "Delete Challenge"
+    );
+
+    if (!isConfirmed) return;
+
     try {
       await ApiService.deleteChallenge(challengeId)
       setChallenges((prev) => prev.filter((challenge) => challenge._id !== challengeId))
-      toast({
-        title: "Challenge deleted",
-        description: "Challenge has been deleted successfully",
-      })
+      AlertService.success("Challenge Deleted!", "The challenge has been deleted successfully.");
     } catch (error) {
       console.error("Delete challenge error:", error)
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete challenge",
-        variant: "destructive",
-      })
+      AlertService.error("Delete Failed", error.message || "Failed to delete challenge. Please try again.");
     }
   }
 
@@ -274,17 +254,10 @@ export default function AdminDashboard() {
     try {
       await ApiService.seedDefaultODDs()
       loadDashboardData()
-      toast({
-        title: "ODDs seeded",
-        description: "Default ODDs have been created successfully",
-      })
+      AlertService.success("ODDs Seeded Successfully!", "Default ODDs have been created and are now available for users.");
     } catch (error) {
       console.error("Seed ODDs error:", error)
-      toast({
-        title: "Error",
-        description: error.message || "Failed to seed ODDs",
-        variant: "destructive",
-      })
+      AlertService.error("Seeding Failed", error.message || "Failed to seed ODDs. Please try again.");
     }
   }
 
@@ -292,17 +265,10 @@ export default function AdminDashboard() {
     try {
       await ApiService.resetODDs()
       loadDashboardData()
-      toast({
-        title: "ODDs reset",
-        description: "All ODDs have been reset successfully",
-      })
+      AlertService.success("ODDs Reset Successfully!", "All ODDs have been reset and are ready for a fresh start.");
     } catch (error) {
       console.error("Reset ODDs error:", error)
-      toast({
-        title: "Error",
-        description: error.message || "Failed to reset ODDs",
-        variant: "destructive",
-      })
+      AlertService.error("Reset Failed", error.message || "Failed to reset ODDs. Please try again.");
     }
   }
 

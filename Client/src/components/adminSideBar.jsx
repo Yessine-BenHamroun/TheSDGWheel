@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Users,
+  MessageSquare,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -64,6 +65,13 @@ export function AdminSidebar() {
       icon: Users,
       route: "/adminSection/UserModeration",
       color: "text-cyan-400",
+    },
+    {
+      label: "Messages",
+      tab: "messages",
+      icon: MessageSquare,
+      route: "/adminSection/MessageManagement",
+      color: "text-indigo-400",
     },
     {
       label: "Advanced Statistics",

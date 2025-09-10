@@ -14,6 +14,7 @@ import { Camera, Save, User, Mail, MapPin, Shield, AlertCircle, CheckCircle, Eye
 import api from "@/services/api"
 import { getAvatarUrl } from "@/utils/avatarUtils"
 import { useAuth } from "@/contexts/AuthContext"
+import AlertService from "@/services/alertService"
 
 // Password strength calculation
 const getPasswordStrength = (password) => {
@@ -130,7 +131,7 @@ export default function Settings() {
       })
     } catch (error) {
       console.error('❌ [FRONTEND] Failed to fetch profile:', error)
-      setMessage({ type: 'error', text: `Failed to load profile: ${error.message}` })
+      AlertService.error("Failed to Load Profile", `Unable to retrieve your profile information: ${error.message}`);
     } finally {
       setLoading(false)
     }
@@ -145,13 +146,13 @@ export default function Settings() {
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        setMessage({ type: 'error', text: 'Please select a valid image file' })
+        AlertService.warning("Invalid File Type", "Please select a valid image file (JPG, PNG, GIF, etc.).");
         return
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        setMessage({ type: 'error', text: 'Image size must be less than 5MB' })
+        AlertService.warning("File Too Large", "Image size must be less than 5MB. Please choose a smaller image.");
         return
       }
 
@@ -188,10 +189,12 @@ export default function Settings() {
 
       // If nothing changed and no avatar, show error
       if (Object.keys(updateData).length === 0 && !avatarFile) {
-        setMessage({ type: 'error', text: 'No changes to save' })
+        AlertService.info("No Changes", "There are no changes to save. Please modify your profile information first.");
         setSaving(false)
         return
       }
+
+      AlertService.loading("Saving Profile", "Please wait while we update your profile...");
 
       let response
       // Handle avatar upload if changed
@@ -205,7 +208,8 @@ export default function Settings() {
 
       console.log('✅ [SAVE PROFILE] Response received:', response)
 
-      setMessage({ type: 'success', text: 'Profile updated successfully!' })
+      AlertService.close();
+      AlertService.success("Profile Updated!", "Your profile has been successfully updated and saved.")
       
       // Update profile with response data
       if (response?.data) {
@@ -239,10 +243,8 @@ export default function Settings() {
         status: error.response?.status
       })
       
-      setMessage({ 
-        type: 'error', 
-        text: error.response?.data?.error || error.response?.data?.message || error.message || 'Failed to update profile' 
-      })
+      AlertService.close();
+      AlertService.error("Profile Update Failed", error.response?.data?.error || error.response?.data?.message || error.message || 'Failed to update profile. Please try again.');
     } finally {
       setSaving(false)
     }
@@ -257,29 +259,29 @@ export default function Settings() {
 
       // Validate email form
       if (!emailForm.newEmail?.trim()) {
-        setMessage({ type: 'error', text: 'New email is required' })
+        AlertService.warning("Email Required", "Please enter your new email address.");
         return
       }
 
       if (emailForm.newEmail.toLowerCase().trim() === profile.email?.toLowerCase().trim()) {
-        setMessage({ type: 'error', text: 'New email must be different from current email' })
+        AlertService.warning("Same Email", "The new email must be different from your current email address.");
         return
       }
 
       if (emailForm.newEmail !== emailForm.confirmEmail) {
-        setMessage({ type: 'error', text: 'Email addresses do not match' })
+        AlertService.warning("Email Mismatch", "The email addresses do not match. Please check both fields.");
         return
       }
 
       if (!emailForm.currentPassword?.trim()) {
-        setMessage({ type: 'error', text: 'Current password is required' })
+        AlertService.warning("Password Required", "Please enter your current password to confirm this change.");
         return
       }
 
       // Email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(emailForm.newEmail)) {
-        setMessage({ type: 'error', text: 'Please enter a valid email address' })
+        AlertService.warning("Invalid Email", "Please enter a valid email address format.");
         return
       }
 
@@ -288,23 +290,28 @@ export default function Settings() {
         currentPassword: emailForm.currentPassword
       }
 
+      AlertService.loading("Updating Email", "Please wait while we process your email change request...");
+
       console.log('📧 [EMAIL CHANGE] Sending email change request...')
       const response = await api.requestEmailChange(emailData)
       console.log('✅ [EMAIL CHANGE] Email change response:', response)
 
       setEmailVerificationSent(true)
-      setMessage({ 
-        type: 'success', 
-        text: 'Verification email sent to your new email address. Please check your inbox and click the verification link to complete the email change.' 
-      })
+      AlertService.close();
+      AlertService.success("Verification Email Sent!", `We've sent a verification link to ${emailForm.newEmail}. Please check your inbox and click the link to complete your email change.`);
       setEmailForm({ newEmail: '', confirmEmail: '', currentPassword: '' })
 
     } catch (error) {
       console.error('Failed to request email change:', error)
-      setMessage({ 
-        type: 'error', 
-        text: error.response?.data?.message || error.message || 'Failed to request email change' 
-      })
+      AlertService.close();
+      
+      if (error.message.includes('password') || error.message.includes('401')) {
+        AlertService.error("Invalid Password", "Your current password is incorrect. Please try again.");
+      } else if (error.message.includes('email') && error.message.includes('exists')) {
+        AlertService.error("Email Already Exists", "This email address is already registered. Please choose a different email.");
+      } else {
+        AlertService.error("Email Change Failed", error.response?.data?.message || error.message || 'Failed to request email change. Please try again.');
+      }
     } finally {
       setUpdatingEmail(false)
     }
@@ -313,28 +320,27 @@ export default function Settings() {
   const handlePasswordChange = async () => {
     try {
       setUpdatingPassword(true)
-      setMessage({ type: '', text: '' })
 
       console.log('🔐 [PASSWORD CHANGE] Starting password update...')
 
       // Validate password form
       if (!passwordForm.currentPassword?.trim()) {
-        setMessage({ type: 'error', text: 'Current password is required' })
+        AlertService.warning("Current Password Required", "Please enter your current password to continue.");
         return
       }
 
       if (!passwordForm.newPassword?.trim()) {
-        setMessage({ type: 'error', text: 'New password is required' })
+        AlertService.warning("New Password Required", "Please enter a new password.");
         return
       }
 
       if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-        setMessage({ type: 'error', text: 'New passwords do not match' })
+        AlertService.warning("Passwords Don't Match", "The new password and confirmation password must be identical.");
         return
       }
 
       if (passwordForm.newPassword.length < 6) {
-        setMessage({ type: 'error', text: 'New password must be at least 6 characters long' })
+        AlertService.warning("Password Too Short", "Your new password must be at least 6 characters long for security.");
         return
       }
 
@@ -343,22 +349,22 @@ export default function Settings() {
         newPassword: passwordForm.newPassword
       }
 
+      AlertService.loading("Updating Password", "Please wait while we securely update your password...");
+
       console.log('🔐 [PASSWORD CHANGE] Sending password update request...')
       const response = await api.updatePassword(passwordData)
       console.log('✅ [PASSWORD CHANGE] Password update response:', response)
 
+      AlertService.close();
+
       // Check if re-authentication is required
       if (response.requiresReauth) {
-        setMessage({ 
-          type: 'success', 
-          text: 'Password updated successfully! You will be logged out for security.' 
-        })
-        // Force logout after a short delay to show the message
-        setTimeout(() => {
-          logout()
-        }, 2000)
+        AlertService.success("Password Updated!", "Your password has been updated successfully. You will be logged out for security reasons.")
+          .then(() => {
+            logout()
+          });
       } else {
-        setMessage({ type: 'success', text: 'Password updated successfully!' })
+        AlertService.success("Password Updated!", "Your password has been updated successfully!");
       }
       
       setShowPasswordForm(false)
@@ -372,10 +378,15 @@ export default function Settings() {
         status: error.response?.status
       })
       
-      setMessage({ 
-        type: 'error', 
-        text: error.response?.data?.error || error.response?.data?.message || error.message || 'Failed to update password' 
-      })
+      AlertService.close();
+
+      if (error.message.includes('current password') || error.message.includes('incorrect') || error.response?.status === 401) {
+        AlertService.error("Incorrect Current Password", "The current password you entered is incorrect. Please try again.");
+      } else if (error.message.includes('same password') || error.message.includes('identical')) {
+        AlertService.warning("Same Password", "Your new password must be different from your current password.");
+      } else {
+        AlertService.error("Password Update Failed", error.response?.data?.error || error.response?.data?.message || error.message || 'Failed to update password. Please try again.');
+      }
     } finally {
       setUpdatingPassword(false)
     }

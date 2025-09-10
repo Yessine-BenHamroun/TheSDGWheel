@@ -265,6 +265,12 @@ export function SDGWheel({ isSpinning = false, selectedSDG = null, onSpinComplet
   return (
     <motion.div
       className="relative flex items-center justify-center p-4"
+      style={{
+        width: `${wheelSize + 100}px`,
+        height: `${wheelSize + 100}px`,
+        minWidth: `${wheelSize + 100}px`,
+        minHeight: `${wheelSize + 100}px`,
+      }}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 1, ease: "easeOut" }}
@@ -304,15 +310,26 @@ export function SDGWheel({ isSpinning = false, selectedSDG = null, onSpinComplet
         </div>
       </div>
 
-      <div className="relative rounded-full overflow-hidden border-4 border-white/20 shadow-2xl backdrop-blur-sm">
+      <div 
+        className="relative rounded-full overflow-hidden border-4 border-white/20 shadow-2xl backdrop-blur-sm flex items-center justify-center"
+        style={{
+          width: `${wheelSize}px`,
+          height: `${wheelSize}px`,
+          minWidth: `${wheelSize}px`,
+          minHeight: `${wheelSize}px`,
+        }}
+      >
         <svg
           width={wheelSize}
           height={wheelSize}
           viewBox={`0 0 ${wheelSize} ${wheelSize}`}
+          preserveAspectRatio="xMidYMid meet"
           style={{
             transform: `rotate(${rotation}rad)`,
             transition: isAnimating ? "transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94)" : "none",
             filter: "drop-shadow(0 0 30px rgba(139, 92, 246, 0.4))",
+            display: "block",
+            aspectRatio: "1 / 1",
           }}
         >
           <circle cx={center.x} cy={center.y} r={outerRadius + 5} fill="rgba(0,0,0,0.1)" />

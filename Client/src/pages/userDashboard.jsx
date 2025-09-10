@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import ApiService from "../services/api"
+import AlertService from "../services/alertService"
 import {
   Activity,
   Award,
@@ -103,11 +104,7 @@ export default function Dashboard() {
 
     } catch (error) {
       console.error("Error loading dashboard data:", error)
-      toast({
-        title: "Error",
-        description: "Failed to load dashboard data",
-        variant: "destructive",
-      })
+      AlertService.error("Failed to Load Dashboard", "Unable to load your dashboard data. Please refresh the page or try again later.");
     } finally {
       setIsLoading(false)
     }
@@ -134,16 +131,14 @@ export default function Dashboard() {
 
   const handleSubmitProof = async () => {
     if (!proofText.trim() && !proofFile) {
-      toast({
-        title: "Proof Required",
-        description: "Please provide either text description or upload a file",
-        variant: "destructive",
-      })
+      AlertService.warning("Proof Required", "Please provide either a text description or upload a file to submit your proof.");
       return
     }
 
     try {
       setProofSubmitting(true)
+      AlertService.loading("Submitting Proof", "Please wait while we upload your proof for verification...");
+      
       const formData = new FormData()
       formData.append('challengeId', selectedChallengeForProof._id)
       formData.append('description', proofText)
@@ -154,10 +149,8 @@ export default function Dashboard() {
 
       await ApiService.submitChallengeProof(formData)
       
-      toast({
-        title: "Proof Submitted! 📤",
-        description: "Your proof is pending admin verification",
-      })
+      AlertService.close();
+      AlertService.success("Proof Submitted!", "Your proof has been successfully submitted and is now pending admin verification. You'll be notified once it's reviewed!");
       
       // Reset form and close modal
       setProofText('')
@@ -169,11 +162,15 @@ export default function Dashboard() {
       loadUserDashboardData()
     } catch (error) {
       console.error("Proof submission error:", error)
-      toast({
-        title: "Error",
-        description: error.message || "Failed to submit proof",
-        variant: "destructive",
-      })
+      AlertService.close();
+      
+      if (error.message.includes('file size') || error.message.includes('size')) {
+        AlertService.error("File Too Large", "The uploaded file is too large. Please choose a smaller file (max 5MB).");
+      } else if (error.message.includes('format') || error.message.includes('type')) {
+        AlertService.error("Invalid File Format", "Please upload a valid image or document file (JPG, PNG, PDF, DOC).");
+      } else {
+        AlertService.error("Submission Failed", error.message || "Failed to submit your proof. Please check your connection and try again.");
+      }
     } finally {
       setProofSubmitting(false)
     }

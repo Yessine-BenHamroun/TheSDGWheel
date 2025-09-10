@@ -9,12 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AdminSidebar } from '@/components/AdminSidebar'
 import { MouseFollower } from '@/components/mouse-follower'
 import { ScrollProgress } from '@/components/scroll-progress'
-import { useToast } from '@/hooks/use-toast'
 import ApiService from '@/services/api'
+import AlertService from '@/services/alertService'
 
 const ProofModeration = () => {
   const navigate = useNavigate()
-  const { toast } = useToast()
   
   const [proofs, setProofs] = useState([])
   const [loading, setLoading] = useState(true)
@@ -100,17 +99,22 @@ const ProofModeration = () => {
       })
     } catch (error) {
       console.error('Failed to load proofs:', error)
-      toast({
-        title: "Error",
-        description: "Failed to load pending proofs",
-        variant: "destructive",
-      })
+      AlertService.error("Failed to Load Proofs", "Unable to load pending proofs. Please try refreshing the page.");
     } finally {
       setLoading(false)
     }
   }
 
   const handleApproveProof = async (proof) => {
+    const isConfirmed = await AlertService.confirm(
+      "Approve This Proof?",
+      `You're about to approve ${proof.user?.username}'s submission for "${proof.challenge?.title}". They will receive ${proof.challenge?.points || 20} points and a notification.`,
+      "Approve",
+      "Cancel"
+    );
+
+    if (!isConfirmed) return;
+
     console.log("🔍 [PROOF MODERATION] Starting proof approval process:", {
       proofId: proof._id,
       userId: proof.user?._id,
@@ -135,10 +139,7 @@ const ProofModeration = () => {
 
       setProofs(prev => prev.filter(p => p._id !== proof._id))
 
-      toast({
-        title: "Proof Approved",
-        description: `${proof.user?.username} will receive ${proof.challenge?.points || 20} points and a notification`,
-      })
+      AlertService.success("Proof Approved!", `${proof.user?.username} will receive ${proof.challenge?.points || 20} points and a notification about the approval.`);
 
       console.log("🎉 [PROOF MODERATION] Approval process completed successfully")
     } catch (error) {
@@ -149,11 +150,7 @@ const ProofModeration = () => {
         timestamp: new Date().toISOString()
       })
 
-      toast({
-        title: "Error",
-        description: error.message || "Failed to approve proof",
-        variant: "destructive",
-      })
+      AlertService.error("Approval Failed", error.message || "Failed to approve proof. Please try again.");
     }
   }
 
@@ -171,11 +168,7 @@ const ProofModeration = () => {
         reasonLength: rejectionReason.length
       })
 
-      toast({
-        title: "Error",
-        description: "Please provide a reason for rejection",
-        variant: "destructive",
-      })
+      AlertService.warning("Rejection Reason Required", "Please provide a clear reason for rejecting this proof submission.");
       return
     }
 
@@ -205,10 +198,7 @@ const ProofModeration = () => {
 
       setProofs(prev => prev.filter(p => p._id !== selectedProofForRejection._id))
 
-      toast({
-        title: "Proof Rejected",
-        description: `${selectedProofForRejection.user?.username} will receive a notification with your feedback`,
-      })
+      AlertService.success("Proof Rejected", `${selectedProofForRejection.user?.username} will receive a notification with your feedback about why the submission was rejected.`);
 
       setShowRejectDialog(false)
       setSelectedProofForRejection(null)
@@ -224,11 +214,7 @@ const ProofModeration = () => {
         timestamp: new Date().toISOString()
       })
 
-      toast({
-        title: "Error",
-        description: error.message || "Failed to reject proof",
-        variant: "destructive",
-      })
+      AlertService.error("Rejection Failed", error.message || "Failed to reject proof. Please try again.");
     } finally {
       setIsSubmittingRejection(false)
     }

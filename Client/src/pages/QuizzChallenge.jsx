@@ -2,17 +2,16 @@
 
 import { useEffect, useState } from "react"
 import ApiService from "../services/api"
+import AlertService from "../services/alertService"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "../../components/ui/dialog"
-import { useToast } from "@/hooks/use-toast"
 import { Plus, Edit, Trash2, BookOpen, Target as TargetIcon, Eye } from "lucide-react"
 import { AdminSidebar } from "@/components/AdminSidebar"
 import { MouseFollower } from "@/components/mouse-follower"
 import { ScrollProgress } from "@/components/scroll-progress"
 
 export default function QuizzChallengeAdmin() {
-  const { toast } = useToast()
   const [tab, setTab] = useState("quizzes")
 
   // Quizzes
@@ -69,7 +68,7 @@ export default function QuizzChallengeAdmin() {
       setChallenges(challengeRes.challenges || [])
       setOdds(oddsRes.odds || [])
     } catch (e) {
-      toast({ title: "Error", description: e.message, variant: "destructive" })
+      AlertService.error("Failed to Load Data", e.message);
     } finally {
       setLoading(false)
     }
@@ -115,26 +114,33 @@ export default function QuizzChallengeAdmin() {
       if (quizEdit) {
         const { _id, createdAt, updatedAt, isActive, __v, ...quizData } = quizForm
         await ApiService.updateQuiz(quizEdit._id, quizData)
-        toast({ title: "Quiz updated!", description: "The quiz was updated successfully." })
+        AlertService.success("Quiz Updated!", "The quiz has been updated successfully.");
       } else {
         await ApiService.createQuiz(quizForm)
-        toast({ title: "Quiz created!", description: "A new quiz was added." })
+        AlertService.success("Quiz Created!", "A new quiz has been added to the system.");
       }
       closeQuizModal()
       fetchAll()
     } catch (err) {
-      toast({ title: "Error", description: err.message, variant: "destructive" })
+      AlertService.error("Operation Failed", err.message);
     }
   }
 
   const handleQuizDelete = async (quiz) => {
-    if (!window.confirm("Are you sure you want to delete this quiz?")) return
+    const isConfirmed = await AlertService.deleteConfirm(
+      "Delete Quiz",
+      `Are you sure you want to delete "${quiz.question}"? This will permanently remove the quiz and cannot be undone.`,
+      "Delete Quiz"
+    );
+
+    if (!isConfirmed) return;
+
     try {
       await ApiService.deleteQuiz(quiz._id)
-      toast({ title: "Quiz deleted!", description: "The quiz was deleted." })
+      AlertService.success("Quiz Deleted", "The quiz has been permanently removed from the system.");
       fetchAll()
     } catch (err) {
-      toast({ title: "Error", description: err.message, variant: "destructive" })
+      AlertService.error("Delete Failed", err.message);
     }
   }
 
@@ -164,26 +170,33 @@ export default function QuizzChallengeAdmin() {
       if (challengeEdit) {
         const { _id, isActive, completionCount, createdAt, updatedAt,__v, ...challengeData } = challengeForm
         await ApiService.updateChallenge(challengeEdit._id, challengeData)
-        toast({ title: "Challenge updated!", description: "The challenge was updated successfully." })
+        AlertService.success("Challenge Updated!", "The challenge has been updated successfully.");
       } else {
         await ApiService.createChallenge(challengeForm)
-        toast({ title: "Challenge created!", description: "A new challenge was added." })
+        AlertService.success("Challenge Created!", "A new challenge has been added to the system.");
       }
       closeChallengeModal()
       fetchAll()
     } catch (err) {
-      toast({ title: "Error", description: err.message, variant: "destructive" })
+      AlertService.error("Operation Failed", err.message);
     }
   }
 
   const handleChallengeDelete = async (challenge) => {
-    if (!window.confirm("Are you sure you want to delete this challenge?")) return
+    const isConfirmed = await AlertService.deleteConfirm(
+      "Delete Challenge",
+      `Are you sure you want to delete "${challenge.title}"? This will permanently remove the challenge and cannot be undone.`,
+      "Delete Challenge"
+    );
+
+    if (!isConfirmed) return;
+
     try {
       await ApiService.deleteChallenge(challenge._id)
-      toast({ title: "Challenge deleted!", description: "The challenge was deleted." })
+      AlertService.success("Challenge Deleted", "The challenge has been permanently removed from the system.");
       fetchAll()
     } catch (err) {
-      toast({ title: "Error", description: err.message, variant: "destructive" })
+      AlertService.error("Delete Failed", err.message);
     }
   }
 

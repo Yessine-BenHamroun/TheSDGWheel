@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import ApiService from "../services/api"
+import AlertService from "../services/alertService"
 import { motion, AnimatePresence } from "framer-motion"
 import { Play, RotateCcw, CheckCircle, XCircle, Upload, FileText, Trophy, Camera } from "lucide-react"
 
@@ -16,6 +17,7 @@ import { ScrollProgress } from "../components/scroll-progress"
 import { useToast } from "../hooks/use-toast"
 import UserNavbar from "../components/UserNavbar"
 import QuizModal from "../components/QuizModal"
+import ChallengeModal from "../components/ChallengeModal"
 
 export default function WheelGame() {
   const { user, isAuthenticated } = useAuth()
@@ -41,6 +43,7 @@ export default function WheelGame() {
   
   // Challenge state
   const [challengeDecision, setChallengeDecision] = useState(null) // 'accepted', 'declined', null
+  const [showChallengeModal, setShowChallengeModal] = useState(false)
   
   // Proof submission modal state
   const [showProofModal, setShowProofModal] = useState(false)
@@ -123,20 +126,12 @@ export default function WheelGame() {
 
   const handleSpin = async () => {
     if (!isAuthenticated) {
-      toast({
-        title: "Login Required",
-        description: "Please login to spin the wheel",
-        variant: "destructive",
-      })
+      AlertService.warning("Login Required", "Please login to spin the wheel and participate in the SDG challenges!");
       return
     }
 
     if (!canSpinToday) {
-      toast({
-        title: "Daily Limit Reached",
-        description: "You can only spin once per day. Come back tomorrow!",
-        variant: "destructive",
-      })
+      AlertService.info("Daily Limit Reached", "You can only spin once per day. Come back tomorrow for another chance!");
       return
     }
 
@@ -165,17 +160,9 @@ export default function WheelGame() {
       
       if (error.message.includes('already spun')) {
         setCanSpinToday(false)
-        toast({
-          title: "Daily Limit Reached", 
-          description: error.message,
-          variant: "destructive",
-        })
+        AlertService.info("Daily Limit Reached", error.message);
       } else {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to spin the wheel",
-          variant: "destructive",
-        })
+        AlertService.error("Spin Failed", error.message || "Failed to spin the wheel. Please try again later.");
       }
     }
   }
@@ -183,11 +170,7 @@ export default function WheelGame() {
   // Quiz handlers
   const handleQuizSubmit = async () => {
     if (selectedAnswer === null) {
-      toast({
-        title: "Please Select an Answer",
-        description: "Choose one of the options before submitting",
-        variant: "destructive",
-      })
+      AlertService.warning("Answer Required", "Please select an answer before submitting your quiz response.");
       return
     }
 
@@ -269,6 +252,13 @@ export default function WheelGame() {
     setQuizResult(null)
   }
 
+  // Challenge modal handlers
+  const handleChallengeModalClose = () => {
+    setShowChallengeModal(false)
+    setCurrentChallenge(null)
+    setChallengeDecision(null)
+  }
+
   const handleQuizComplete = (result) => {
     setQuizResult(result)
     // Update user's points in the context if needed
@@ -276,6 +266,12 @@ export default function WheelGame() {
       // The points are already updated on the backend
       // You might want to refresh user data here if you display points
     }
+  }
+
+  const handleChallengeComplete = (result) => {
+    setChallengeDecision(result.accepted ? 'accepted' : 'declined')
+    // Refresh spin status to get updated pending challenges
+    loadSpinStatus()
   }
 
   // Proof submission handlers
@@ -500,13 +496,14 @@ export default function WheelGame() {
         )}
 
         {/* Game Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mt-20">
           {/* Wheel */}
-          <div className="flex flex-col items-center space-y-8">
-            <SDGWheel
-              isSpinning={isSpinning}
-              selectedSDG={selectedODD}
-              onSpinComplete={(sdgId) => {
+          <div className="flex flex-col items-center space-y-20 mt-24">
+            <div className="flex items-center justify-center w-full aspect-square max-w-md mx-auto relative z-10">
+              <SDGWheel
+                isSpinning={isSpinning}
+                selectedSDG={selectedODD}
+                onSpinComplete={(sdgId) => {
                 console.log("🎯 Wheel stopped on SDG:", sdgId)
                 console.log("🎯 Backend selected ODD:", selectedODD?.oddId)
                 setIsSpinning(false)
@@ -522,6 +519,7 @@ export default function WheelGame() {
                   } else {
                     setCurrentScenario(scenarioType)
                     setCurrentChallenge(challenge)
+                    setShowChallengeModal(true)
                   }
 
                   // Show success message
@@ -534,170 +532,37 @@ export default function WheelGame() {
                   setPendingSpinResult(null)
                 }
               }}
-            />
+              />
+            </div>
 
-            <Button
-              onClick={handleSpin}
-              disabled={isSpinning || !canSpinToday}
-              size="lg"
-              className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-full disabled:opacity-50"
-            >
-              {isSpinning ? (
-                <>
-                  <RotateCcw className="mr-2 h-5 w-5 animate-spin" />
-                  Spinning...
-                </>
-              ) : !canSpinToday ? (
-                "Daily Limit Reached"
-              ) : (
-                <>
-                  <Play className="mr-2 h-5 w-5" />
-                  Spin the Wheel
-                </>
-              )}
-            </Button>
+            <div className="flex justify-center w-full relative z-50 mt-12">
+              <Button
+                onClick={handleSpin}
+                disabled={isSpinning || !canSpinToday}
+                size="lg"
+                className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-full disabled:opacity-50 relative z-50 cursor-pointer"
+              >
+                {isSpinning ? (
+                  <>
+                    <RotateCcw className="mr-2 h-5 w-5 animate-spin" />
+                    Spinning...
+                  </>
+                ) : !canSpinToday ? (
+                  "Daily Limit Reached"
+                ) : (
+                  <>
+                    <Play className="mr-2 h-5 w-5" />
+                    Spin the Wheel
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
 
           {/* Scenario Display */}
           <div className="space-y-6">
             <AnimatePresence mode="wait">
-              {/* Quiz Scenario - Now handled by QuizModal */}
-              {/* Inline quiz display removed - using modal instead */}
-
-              {/* Challenge Scenario */}
-              {currentScenario === 'CHALLENGE' && currentChallenge && (
-                <motion.div
-                  key="challenge"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Card className="bg-zinc-800/50 border-zinc-700">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <CardTitle className="text-2xl text-white">{currentChallenge.title}</CardTitle>
-                          <CardDescription className="text-lg">
-                            ODD {selectedODD?.oddId}: {selectedODD?.name?.en}
-                          </CardDescription>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Trophy className="h-4 w-4 text-yellow-500" />
-                          <span className="text-yellow-500 font-bold">20 points</span>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <p className="text-zinc-300 text-lg">{currentChallenge.description}</p>
-
-                      {challengeDecision === null && (
-                        <div className="flex space-x-4">
-                          <Button
-                            onClick={handleAcceptChallenge}
-                            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-                          >
-                            <CheckCircle className="mr-2 h-4 w-4" />
-                            Accept Challenge
-                          </Button>
-                          <Button
-                            onClick={handleDeclineChallenge}
-                            variant="outline"
-                            className="flex-1 border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500"
-                          >
-                            <XCircle className="mr-2 h-4 w-4" />
-                            Decline
-                          </Button>
-                        </div>
-                      )}
-
-                      {challengeDecision === 'accepted' && (
-                        <div className="text-center space-y-4">
-                          <div className="text-green-400">
-                            <CheckCircle className="h-12 w-12 mx-auto mb-2" />
-                            <h3 className="text-lg font-bold">Challenge Accepted! 💪</h3>
-                            <p className="text-sm">Complete the challenge and submit proof to earn 20 points</p>
-                          </div>
-                          {(() => {
-                            const todaysPendingChallenge = pendingChallenges.find(pc =>
-                              pc.challenge?._id === currentChallenge._id
-                            );
-
-                            if (todaysPendingChallenge?.status === 'PROOF_SUBMITTED') {
-                              return (
-                                <Button
-                                  disabled
-                                  className="bg-yellow-600/50 text-yellow-200 cursor-not-allowed opacity-75"
-                                >
-                                  <CheckCircle className="mr-2 h-4 w-4" />
-                                  Pending Review
-                                </Button>
-                              );
-                            } else if (todaysPendingChallenge?.status === 'VERIFIED') {
-                              return (
-                                <Button
-                                  disabled
-                                  className="bg-green-600/50 text-green-200 cursor-not-allowed opacity-75"
-                                >
-                                  <CheckCircle className="mr-2 h-4 w-4" />
-                                  Proof Approved ✅
-                                </Button>
-                              );
-                            } else if (todaysPendingChallenge?.status === 'REJECTED') {
-                              return (
-                                <Button
-                                  disabled
-                                  className="bg-red-600/50 text-red-200 cursor-not-allowed opacity-75"
-                                >
-                                  <XCircle className="mr-2 h-4 w-4" />
-                                  Proof Rejected ❌
-                                </Button>
-                              );
-                            } else if (todaysPendingChallenge?.status === 'PENDING') {
-                              return (
-                                <Button
-                                  onClick={() => handleOpenProofModal(todaysPendingChallenge)}
-                                  className="bg-blue-600 hover:bg-blue-700"
-                                >
-                                  <Upload className="mr-2 h-4 w-4" />
-                                  Submit Proof
-                                </Button>
-                              );
-                            } else {
-                              return (
-                                <Button
-                                  onClick={() => {
-                                    toast({
-                                      title: "Error",
-                                      description: "Could not find pending challenge. Please refresh the page.",
-                                      variant: "destructive",
-                                    })
-                                  }}
-                                  variant="outline"
-                                  className="border-zinc-700 text-zinc-300"
-                                >
-                                  <Upload className="mr-2 h-4 w-4" />
-                                  Submit Proof
-                                </Button>
-                              );
-                            }
-                          })()}
-                        </div>
-                      )}
-
-                      {challengeDecision === 'declined' && (
-                        <div className="text-center space-y-4">
-                          <div className="text-gray-400">
-                            <XCircle className="h-12 w-12 mx-auto mb-2" />
-                            <h3 className="text-lg font-bold">Challenge Declined</h3>
-                            <p className="text-sm">See you tomorrow for another spin!</p>
-                          </div>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
+              {/* Quiz and Challenge scenarios are now handled by modals */}
 
               {/* Waiting State */}
               {!currentScenario && (
@@ -852,6 +717,16 @@ export default function WheelGame() {
           isOpen={showQuizModal}
           onClose={handleQuizModalClose}
           onComplete={handleQuizComplete}
+        />
+
+        {/* Challenge Modal */}
+        <ChallengeModal
+          challenge={currentChallenge}
+          odd={selectedODD}
+          isOpen={showChallengeModal}
+          onClose={handleChallengeModalClose}
+          onComplete={handleChallengeComplete}
+          pendingChallenges={pendingChallenges}
         />
       </div>
     </div>

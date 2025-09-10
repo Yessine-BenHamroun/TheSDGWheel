@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, CheckCircle, Eye, EyeOff, Lock, ArrowLeft } from "lucide-react"
 import api from "@/services/api"
+import AlertService from "@/services/alertService"
 
 export default function ResetPasswordWithToken() {
   const navigate = useNavigate()
@@ -32,6 +33,7 @@ export default function ResetPasswordWithToken() {
 
   const verifyToken = async () => {
     if (!token) {
+      AlertService.error("Invalid Reset Link", "The password reset link is invalid or malformed. Please request a new password reset.");
       setMessage({ type: 'error', text: 'Invalid reset link' })
       setVerifying(false)
       return
@@ -46,10 +48,12 @@ export default function ResetPasswordWithToken() {
         setUserInfo(response)
         console.log('✅ [VERIFY TOKEN] Token is valid for:', response.email)
       } else {
+        AlertService.error("Expired Reset Link", response.error || 'This password reset link has expired or is invalid. Please request a new password reset.');
         setMessage({ type: 'error', text: response.error || 'Invalid or expired reset link' })
       }
     } catch (error) {
       console.error('❌ [VERIFY TOKEN] Error:', error)
+      AlertService.error("Verification Error", error.message || 'Unable to verify the reset link. Please try again or request a new password reset.');
       setMessage({ type: 'error', text: error.message || 'Invalid or expired reset link' })
     } finally {
       setVerifying(false)
@@ -71,22 +75,22 @@ export default function ResetPasswordWithToken() {
 
   const validateForm = () => {
     if (!formData.newPassword.trim()) {
-      setMessage({ type: 'error', text: 'Please enter a new password' })
+      AlertService.warning("Password Required", "Please enter your new password to continue.");
       return false
     }
 
     if (formData.newPassword.length < 6) {
-      setMessage({ type: 'error', text: 'Password must be at least 6 characters long' })
+      AlertService.warning("Password Too Short", "Password must be at least 6 characters long for security.");
       return false
     }
 
     if (!formData.confirmPassword.trim()) {
-      setMessage({ type: 'error', text: 'Please confirm your password' })
+      AlertService.warning("Confirmation Required", "Please confirm your password by typing it again.");
       return false
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
-      setMessage({ type: 'error', text: 'Passwords do not match' })
+      AlertService.warning("Password Mismatch", "The passwords you entered don't match. Please try again.");
       return false
     }
 
@@ -101,6 +105,8 @@ export default function ResetPasswordWithToken() {
     try {
       setLoading(true)
       setMessage({ type: '', text: '' })
+      
+      AlertService.loading("Resetting Password", "Please wait while we update your password...");
       
       console.log('🔐 [RESET PASSWORD] Attempting password reset with token:', token)
       
@@ -119,18 +125,23 @@ export default function ResetPasswordWithToken() {
           localStorage.setItem('user', JSON.stringify(response.user))
         }
         
-        setMessage({ type: 'success', text: 'Password reset successfully! Redirecting to dashboard...' })
+        AlertService.close();
+        AlertService.success("Password Reset Complete!", "Your password has been successfully updated. You're now logged in and will be redirected to your dashboard.");
         
         // Redirect to dashboard after success
         setTimeout(() => {
           navigate('/dashboard')
         }, 2000)
       } else {
+        AlertService.close();
+        AlertService.error("Reset Failed", response.error || 'Failed to reset password');
         setMessage({ type: 'error', text: response.error || 'Failed to reset password' })
       }
       
     } catch (error) {
       console.error('❌ [RESET PASSWORD] Error:', error)
+      AlertService.close();
+      AlertService.error("Reset Error", error.message || 'Failed to reset password. Please try again.');
       setMessage({ type: 'error', text: error.message || 'Failed to reset password. Please try again.' })
     } finally {
       setLoading(false)

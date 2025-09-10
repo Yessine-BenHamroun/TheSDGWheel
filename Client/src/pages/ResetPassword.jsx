@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { AlertCircle, CheckCircle, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react"
 import api from "@/services/api"
 import { useAuth } from "@/contexts/AuthContext"
+import AlertService from "@/services/alertService"
 
 // Password strength calculation
 const getPasswordStrength = (password) => {
@@ -70,34 +71,36 @@ export default function ResetPassword() {
     e.preventDefault()
     
     if (!formData.newPassword.trim()) {
-      setMessage({ type: 'error', text: 'Please enter a new password' })
+      AlertService.warning("Password Required", "Please enter your new password to continue.");
       return
     }
 
     if (formData.newPassword.length < 6) {
-      setMessage({ type: 'error', text: 'Password must be at least 6 characters long' })
+      AlertService.warning("Password Too Short", "Password must be at least 6 characters long for security.");
       return
     }
 
     if (!formData.confirmPassword.trim()) {
-      setMessage({ type: 'error', text: 'Please confirm your password' })
+      AlertService.warning("Confirmation Required", "Please confirm your password by typing it again.");
       return
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
-      setMessage({ type: 'error', text: 'Passwords do not match' })
+      AlertService.warning("Password Mismatch", "The passwords you entered don't match. Please try again.");
       return
     }
 
     try {
       setLoading(true)
-      setMessage({ type: '', text: '' })
+      AlertService.loading("Updating Password", "Please wait while we update your password...");
       
       console.log('🔐 [RESET PASSWORD] Resetting password for:', email)
       const response = await api.resetPassword(resetToken, formData.newPassword, formData.confirmPassword)
       
       console.log('✅ [RESET PASSWORD] Response:', response)
-      setMessage({ type: 'success', text: response.message })
+      AlertService.close();
+      
+      AlertService.success("Password Updated!", "Your password has been successfully updated. You will be logged in automatically.");
       
       // Login the user automatically with the new token
       if (response.token && response.user) {
@@ -112,7 +115,15 @@ export default function ResetPassword() {
       
     } catch (error) {
       console.error('❌ [RESET PASSWORD] Error:', error)
-      setMessage({ type: 'error', text: error.message || 'Failed to reset password. Please try again.' })
+      AlertService.close();
+      
+      if (error.message.includes('token') && (error.message.includes('invalid') || error.message.includes('expired'))) {
+        AlertService.error("Invalid Reset Link", "This password reset link is invalid or has expired. Please request a new one.");
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        AlertService.networkError();
+      } else {
+        AlertService.error("Reset Failed", error.message || "Failed to reset password. Please try again or request a new reset link.");
+      }
     } finally {
       setLoading(false)
     }

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, CheckCircle, Shield, ArrowLeft, Clock } from "lucide-react"
 import api from "@/services/api"
+import AlertService from "@/services/alertService"
 
 export default function VerifyResetCode() {
   const navigate = useNavigate()
@@ -54,24 +55,26 @@ export default function VerifyResetCode() {
     e.preventDefault()
     
     if (!code.trim()) {
-      setMessage({ type: 'error', text: 'Please enter the reset code' })
+      AlertService.warning("Code Required", "Please enter the 6-digit reset code sent to your email.");
       return
     }
 
     if (code.length !== 6) {
-      setMessage({ type: 'error', text: 'Reset code must be 6 digits' })
+      AlertService.warning("Invalid Code Length", "Reset code must be exactly 6 digits. Please check your email and try again.");
       return
     }
 
     try {
       setLoading(true)
-      setMessage({ type: '', text: '' })
+      AlertService.loading("Verifying Code", "Please wait while we verify your reset code...");
       
       console.log('🔐 [VERIFY CODE] Verifying reset code for:', email)
       const response = await api.verifyResetCode(email, code)
       
       console.log('✅ [VERIFY CODE] Response:', response)
-      setMessage({ type: 'success', text: response.message })
+      AlertService.close();
+      
+      AlertService.success("Code Verified!", "Your reset code has been verified. Redirecting to password reset...");
       
       // Navigate to reset password page with token
       setTimeout(() => {
@@ -85,7 +88,17 @@ export default function VerifyResetCode() {
       
     } catch (error) {
       console.error('❌ [VERIFY CODE] Error:', error)
-      setMessage({ type: 'error', text: error.message || 'Invalid or expired reset code' })
+      AlertService.close();
+      
+      if (error.message.includes('expired')) {
+        AlertService.error("Code Expired", "This reset code has expired. Please request a new one.");
+      } else if (error.message.includes('invalid') || error.message.includes('incorrect')) {
+        AlertService.error("Invalid Code", "The reset code you entered is incorrect. Please check your email and try again.");
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        AlertService.networkError();
+      } else {
+        AlertService.error("Verification Failed", error.message || "Unable to verify reset code. Please try again or request a new one.");
+      }
     } finally {
       setLoading(false)
     }
@@ -94,11 +107,15 @@ export default function VerifyResetCode() {
   const handleResendCode = async () => {
     try {
       setLoading(true)
+      AlertService.loading("Sending New Code", "Please wait while we send you a new reset code...");
+      
       await api.forgotPassword(email)
-      setMessage({ type: 'success', text: 'A new reset code has been sent to your email' })
+      AlertService.close();
+      AlertService.success("New Code Sent!", `A new reset code has been sent to ${email}. Please check your inbox.`);
       setTimeLeft(300) // Reset timer
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to resend code. Please try again.' })
+      AlertService.close();
+      AlertService.error("Resend Failed", "Failed to send new reset code. Please try again or contact support.");
     } finally {
       setLoading(false)
     }

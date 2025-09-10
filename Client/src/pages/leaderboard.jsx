@@ -80,7 +80,17 @@ export default function Leaderboard() {
         challengeCount: sdg.spinCount // Use spinCount as challengeCount for display
       }))
 
-      setSdgData(processedSdgs.slice(0, 6))
+      // Calculate total spins across ALL SDGs (not just displayed ones)
+      const totalSpins = processedSdgs.reduce((sum, sdg) => sum + (sdg.spinCount || 0), 0)
+
+      // Sort by spinCount (most played first) and take top 6
+      const sortedSdgs = processedSdgs.sort((a, b) => (b.spinCount || 0) - (a.spinCount || 0))
+      const displaySdgs = sortedSdgs.slice(0, 6).map(sdg => ({
+        ...sdg,
+        totalSpinsForPercentage: totalSpins // Add total spins for percentage calculation
+      }))
+      
+      setSdgData(displaySdgs)
     } catch (error) {
       console.error("Error loading leaderboard:", error)
       toast({
@@ -431,7 +441,10 @@ export default function Leaderboard() {
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-white mb-4">Wall of Eco Heroes</h2>
               <p className="text-zinc-400">
-                Discover the most popular Sustainable Development Goals our community is passionate about
+                The most popular Sustainable Development Goals ranked by community engagement
+              </p>
+              <p className="text-zinc-500 text-sm mt-2">
+                Ranked by total wheel spins - see which SDGs our eco heroes are most passionate about!
               </p>
             </div>
 
@@ -444,14 +457,36 @@ export default function Leaderboard() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <Card className="bg-zinc-900/50 border-zinc-700/50 hover:border-zinc-600/50 transition-all duration-300 group">
+                  <Card className="bg-zinc-900/50 border-zinc-700/50 hover:border-zinc-600/50 transition-all duration-300 group relative">
                     <CardContent className="p-6">
                       <div className="text-center">
-                        {/* SDG Icon/Number */}
-                        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full flex items-center justify-center border border-purple-500/30">
-                          <span className="text-2xl font-bold text-purple-300">
-                            {sdg.number || index + 1}
-                          </span>
+                        {/* SDG Ranking Position */}
+                        <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center border-2 ${
+                          index === 0 ? 'bg-gradient-to-br from-yellow-500/30 to-orange-500/30 border-yellow-500/50' :
+                          index === 1 ? 'bg-gradient-to-br from-gray-400/30 to-gray-600/30 border-gray-400/50' :
+                          index === 2 ? 'bg-gradient-to-br from-amber-600/30 to-amber-800/30 border-amber-600/50' :
+                          'bg-gradient-to-br from-purple-500/20 to-blue-500/20 border-purple-500/30'
+                        }`}>
+                          {index < 3 ? (
+                            <span className={`text-2xl ${
+                              index === 0 ? 'text-yellow-300' :
+                              index === 1 ? 'text-gray-300' :
+                              'text-amber-300'
+                            }`}>
+                              {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                            </span>
+                          ) : (
+                            <span className="text-2xl font-bold text-purple-300">
+                              #{index + 1}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {/* Original SDG Number Badge */}
+                        <div className="absolute top-2 right-2">
+                          <Badge className="bg-zinc-800/80 text-zinc-300 border-zinc-600/50 text-xs">
+                            SDG {sdg.oddId}
+                          </Badge>
                         </div>
 
                         {/* SDG Title */}
@@ -486,12 +521,13 @@ export default function Leaderboard() {
                             <div
                               className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-500"
                               style={{
-                                width: `${Math.min(100, ((sdg.spinCount || 0) / Math.max(...sdgData.map(s => s.spinCount || 0), 1)) * 100)}%`
+                                width: `${Math.min(100, ((sdg.spinCount || 0) / Math.max(sdg.totalSpinsForPercentage || 1, 1)) * 100)}%`
                               }}
                             ></div>
                           </div>
                           <p className="text-xs text-zinc-500 mt-1">
-                            {sdgData.length > 0 ? ((sdg.spinCount || 0) / Math.max(...sdgData.map(s => s.spinCount || 0), 1) * 100).toFixed(0) : 0}% of total spins
+                            {(sdg.totalSpinsForPercentage && sdg.totalSpinsForPercentage > 0) ? 
+                              ((sdg.spinCount || 0) / sdg.totalSpinsForPercentage * 100).toFixed(1) : 0}% of total spins
                           </p>
                         </div>
                       </div>

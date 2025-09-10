@@ -1,3 +1,5 @@
+import AlertService from './alertService.js';
+
 class ApiService {
   constructor() {
     this.baseURL = import.meta.env.VITE_API_URL || "http://localhost:3001/api"
@@ -44,6 +46,17 @@ class ApiService {
       return data
     } catch (error) {
       console.error("API request failed:", error)
+      
+      // Show appropriate alert based on error type
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        // Network error
+        AlertService.networkError();
+      } else if (error.message.includes('401') || error.message.includes('403')) {
+        // Don't show alert for auth errors as they're handled by event system
+      } else {
+        // Other API errors - let components handle them
+      }
+      
       throw error
     }
   }
@@ -630,6 +643,49 @@ class ApiService {
 
   async getUserStats() {
     return this.request('/users/stats');
+  }
+
+  // Message/Contact Form Methods
+  async submitContactMessage(messageData) {
+    return this.request('/messages/submit', {
+      method: 'POST',
+      body: JSON.stringify(messageData)
+    });
+  }
+
+  async getAllMessages(params = {}) {
+    const queryParams = new URLSearchParams(params);
+    return this.request(`/messages?${queryParams}`);
+  }
+
+  async getMessageById(messageId) {
+    return this.request(`/messages/${messageId}`);
+  }
+
+  async replyToMessage(messageId, reply) {
+    return this.request(`/messages/${messageId}/reply`, {
+      method: 'POST',
+      body: JSON.stringify({ reply })
+    });
+  }
+
+  async updateMessageStatus(messageId, updates) {
+    return this.request(`/messages/${messageId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates)
+    });
+  }
+
+  async toggleMessageReadStatus(messageId) {
+    return this.request(`/messages/${messageId}/read`, {
+      method: 'PATCH'
+    });
+  }
+
+  async deleteMessage(messageId) {
+    return this.request(`/messages/${messageId}`, {
+      method: 'DELETE'
+    });
   }
 }
 

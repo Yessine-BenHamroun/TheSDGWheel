@@ -36,8 +36,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useToast } from "@/hooks/use-toast"
 import api from "@/services/api"
+import AlertService from "@/services/alertService"
 import { getAvatarUrl } from "@/utils/avatarUtils"
 
 export default function UserModeration() {
@@ -53,7 +53,6 @@ export default function UserModeration() {
     totalCount: 0,
     limit: 10
   })
-  const { toast } = useToast()
 
   useEffect(() => {
     fetchUsers()
@@ -146,9 +145,16 @@ export default function UserModeration() {
   }
 
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      return
-    }
+    const user = users.find(u => u._id === userId);
+    const userName = user?.username || 'this user';
+    
+    const isConfirmed = await AlertService.deleteConfirm(
+      "Delete User Account",
+      `Are you sure you want to permanently delete ${userName}? This will remove all their data, posts, and activity. This action cannot be undone.`,
+      "Delete User"
+    );
+
+    if (!isConfirmed) return;
     
     try {
       setActionLoading(`${userId}-delete`)
@@ -158,18 +164,11 @@ export default function UserModeration() {
       // Remove from local state
       setUsers(prev => prev.filter(user => user._id !== userId))
       
-      toast({
-        title: "Success",
-        description: "User deleted successfully",
-      })
+      AlertService.success("User Deleted", `${userName} has been permanently removed from the system.`);
       
     } catch (error) {
       console.error('Failed to delete user:', error)
-      toast({
-        title: "Error",
-        description: `Failed to delete user: ${error.message}`,
-        variant: "destructive"
-      })
+      AlertService.error("Delete Failed", `Failed to delete user: ${error.message}`);
     } finally {
       setActionLoading(null)
     }
