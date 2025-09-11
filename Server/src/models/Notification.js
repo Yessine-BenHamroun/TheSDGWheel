@@ -15,7 +15,8 @@ const notificationSchema = new mongoose.Schema({
       'CHALLENGE_COMPLETED',
       'BADGE_EARNED',
       'LEVEL_UP',
-      'SYSTEM_ANNOUNCEMENT'
+      'SYSTEM_ANNOUNCEMENT',
+      'POST_VOTED'
     ]
   },
   title: {

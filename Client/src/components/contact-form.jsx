@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
+import { useTranslation } from "react-i18next"
 import api from "../services/api"
 import AlertService from "../services/alertService"
 
 export function ContactForm() {
   const { toast } = useToast()
+  const { t } = useTranslation()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
@@ -33,19 +35,19 @@ export function ContactForm() {
     
     // Validate form data
     if (!formData.name.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
-      AlertService.warning("Missing Information", "Please fill in all fields before sending your message.");
+      AlertService.warning(t('contactForm.validation.missingInfo.title'), t('contactForm.validation.missingInfo.message'));
       return;
     }
 
     setIsSubmitting(true)
 
     try {
-      AlertService.loading("Sending Message", "Please wait while we send your message...");
+      AlertService.loading(t('contactForm.sending.title'), t('contactForm.sending.message'));
       
       await api.submitContactMessage(formData)
       
       AlertService.close();
-      AlertService.success("Message Sent! ✉️", "Thank you for reaching out! We've received your message and will get back to you as soon as possible.");
+      AlertService.success(t('contactForm.success.title'), t('contactForm.success.message'));
 
       // Reset form
       setFormData({
@@ -59,11 +61,11 @@ export function ContactForm() {
       AlertService.close();
       
       if (error.message.includes('email')) {
-        AlertService.error("Invalid Email", "Please enter a valid email address.");
+        AlertService.error(t('contactForm.errors.invalidEmail.title'), t('contactForm.errors.invalidEmail.message'));
       } else if (error.message.includes('network') || error.message.includes('fetch')) {
         AlertService.networkError();
       } else {
-        AlertService.error("Failed to Send Message", error.message || "We couldn't send your message right now. Please try again later or contact us directly.");
+        AlertService.error(t('contactForm.errors.sendFailed.title'), error.message || t('contactForm.errors.sendFailed.message'));
       }
     } finally {
       setIsSubmitting(false)
@@ -81,13 +83,13 @@ export function ContactForm() {
         <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl blur opacity-25 hover:opacity-100 transition duration-1000 hover:duration-200"></div>
 
         <div className="relative">
-          <h3 className="text-2xl font-bold mb-6">Send Us a Message</h3>
+          <h3 className="text-2xl font-bold mb-6">{t('contactForm.title')}</h3>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Input
                 name="name"
-                placeholder="Your Name"
+                placeholder={t('contactForm.form.namePlaceholder')}
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -98,7 +100,7 @@ export function ContactForm() {
               <Input
                 type="email"
                 name="email"
-                placeholder="Your Email"
+                placeholder={t('contactForm.form.emailPlaceholder')}
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -108,7 +110,7 @@ export function ContactForm() {
             <div className="space-y-2">
               <Input
                 name="subject"
-                placeholder="Subject"
+                placeholder={t('contactForm.form.subjectPlaceholder')}
                 value={formData.subject}
                 onChange={handleChange}
                 required
@@ -118,7 +120,7 @@ export function ContactForm() {
             <div className="space-y-2">
               <Textarea
                 name="message"
-                placeholder="Your Message"
+                placeholder={t('contactForm.form.messagePlaceholder')}
                 value={formData.message}
                 onChange={handleChange}
                 rows={5}
@@ -132,10 +134,10 @@ export function ContactForm() {
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                <>Sending...</>
+                <>{t('contactForm.form.sendingButton')}</>
               ) : (
                 <>
-                  Send Message <Send className="ml-2 h-4 w-4" />
+                  {t('contactForm.form.sendButton')} <Send className="ml-2 h-4 w-4" />
                 </>
               )}
             </Button>

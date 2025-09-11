@@ -7,27 +7,37 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Heart, MessageCircle, Share2, ThumbsUp, Clock, Award } from "lucide-react"
+import { Heart, MessageCircle, Share2, ThumbsUp, Clock, Award, ChevronLeft, ChevronRight } from "lucide-react"
 import UserNavbar from "@/components/UserNavbar"
 import api from "@/services/api"
 import { getAvatarUrl, getMediaUrl } from "@/utils/avatarUtils"
+import { useTranslation } from "react-i18next"
 
 export default function CommunityFeed() {
+  const { t } = useTranslation()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [votingPost, setVotingPost] = useState(null)
   const [userVotes, setUserVotes] = useState(new Set())
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [totalCount, setTotalCount] = useState(0)
+  const postsPerPage = 10
 
   useEffect(() => {
     fetchCommunityPosts()
     fetchUserVotes()
-  }, [])
+  }, [currentPage])
 
   const fetchCommunityPosts = async () => {
     try {
       setLoading(true)
-      const response = await api.getCommunityPosts()
+      const response = await api.getCommunityPosts(currentPage, postsPerPage)
       setPosts(response.data || [])
+      setTotalPages(response.pagination?.totalPages || 1)
+      setHasMore(response.pagination?.hasMore || false)
+      setTotalCount(response.pagination?.totalCount || 0)
     } catch (error) {
       console.error('Failed to fetch community posts:', error)
     } finally {
@@ -65,15 +75,22 @@ export default function CommunityFeed() {
     }
   }
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   const formatTimeAgo = (date) => {
     const now = new Date()
     const posted = new Date(date)
     const diffInMinutes = Math.floor((now - posted) / (1000 * 60))
     
-    if (diffInMinutes < 1) return 'Just now'
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`
-    return `${Math.floor(diffInMinutes / 1440)}d ago`
+    if (diffInMinutes < 1) return t('community.feed.timeAgo.justNow')
+    if (diffInMinutes < 60) return t('community.feed.timeAgo.minutesAgo', { count: diffInMinutes })
+    if (diffInMinutes < 1440) return t('community.feed.timeAgo.hoursAgo', { count: Math.floor(diffInMinutes / 60) })
+    return t('community.feed.timeAgo.daysAgo', { count: Math.floor(diffInMinutes / 1440) })
   }
 
   const getStatusColor = (status) => {
@@ -87,6 +104,21 @@ export default function CommunityFeed() {
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50'
       default:
         return 'bg-blue-500/20 text-blue-400 border-blue-500/50'
+    }
+  }
+
+  const getTranslatedStatus = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'approved':
+        return t('community.feed.status.approved')
+      case 'accepted':
+        return t('community.feed.status.accepted')
+      case 'rejected':
+        return t('community.feed.status.rejected')
+      case 'under_review':
+        return t('community.feed.status.underReview')
+      default:
+        return t('community.feed.status.submitted')
     }
   }
 
@@ -108,9 +140,9 @@ export default function CommunityFeed() {
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 mb-2">
-              Community Feed
+              {t('community.feed.title')}
             </h1>
-            <p className="text-zinc-400">Discover and vote on sustainability proofs from the community</p>
+            <p className="text-zinc-400">{t('community.feed.subtitle')}</p>
           </div>
 
           {/* Posts Feed */}
@@ -138,8 +170,8 @@ export default function CommunityFeed() {
             <Card className="bg-zinc-900/50 border-zinc-700">
               <CardContent className="text-center py-12">
                 <Award className="h-12 w-12 text-zinc-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-zinc-300 mb-2">No posts yet</h3>
-                <p className="text-zinc-500">Be the first to share your sustainability proof!</p>
+                <h3 className="text-xl font-semibold text-zinc-300 mb-2">{t('community.feed.noPosts')}</h3>
+                <p className="text-zinc-500">{t('community.feed.beFirstToShare')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -156,7 +188,7 @@ export default function CommunityFeed() {
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="font-semibold text-white">{post.user?.username || 'Anonymous'}</p>
+                          <p className="font-semibold text-white">{post.user?.username || t('community.feed.anonymous')}</p>
                           <div className="flex items-center space-x-2 text-sm text-zinc-400">
                             <Clock className="h-3 w-3" />
                             <span>{formatTimeAgo(post.createdAt)}</span>
@@ -170,7 +202,7 @@ export default function CommunityFeed() {
                         </div>
                       </div>
                       <Badge variant="outline" className={getStatusColor(post.status)}>
-                        {post.status || 'SUBMITTED'}
+                        {getTranslatedStatus(post.status)}
                       </Badge>
                     </div>
                   </CardHeader>
@@ -195,7 +227,7 @@ export default function CommunityFeed() {
                         {post.mediaType === 'IMAGE' || post.url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
                           <img 
                             src={getMediaUrl(post.url)}
-                            alt="Proof submission"
+                            alt={t('community.feed.proofSubmission')}
                             className="w-full max-h-96 object-cover cursor-pointer hover:opacity-90 transition-opacity"
                             onError={(e) => {
                               console.error('Failed to load image:', post.url)
@@ -215,20 +247,20 @@ export default function CommunityFeed() {
                               e.target.nextSibling.style.display = 'flex'
                             }}
                           >
-                            Your browser does not support the video tag.
+                            {t('community.feed.videoNotSupported')}
                           </video>
                         ) : (
                           <div className="flex items-center justify-center h-32 text-zinc-400 p-4">
                             <div className="text-center">
                               <Award className="h-8 w-8 mx-auto mb-2" />
-                              <p className="text-sm">Document file</p>
+                              <p className="text-sm">{t('community.feed.documentFile')}</p>
                               <a 
                                 href={getMediaUrl(post.url)} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="text-blue-400 hover:text-blue-300 text-xs mt-1 inline-block"
                               >
-                                Open file
+                                {t('community.feed.openFile')}
                               </a>
                             </div>
                           </div>
@@ -237,8 +269,8 @@ export default function CommunityFeed() {
                         <div className="hidden items-center justify-center h-32 text-zinc-400 p-4">
                           <div className="text-center">
                             <Award className="h-8 w-8 mx-auto mb-2 text-red-400" />
-                            <p className="text-sm text-red-400">Unable to load media</p>
-                            <p className="text-xs text-zinc-500 mt-1">File may be corrupted or moved</p>
+                            <p className="text-sm text-red-400">{t('community.feed.unableToLoadMedia')}</p>
+                            <p className="text-xs text-zinc-500 mt-1">{t('community.feed.fileMayBeCorrupted')}</p>
                           </div>
                         </div>
                       </div>
@@ -262,26 +294,88 @@ export default function CommunityFeed() {
                           <span>{post.votes || 0}</span>
                         </Button>
                         
-                        <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-zinc-400 hover:text-blue-400">
+                        {/* <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-zinc-400 hover:text-blue-400">
                           <MessageCircle className="h-4 w-4" />
-                          <span>Comment</span>
-                        </Button>
+                          <span>{t('community.feed.comment')}</span>
+                        </Button> */}
                         
-                        <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-zinc-400 hover:text-green-400">
+                        {/* <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-zinc-400 hover:text-green-400">
                           <Share2 className="h-4 w-4" />
-                          <span>Share</span>
-                        </Button>
+                          <span>{t('community.feed.share')}</span>
+                        </Button> */}
                       </div>
 
                       {post.points && (
                         <Badge variant="outline" className="bg-amber-500/20 text-amber-400 border-amber-500/50">
-                          +{post.points} points
+                          +{post.points} {t('community.feed.points')}
                         </Badge>
                       )}
                     </div>
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {!loading && posts.length > 0 && totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-between">
+              <div className="text-sm text-zinc-400">
+                {t('community.pagination.showing')} {((currentPage - 1) * postsPerPage) + 1} - {Math.min(currentPage * postsPerPage, totalCount)} {t('community.pagination.of')} {totalCount} {t('community.pagination.posts')}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="bg-zinc-800 border-zinc-600 text-white hover:bg-zinc-700"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  {t('community.pagination.previous')}
+                </Button>
+                
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handlePageChange(pageNum)}
+                        className={currentPage === pageNum 
+                          ? "bg-blue-600 text-white" 
+                          : "bg-zinc-800 border-zinc-600 text-white hover:bg-zinc-700"
+                        }
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="bg-zinc-800 border-zinc-600 text-white hover:bg-zinc-700"
+                >
+                  {t('community.pagination.next')}
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
             </div>
           )}
         </div>

@@ -22,12 +22,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { getAvatarUrl } from "@/utils/avatarUtils"
+import { useTranslation } from "react-i18next"
+import LanguageSwitcher from "./LanguageSwitcher"
 
 export function AdminSidebar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const { toast } = useToast()
+  const { t } = useTranslation()
   const [collapsed, setCollapsed] = useState(false)
 
   const sidebarItems = [
@@ -197,6 +200,17 @@ export function AdminSidebar() {
           )
         })}
       </nav>
+
+      {/* Language Switcher at bottom */}
+      <div className="p-4 border-t border-zinc-700">
+        <div className={`${collapsed ? "flex justify-center" : ""}`}>
+          <LanguageSwitcher 
+            variant="ghost" 
+            size="sm" 
+            className={`${collapsed ? "w-auto px-2" : "w-full justify-start"} text-zinc-400 hover:text-white`}
+          />
+        </div>
+      </div>
     </aside>
   )
 }

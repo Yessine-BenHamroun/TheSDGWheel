@@ -1,0 +1,795 @@
+{
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "leaderboard": "Leaderboard",
+    "community": "Community",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "about": "About",
+    "contact": "Contact",
+    "admin": "Admin"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Sign In",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up here",
+      "loginSuccess": "Login successful!",
+      "loginError": "Invalid credentials. Please try again.",
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password is required"
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Join The SDG Wheel community",
+      "name": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "registerButton": "Create Account",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign in here",
+      "registerSuccess": "Account created successfully! Please check your email for verification.",
+      "registerError": "Registration failed. Please try again.",
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password is required",
+      "passwordsMatch": "Passwords must match"
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email to reset password",
+      "email": "Email",
+      "sendReset": "Send Reset Link",
+      "backToLogin": "Back to Login",
+      "resetSent": "Reset link sent to your email!",
+      "resetError": "Failed to send reset link. Please try again."
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your new password",
+      "password": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "resetButton": "Reset Password",
+      "resetSuccess": "Password reset successfully!",
+      "resetError": "Failed to reset password. Please try again."
+    }
+  },
+  "hero": {
+    "welcome": "Welcome to",
+    "title": "The SDG Wheel",
+    "description": "A gamified web application to raise awareness about the 17 Sustainable Development Goals (SDGs) with a special focus on climate-related themes.",
+    "exploreButton": "Explore the Wheel",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "heroDescription": "Join our community in making a positive impact on the world through engaging challenges and activities aligned with the UN Sustainable Development Goals."
+  },
+  "about": {
+    "title": "About The SDG Wheel",
+    "subtitle": "Gamifying sustainable development awareness",
+    "projectOverview": {
+      "title": "Project Overview",
+      "description1": "The SDG Wheel is a gamified web application designed to raise awareness among citizens, particularly youth, about the 17 Sustainable Development Goals (SDGs), with a special focus on climate-related themes.",
+      "description2": "Users spin an interactive wheel representing the 17 SDGs, draw challenges or quizzes, respond, justify their actions with proof (photos/videos), accumulate points, and progress in their sustainable engagement profile.",
+      "targetAudience": {
+        "label": "Target Audience",
+        "value": "Citizens & Youth interested in sustainability"
+      },
+      "focusAreas": {
+        "label": "Focus Areas",
+        "value": "Climate SDGs: 13, 7, 6, 12, 15, 2"
+      },
+      "engagementMethod": {
+        "label": "Engagement Method",
+        "value": "Gamification with badges, rankings & rewards"
+      }
+    }
+  },
+  "keyFeatures": {
+    "title": "Key Features",
+    "subtitle": "Core functionalities of The SDG Wheel",
+    "sdgWheel": {
+      "title": "SDG Wheel",
+      "description": "Interactive circular wheel with 17 segments featuring SDG colors and icons. Random drawing influenced by customizable weights."
+    },
+    "challengesQuizzes": {
+      "title": "Challenges & Quizzes",
+      "description": "Database of content with 2 types: multiple-choice quizzes and challenges requiring proof justification."
+    },
+    "userProgress": {
+      "title": "User Progress",
+      "description": "Cumulative scores, badges per validated SDG, and progression levels: Explorer, Engaged Actor, SDG Ambassador."
+    },
+    "userAccounts": {
+      "title": "User Accounts",
+      "description": "Account creation with username/email, optional avatar and country, personal dashboard with scores and history."
+    },
+    "monthlyPodium": {
+      "title": "Monthly Podium",
+      "description": "Top 10 users ranking with points + proof bonuses + community votes. \"Wall of Eco Heroes\" section."
+    },
+    "proofSystem": {
+      "title": "Proof System",
+      "description": "Photo/video upload or external links with admin validation interface and community voting system."
+    }
+  },
+  "objectives": {
+    "title": "Project Objectives",
+    "subtitle": "Goals and impact targets",
+    "climateAwareness": {
+      "title": "Climate Awareness",
+      "description": "Raise awareness about the 17 SDGs in a playful way, with special focus on climate themes (SDG 13, 7, 6, 12, 15, 2)."
+    },
+    "individualAction": {
+      "title": "Individual Action",
+      "description": "Encourage concrete and visible individual actions that contribute to sustainable development goals."
+    },
+    "engagementRecognition": {
+      "title": "Engagement Recognition",
+      "description": "Value engagement through badges, rankings, and rewards to motivate continued participation."
+    },
+    "adaptableTool": {
+      "title": "Adaptable Tool",
+      "description": "Provide an adaptable tool for targeted campaigns and educational initiatives."
+    }
+  },
+  "scoringSystem": {
+    "title": "Scoring System",
+    "subtitle": "Rewards",
+    "hybridSystem": {
+      "title": "Hybrid Scoring System",
+      "basePoints": {
+        "label": "Base Points",
+        "description": "Challenge completion with validated proof"
+      },
+      "perVote": {
+        "label": "Per Vote",
+        "description": "Community votes (max +10 points)"
+      },
+      "topBonus": {
+        "label": "Top 3 Bonus",
+        "description": "Monthly top 3 voted challenges"
+      },
+      "recognition": {
+        "label": "Recognition",
+        "description": "Real actions + community approval"
+      }
+    },
+    "userJourney": {
+      "title": "User Journey",
+      "steps": {
+        "step1": "Spin the interactive SDG wheel",
+        "step2": "Receive challenge or quiz",
+        "step3": "Complete and provide proof",
+        "step4": "Earn points and badges",
+        "step5": "Progress through levels"
+      }
+    },
+    "progressionLevels": {
+      "title": "Progression Levels",
+      "explorer": {
+        "title": "Explorer",
+        "description": "Starting your sustainability journey"
+      },
+      "engagedActor": {
+        "title": "Engaged Actor",
+        "description": "Actively participating in challenges"
+      },
+      "sdgAmbassador": {
+        "title": "SDG Ambassador",
+        "description": "Leading by example in sustainability"
+      }
+    }
+  },
+  "contact": {
+    "title": "Get Involved",
+    "subtitle": "Join the sustainable development movement",
+    "projectInfo": {
+      "title": "Project Information",
+      "focus": {
+        "label": "Focus",
+        "value": "17 UN Sustainable Development Goals"
+      },
+      "target": {
+        "label": "Target",
+        "value": "Climate-aware citizens & youth"
+      },
+      "method": {
+        "label": "Method",
+        "value": "Gamified learning & engagement"
+      }
+    },
+    "projectStatus": {
+      "title": "Project Status",
+      "message": "In active development - Join us in creating positive impact!"
+    }
+  },
+  "footer": {
+    "brand": {
+      "part1": "The SDG",
+      "part2": " Wheel"
+    },
+    "copyright": "© {{year}} The SDG Wheel Project. Building a sustainable future together."
+  },
+  "contactForm": {
+    "title": "Send Us a Message",
+    "form": {
+      "namePlaceholder": "Your Name",
+      "emailPlaceholder": "Your Email",
+      "subjectPlaceholder": "Subject",
+      "messagePlaceholder": "Your Message",
+      "sendButton": "Send Message",
+      "sendingButton": "Sending..."
+    },
+    "validation": {
+      "missingInfo": {
+        "title": "Missing Information",
+        "message": "Please fill in all fields before sending your message."
+      }
+    },
+    "sending": {
+      "title": "Sending Message",
+      "message": "Please wait while we send your message..."
+    },
+    "success": {
+      "title": "Message Sent! ✉️",
+      "message": "Thank you for reaching out! We've received your message and will get back to you as soon as possible."
+    },
+    "errors": {
+      "invalidEmail": {
+        "title": "Invalid Email",
+        "message": "Please enter a valid email address."
+      },
+      "sendFailed": {
+        "title": "Failed to Send Message",
+        "message": "We couldn't send your message right now. Please try again later or contact us directly."
+      }
+    }
+  },
+  "wheel": {
+    "title": "The ODD Wheel",
+    "subtitle": "Spin to discover your next challenge",
+    "description": "Spin the wheel to discover your daily challenge or quiz and make a positive impact on the world!",
+    "spinButton": {
+      "spin": "Spin the Wheel",
+      "spinning": "Spinning...",
+      "dailyLimit": "Daily Limit Reached"
+    },
+    "congratulations": "Congratulations!",
+    "youLanded": "You landed on",
+    "earnedPoints": "You earned {{points}} points!",
+    "startChallenge": "Start Challenge",
+    "dailySpinUsed": "Daily spin used. Come back tomorrow!",
+    "cannotSpin": "You cannot spin today. Try again tomorrow!",
+    "spinCooldown": "You can spin again in {{hours}} hours",
+    "dailyLimit": "You've already spun today! Come back tomorrow for another chance.",
+    "nextSpinTime": "Next spin available: {{time}}",
+    "welcomeTitle": "Welcome to The SDG Wheel",
+    "welcomeSubtitle": "Spin the wheel to discover your daily challenge or quiz and make a positive impact on the world!",
+    "loginRequired": "Login Required",
+    "loginRequiredMessage": "Please login to spin the wheel and participate in the SDG challenges!",
+    "spinFailed": "Spin Failed",
+    "spinFailedMessage": "Failed to spin the wheel. Please try again later.",
+    "oncePerDay": "Remember: You can only spin the wheel once per day!",
+    "gameArea": "Game Area",
+    "instructions": "Click the button below to spin the wheel and discover your challenge for today!",
+    "pendingChallenges": {
+      "title": "Pending Challenges",
+      "description": "You have {{count}} accepted challenge(s) waiting for proof submission:",
+      "accepted": "Accepted: {{date}}",
+      "submitProof": "Submit Proof"
+    },
+    "submittedProofs": {
+      "title": "Proofs Under Review",
+      "description": "You have {{count}} proof(s) waiting for admin verification:",
+      "submitted": "Submitted: {{date}}",
+      "underReview": "Under Review"
+    },
+    "completedChallenges": {
+      "title": "Recent Challenge Results",
+      "description": "Recent challenge completion results:",
+      "approved": "Approved on {{date}} - {{points}} points earned!",
+      "rejected": "Rejected on {{date}}",
+      "adminFeedback": "Admin feedback: {{feedback}}",
+      "approvedBadge": "Approved ✅",
+      "rejectedBadge": "Rejected ❌"
+    },
+    "waitingState": {
+      "title": "Ready to Make an Impact?",
+      "description": "Spin the wheel to discover your daily challenge or quiz!"
+    },
+    "userStats": {
+      "title": "Your Progress",
+      "totalPoints": "Total Points",
+      "badges": "Badges",
+      "level": "Level"
+    },
+    "oddSelected": {
+      "title": "ODD Selected!",
+      "description": "You got ODD {{oddId}}: {{name}} - {{type}}"
+    },
+    "quiz": {
+      "correct": "Correct Answer! 🎉",
+      "incorrect": "Incorrect Answer",
+      "pointsEarned": "You earned {{points}} points!",
+      "submitted": "Quiz Submitted! 📝",
+      "score": "Score",
+      "submitError": "Failed to submit quiz answer"
+    },
+    "challenge": {
+      "accepted": "Challenge Accepted! 💪",
+      "uploadReady": "You can upload proof whenever you're ready",
+      "declined": "Challenge Declined",
+      "seeTomorrow": "See you tomorrow for another spin!",
+      "acceptError": "Failed to accept challenge",
+      "declineError": "Failed to decline challenge"
+    },
+    "errors": {
+      "spinFailed": "Failed to spin the wheel. Please try again.",
+      "loadStatusFailed": "Failed to load wheel status"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {{name}}!",
+    "subtitle": "Track your sustainability journey and impact",
+    "totalPoints": "Total Points",
+    "points": "Points",
+    "level": "Level {{level}}",
+    "pointsToNextLevel": "{{points}} points to next level",
+    "activeChallenges": "Active Challenges",
+    "inProgress": "In Progress",
+    "leaderboardRank": "Leaderboard Rank",
+    "globalPosition": "Global Position",
+    "unranked": "Unranked",
+    "sdgImpact": "SDG Impact",
+    "totalImpact": "Total Impact",
+    "sustainabilityJourney": "Your Sustainability Journey",
+    "live": "LIVE",
+    "completedChallenges": "Completed Challenges",
+    "currentRank": "Current Rank",
+    "pendingChallenges": "Pending Challenges",
+    "proofsUnderReview": "Proofs Under Review",
+    "completedToday": "Completed Today",
+    "recentActivity": "Recent Activity",
+    "viewAll": "View All",
+    "noActivity": "No recent activity",
+    "statistics": "Statistics",
+    "achievements": "Achievements",
+    "badges": "Badges",
+    "quickActions": "Quick Actions",
+    "spinWheelToday": "Spin Today's Wheel",
+    "viewChallenges": "View Challenges",
+    "checkLeaderboard": "Check Leaderboard",
+    "manageProfile": "Manage Profile",
+    "progressOverview": "Progress Overview",
+    "weeklyGoal": "Weekly Goal",
+    "monthlyProgress": "Monthly Progress",
+    "streakCounter": "Current Streak",
+    "days": "days",
+    "nextLevel": "Next Level",
+    "experiencePoints": "XP",
+    "notifications": "Recent Notifications",
+    "seeAllNotifications": "See All Notifications",
+    "noNotifications": "No notifications yet",
+    "todaysChallenge": "Today's Challenge",
+    "availableQuizzes": "Available Quizzes",
+    "upcomingEvents": "Upcoming Events",
+    "startJourney": "Start your sustainability journey by spinning the wheel!",
+    "completedChallengesTitle": "Completed Challenges",
+    "sdgsContributed": "SDGs Contributed",
+    "communityRank": "Community Rank",
+    "thisMonth": "This month",
+    "totalGoals": "Total goals"
+  },
+  "challenges": {
+    "title": "Challenges",
+    "allChallenges": "All Challenges",
+    "myProgress": "My Progress",
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "status": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "inReview": "In Review",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "points": "{{points}} points",
+    "submitProof": "Submit Proof",
+    "viewProof": "View Proof",
+    "startChallenge": "Start Challenge",
+    "challengeCompleted": "Challenge Completed",
+    "uploadProof": "Upload Proof",
+    "proofDescription": "Proof Description",
+    "submitSuccess": "Proof submitted successfully!",
+    "submitError": "Failed to submit proof. Please try again.",
+    "noProofFile": "Please select a proof file",
+    "noDescription": "Please provide a description"
+  },
+  "quizzes": {
+    "title": "Quizzes",
+    "takeQuiz": "Take Quiz",
+    "question": "Question {{current}} of {{total}}",
+    "nextQuestion": "Next Question",
+    "submitQuiz": "Submit Quiz",
+    "quizCompleted": "Quiz Completed!",
+    "yourScore": "Your Score: {{score}}/{{total}}",
+    "correctAnswer": "Correct Answer",
+    "wrongAnswer": "Wrong Answer",
+    "explanation": "Explanation",
+    "tryAgain": "Try Again",
+    "backToQuizzes": "Back to Quizzes",
+    "timeRemaining": "Time Remaining: {{time}}",
+    "timeUp": "Time's Up!"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "Celebrate the champions making a real difference in sustainable development",
+    "loading": "Loading leaderboard...",
+    "error": "Error",
+    "errorDescription": "Failed to load leaderboard data",
+    "currentLeaders": "Current Leaders",
+    "ecoHeroes": "Eco Heroes",
+    "currentChampions": "Current Champions",
+    "filterByCountry": "Filter by Country",
+    "rank": "Rank",
+    "user": "User",
+    "points": "Points",
+    "challenges": "Challenges",
+    "myRank": "My Rank: #{{rank}}",
+    "topUsers": "Top Users",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "allTime": "All Time",
+    "yourRank": "Your Rank",
+    "totalPlayers": "Total Players",
+    "sdgHeroes": "SDG Heroes",
+    "sdgHeroesDescription": "Discover the most played Sustainable Development Goals and their champions",
+    "challengesCompleted": "Challenges Completed",
+    "totalChallenges": "Total Challenges",
+    "first": "1st",
+    "second": "2nd", 
+    "third": "3rd",
+    "position": "Position",
+    "wallOfEcoHeroes": "Wall of Eco Heroes",
+    "popularSdgsDescription": "The most popular Sustainable Development Goals ranked by community engagement",
+    "rankedBySpins": "Ranked by total wheel spins - see which SDGs our eco heroes are most passionate about!",
+    "timesPlayed": "times played",
+    "yourPosition": "Your Position",
+    "totalPlayersText": "Total Players",
+    "wheelSpins": "wheel spins",
+    "climateFocus": "Climate Focus",
+    "ofTotalSpins": "of total spins",
+    "buildingOurImpact": "Building Our Impact",
+    "sdgDataWillAppear": "SDG popularity data will appear as our community grows",
+    "levels": {
+      "sdgAmbassador": "SDG Ambassador",
+      "engagedActor": "Engaged Actor",
+      "explorer": "Explorer"
+    },
+    "noLeadersYet": "No leaders yet",
+    "beFirstToMakeImpact": "Be the first to make an impact!",
+    "yourCurrentStanding": "Your Current Standing",
+    "keepClimbingLeaderboard": "Keep climbing the leaderboard!",
+    "pointsLabel": "points",
+    "rankLabel": "rank"
+  },
+  "community": {
+    "title": "Community",
+    "discussions": "Discussions",
+    "members": "Members",
+    "events": "Events",
+    "createPost": "Create Post",
+    "joinDiscussion": "Join Discussion",
+    "latestPosts": "Latest Posts",
+    "popularTopics": "Popular Topics",
+    "onlineMembers": "Online Members",
+    "feed": {
+      "title": "Community Feed",
+      "subtitle": "Discover and vote on sustainability proofs from the community",
+      "noPosts": "No posts yet",
+      "beFirstToShare": "Be the first to share your sustainability proof!",
+      "loading": "Loading community posts...",
+      "anonymous": "Anonymous",
+      "comment": "Comment",
+      "share": "Share",
+      "points": "points",
+      "documentFile": "Document file",
+      "openFile": "Open file",
+      "unableToLoadMedia": "Unable to load media",
+      "fileMayBeCorrupted": "File may be corrupted or moved",
+      "proofSubmission": "Proof submission",
+      "videoNotSupported": "Your browser does not support the video tag.",
+      "timeAgo": {
+        "justNow": "Just now",
+        "minutesAgo": "{{count}}m ago",
+        "hoursAgo": "{{count}}h ago", 
+        "daysAgo": "{{count}}d ago"
+      },
+      "status": {
+        "approved": "APPROVED",
+        "accepted": "ACCEPTED", 
+        "rejected": "REJECTED",
+        "underReview": "UNDER REVIEW",
+        "submitted": "SUBMITTED"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "posts": "posts",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "personalInfo": "Personal Information",
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "deleteAccount": "Delete Account",
+    "name": "Name",
+    "email": "Email",
+    "joinDate": "Join Date",
+    "totalPoints": "Total Points",
+    "completedChallenges": "Completed Challenges",
+    "badges": "Badges",
+    "updateSuccess": "Profile updated successfully!",
+    "updateError": "Failed to update profile. Please try again.",
+    "passwordChanged": "Password changed successfully!",
+    "passwordError": "Failed to change password. Please try again."
+  },
+  "settings": {
+    "title": "Profile Settings",
+    "subtitle": "Manage your account and preferences",
+    "profileOverview": {
+      "title": "Profile Overview",
+      "description": "Your current level and achievements"
+    },
+    "editProfile": {
+      "title": "Edit Profile", 
+      "description": "Update your personal information",
+      "profilePicture": "Profile Picture",
+      "username": "Username",
+      "emailAddress": "Email Address",
+      "country": "Country",
+      "selectCountry": "Select your country",
+      "password": "Password",
+      "changeEmail": "Change Email",
+      "changePassword": "Change Password"
+    },
+    "emailChange": {
+      "emailVerificationPending": "Email verification pending",
+      "verificationEmailSent": "Verification Email Sent!",
+      "checkInbox": "Please check your inbox and click the verification link to complete your email change.",
+      "newEmail": "New Email",
+      "confirmEmail": "Confirm New Email",
+      "currentPassword": "Current Password",
+      "enterNewEmail": "Enter new email",
+      "confirmNewEmail": "Confirm new email", 
+      "enterCurrentPassword": "Enter current password",
+      "updateEmail": "Update Email",
+      "cancel": "Cancel"
+    },
+    "passwordChange": {
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "passwordsMatch": "Passwords match",
+      "passwordsDoNotMatch": "Passwords do not match",
+      "updatePassword": "Update Password",
+      "cancel": "Cancel"
+    },
+    "passwordStrength": {
+      "weak": "Weak",
+      "fair": "Fair", 
+      "good": "Good",
+      "strong": "Strong"
+    },
+    "buttons": {
+      "editProfile": "Edit Profile",
+      "saveProfile": "Save Profile Changes",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "updating": "Updating",
+      "cancel": "Cancel",
+      "close": "Close"
+    },
+    "placeholders": {
+      "enterUsername": "Enter your username",
+      "enterNewEmail": "Enter new email",
+      "confirmNewEmail": "Confirm new email",
+      "enterCurrentPassword": "Enter current password",
+      "enterNewPassword": "Enter new password",
+      "confirmNewPassword": "Confirm new password"
+    },
+    "alerts": {
+      "profileLoadFailed": "Failed to Load Profile",
+      "profileLoadError": "Unable to retrieve your profile information",
+      "invalidFileType": "Invalid File Type", 
+      "invalidFileTypeDesc": "Please select a valid image file (JPG, PNG, GIF, etc.).",
+      "fileTooLarge": "File Too Large",
+      "fileTooLargeDesc": "Image size must be less than 5MB. Please choose a smaller image.",
+      "noChanges": "No Changes",
+      "noChangesDesc": "There are no changes to save. Please modify your profile information first.",
+      "savingProfile": "Saving Profile",
+      "savingProfileDesc": "Please wait while we update your profile...",
+      "profileUpdated": "Profile Updated!",
+      "profileUpdatedDesc": "Your profile has been successfully updated and saved.",
+      "profileUpdateFailed": "Profile Update Failed",
+      "profileUpdateFailedDesc": "Failed to update profile. Please try again.",
+      "emailRequired": "Email Required",
+      "emailRequiredDesc": "Please enter your new email address.",
+      "sameEmail": "Same Email",
+      "sameEmailDesc": "The new email must be different from your current email address.",
+      "emailMismatch": "Email Mismatch",
+      "emailMismatchDesc": "The email addresses do not match. Please check both fields.",
+      "passwordRequired": "Password Required",
+      "passwordRequiredDesc": "Please enter your current password to confirm this change.",
+      "invalidEmail": "Invalid Email",
+      "invalidEmailDesc": "Please enter a valid email address format.",
+      "updatingEmail": "Updating Email",
+      "updatingEmailDesc": "Please wait while we process your email change request...",
+      "verificationEmailSent": "Verification Email Sent!",
+      "verificationEmailSentDesc": "We've sent a verification link to your new email. Please check your inbox and click the link to complete your email change.",
+      "invalidPassword": "Invalid Password",
+      "invalidPasswordDesc": "Your current password is incorrect. Please try again.",
+      "emailAlreadyExists": "Email Already Exists",
+      "emailAlreadyExistsDesc": "This email address is already registered. Please choose a different email.",
+      "emailChangeFailed": "Email Change Failed",
+      "emailChangeFailedDesc": "Failed to request email change. Please try again.",
+      "currentPasswordRequired": "Current Password Required",
+      "currentPasswordRequiredDesc": "Please enter your current password to continue.",
+      "newPasswordRequired": "New Password Required", 
+      "newPasswordRequiredDesc": "Please enter a new password.",
+      "passwordsDontMatch": "Passwords Don't Match",
+      "passwordsDontMatchDesc": "The new password and confirmation password must be identical.",
+      "passwordTooShort": "Password Too Short",
+      "passwordTooShortDesc": "Your new password must be at least 6 characters long for security.",
+      "updatingPassword": "Updating Password",
+      "updatingPasswordDesc": "Please wait while we securely update your password...",
+      "passwordUpdated": "Password Updated!",
+      "passwordUpdatedDesc": "Your password has been successfully changed. Please use your new password for future logins.",
+      "incorrectCurrentPassword": "Incorrect Current Password",
+      "incorrectCurrentPasswordDesc": "The current password you entered is incorrect. Please try again.",
+      "samePassword": "Same Password",
+      "samePasswordDesc": "Your new password must be different from your current password.",
+      "passwordUpdateFailed": "Password Update Failed",
+      "passwordUpdateFailedDesc": "Failed to update password. Please try again."
+    }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "users": "Users",
+    "challenges": "Challenges",
+    "quizzes": "Quizzes",
+    "messages": "Messages",
+    "statistics": "Statistics",
+    "userManagement": "User Management",
+    "challengeManagement": "Challenge Management",
+    "quizManagement": "Quiz Management",
+    "messageManagement": "Message Management",
+    "proofModeration": "Proof Moderation",
+    "approveProof": "Approve Proof",
+    "rejectProof": "Reject Proof",
+    "deleteUser": "Delete User",
+    "deleteChallenge": "Delete Challenge",
+    "deleteQuiz": "Delete Quiz",
+    "deleteMessage": "Delete Message",
+    "confirmDelete": "Delete Confirmation",
+    "confirmDeleteText": "Are you sure you want to delete {{item}}? This action cannot be undone!",
+    "deleteSuccess": "Item deleted successfully!",
+    "deleteError": "Failed to delete item. Please try again.",
+    "approveSuccess": "Proof approved successfully!",
+    "rejectSuccess": "Proof rejected successfully!",
+    "moderationError": "Failed to moderate proof. Please try again."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "save": "Save",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "upload": "Upload",
+    "download": "Download",
+    "share": "Share",
+    "copy": "Copy",
+    "paste": "Paste",
+    "cut": "Cut",
+    "undo": "Undo",
+    "redo": "Redo",
+    "selectAll": "Select All",
+    "none": "None",
+    "all": "All",
+    "more": "More",
+    "less": "Less",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "show": "Show",
+    "hide": "Hide",
+    "item": "this item",
+    "pleaseWait": "Please wait...",
+    "networkError": "Network Error",
+    "networkErrorText": "Please check your internet connection and try again.",
+    "authRequired": "Authentication Required",
+    "authRequiredText": "Please log in to continue.",
+    "accessDenied": "Access Denied",
+    "accessDeniedText": "You don't have permission to perform this action.",
+    "inputRequired": "You need to write something!"
+  },
+  "sdg": {
+    "goal1": "No Poverty",
+    "goal2": "Zero Hunger",
+    "goal3": "Good Health and Well-being",
+    "goal4": "Quality Education",
+    "goal5": "Gender Equality",
+    "goal6": "Clean Water and Sanitation",
+    "goal7": "Affordable and Clean Energy",
+    "goal8": "Decent Work and Economic Growth",
+    "goal9": "Industry, Innovation and Infrastructure",
+    "goal10": "Reduced Inequalities",
+    "goal11": "Sustainable Cities and Communities",
+    "goal12": "Responsible Consumption and Production",
+    "goal13": "Climate Action",
+    "goal14": "Life Below Water",
+    "goal15": "Life on Land",
+    "goal16": "Peace, Justice and Strong Institutions",
+    "goal17": "Partnerships for the Goals"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "loading": "Loading notifications...",
+    "offline": "Offline",
+    "markAllRead": "Mark All as Read",
+    "noNotifications": "No notifications",
+    "newChallenge": "New challenge available",
+    "proofApproved": "Your proof has been approved",
+    "proofRejected": "Your proof has been rejected",
+    "pointsEarned": "You earned {{points}} points",
+    "badgeUnlocked": "New badge unlocked",
+    "messageReceived": "New message received",
+    "postVoted": "Someone voted on your post",
+    "voteReceived": "{{username}} voted on your post! Total votes: {{count}}",
+    "timeAgo": {
+      "justNow": "Just now",
+      "minutesAgo": "{{count}}m ago",
+      "minutesAgo_plural": "{{count}}m ago",
+      "hoursAgo": "{{count}}h ago",
+      "hoursAgo_plural": "{{count}}h ago",
+      "daysAgo": "{{count}}d ago",
+      "daysAgo_plural": "{{count}}d ago"
+    }
+  }
+}

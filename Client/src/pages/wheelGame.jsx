@@ -18,10 +18,12 @@ import { useToast } from "../hooks/use-toast"
 import UserNavbar from "../components/UserNavbar"
 import QuizModal from "../components/QuizModal"
 import ChallengeModal from "../components/ChallengeModal"
+import { useTranslation } from "react-i18next"
 
 export default function WheelGame() {
   const { user, isAuthenticated } = useAuth()
   const { toast } = useToast()
+  const { t } = useTranslation()
 
   const [isSpinning, setIsSpinning] = useState(false)
   const [selectedODD, setSelectedODD] = useState(null)
@@ -126,12 +128,12 @@ export default function WheelGame() {
 
   const handleSpin = async () => {
     if (!isAuthenticated) {
-      AlertService.warning("Login Required", "Please login to spin the wheel and participate in the SDG challenges!");
+      AlertService.warning(t('wheel.loginRequired'), t('wheel.loginRequiredMessage'));
       return
     }
 
     if (!canSpinToday) {
-      AlertService.info("Daily Limit Reached", "You can only spin once per day. Come back tomorrow for another chance!");
+      AlertService.info(t('wheel.dailySpinUsed'), t('wheel.cannotSpin'));
       return
     }
 
@@ -160,9 +162,9 @@ export default function WheelGame() {
       
       if (error.message.includes('already spun')) {
         setCanSpinToday(false)
-        AlertService.info("Daily Limit Reached", error.message);
+        AlertService.info(t('wheel.dailySpinUsed'), error.message);
       } else {
-        AlertService.error("Spin Failed", error.message || "Failed to spin the wheel. Please try again later.");
+        AlertService.error(t('wheel.spinFailed'), error.message || t('wheel.spinFailedMessage'));
       }
     }
   }
@@ -208,8 +210,8 @@ export default function WheelGame() {
       setChallengeDecision('accepted')
       
       toast({
-        title: "Challenge Accepted! 💪",
-        description: "You can upload proof whenever you're ready",
+        title: t('wheel.challenge.accepted'),
+        description: t('wheel.challenge.uploadReady'),
       })
       
       // Refresh pending challenges
@@ -217,8 +219,8 @@ export default function WheelGame() {
     } catch (error) {
       console.error("Accept challenge error:", error)
       toast({
-        title: "Error",
-        description: error.message || "Failed to accept challenge",
+        title: t('common.error'),
+        description: error.message || t('wheel.challenge.acceptError'),
         variant: "destructive",
       })
     }
@@ -230,14 +232,14 @@ export default function WheelGame() {
       setChallengeDecision('declined')
       
       toast({
-        title: "Challenge Declined",
-        description: "See you tomorrow for another spin!",
+        title: t('wheel.challenge.declined'),
+        description: t('wheel.challenge.seeTomorrow'),
       })
     } catch (error) {
       console.error("Decline challenge error:", error)
       toast({
-        title: "Error",
-        description: error.message || "Failed to decline challenge",
+        title: t('common.error'),
+        description: error.message || t('wheel.challenge.declineError'),
         variant: "destructive",
       })
     }
@@ -345,11 +347,11 @@ export default function WheelGame() {
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-600">
-              The ODD Wheel
+              {t('wheel.title')}
             </span>
           </h1>
           <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-            Spin the wheel to discover your daily challenge or quiz and make a positive impact on the world!
+            {t('wheel.description')}
           </p>
         </div>
 
@@ -359,10 +361,10 @@ export default function WheelGame() {
             <Card className="bg-yellow-900/20 border-yellow-500/50">
               <CardContent className="p-4 text-center">
                 <p className="text-yellow-400">
-                  You've already spun today! Come back tomorrow for another chance.
+                  {t('wheel.dailyLimit')}
                 </p>
                 <p className="text-sm text-yellow-300 mt-1">
-                  Next spin available: {new Date(nextSpinTime).toLocaleString()}
+                  {t('wheel.nextSpinTime', { time: new Date(nextSpinTime).toLocaleString() })}
                 </p>
               </CardContent>
             </Card>
@@ -374,11 +376,11 @@ export default function WheelGame() {
           <div className="mb-8">
             <Card className="bg-blue-900/20 border-blue-500/50">
               <CardHeader>
-                <CardTitle className="text-blue-400">Pending Challenges</CardTitle>
+                <CardTitle className="text-blue-400">{t('wheel.pendingChallenges.title')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-blue-300 mb-4">
-                  You have {pendingChallenges.filter(challenge => challenge.status === 'PENDING').length} accepted challenge(s) waiting for proof submission:
+                  {t('wheel.pendingChallenges.description', { count: pendingChallenges.filter(challenge => challenge.status === 'PENDING').length })}
                 </p>
                 <div className="space-y-2">
                   {pendingChallenges
@@ -388,7 +390,7 @@ export default function WheelGame() {
                       <div>
                         <h4 className="font-semibold text-blue-200">{challenge.challenge?.title}</h4>
                         <p className="text-sm text-blue-300">
-                          Accepted: {new Date(challenge.acceptedAt).toLocaleDateString()}
+                          {t('wheel.pendingChallenges.accepted', { date: new Date(challenge.acceptedAt).toLocaleDateString() })}
                         </p>
                       </div>
                       <Button
@@ -397,7 +399,7 @@ export default function WheelGame() {
                         className="bg-blue-600 hover:bg-blue-700"
                       >
                         <Upload className="h-4 w-4 mr-2" />
-                        Submit Proof
+                        {t('wheel.pendingChallenges.submitProof')}
                       </Button>
                     </div>
                   ))}
@@ -412,11 +414,11 @@ export default function WheelGame() {
           <div className="mb-8">
             <Card className="bg-yellow-900/20 border-yellow-500/50">
               <CardHeader>
-                <CardTitle className="text-yellow-400">Proofs Under Review</CardTitle>
+                <CardTitle className="text-yellow-400">{t('wheel.submittedProofs.title')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-yellow-300 mb-4">
-                  You have {pendingChallenges.filter(challenge => challenge.status === 'PROOF_SUBMITTED').length} proof(s) waiting for admin verification:
+                  {t('wheel.submittedProofs.description', { count: pendingChallenges.filter(challenge => challenge.status === 'PROOF_SUBMITTED').length })}
                 </p>
                 <div className="space-y-2">
                   {pendingChallenges
@@ -426,11 +428,11 @@ export default function WheelGame() {
                       <div>
                         <h4 className="font-semibold text-yellow-200">{challenge.challenge?.title}</h4>
                         <p className="text-sm text-yellow-300">
-                          Submitted: {new Date(challenge.proofSubmittedAt).toLocaleDateString()}
+                          {t('wheel.submittedProofs.submitted', { date: new Date(challenge.proofSubmittedAt).toLocaleDateString() })}
                         </p>
                       </div>
                       <Badge variant="outline" className="border-yellow-500 text-yellow-400">
-                        Under Review
+                        {t('wheel.submittedProofs.underReview')}
                       </Badge>
                     </div>
                   ))}
@@ -445,11 +447,11 @@ export default function WheelGame() {
           <div className="mb-8">
             <Card className="bg-zinc-900/20 border-zinc-500/50">
               <CardHeader>
-                <CardTitle className="text-zinc-300">Recent Challenge Results</CardTitle>
+                <CardTitle className="text-zinc-300">{t('wheel.completedChallenges.title')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-zinc-400 mb-4">
-                  Recent challenge completion results:
+                  {t('wheel.completedChallenges.description')}
                 </p>
                 <div className="space-y-2">
                   {pendingChallenges
@@ -470,13 +472,18 @@ export default function WheelGame() {
                           challenge.status === 'VERIFIED' ? 'text-green-300' : 'text-red-300'
                         }`}>
                           {challenge.status === 'VERIFIED'
-                            ? `Approved on ${new Date(challenge.verifiedAt).toLocaleDateString()} - ${challenge.pointsAwarded || 20} points earned!`
-                            : `Rejected on ${new Date(challenge.updatedAt).toLocaleDateString()}`
+                            ? t('wheel.completedChallenges.approved', { 
+                                date: new Date(challenge.verifiedAt).toLocaleDateString(),
+                                points: challenge.pointsAwarded || 20 
+                              })
+                            : t('wheel.completedChallenges.rejected', { 
+                                date: new Date(challenge.updatedAt).toLocaleDateString() 
+                              })
                           }
                         </p>
                         {challenge.status === 'REJECTED' && challenge.adminNotes && (
                           <p className="text-xs text-red-400 mt-1">
-                            Admin feedback: {challenge.adminNotes}
+                            {t('wheel.completedChallenges.adminFeedback', { feedback: challenge.adminNotes })}
                           </p>
                         )}
                       </div>
@@ -485,7 +492,7 @@ export default function WheelGame() {
                           ? 'bg-green-600/50 text-green-200'
                           : 'bg-red-600/50 text-red-200'
                       }>
-                        {challenge.status === 'VERIFIED' ? 'Approved ✅' : 'Rejected ❌'}
+                        {challenge.status === 'VERIFIED' ? t('wheel.completedChallenges.approvedBadge') : t('wheel.completedChallenges.rejectedBadge')}
                       </Badge>
                     </div>
                   ))}
@@ -524,8 +531,12 @@ export default function WheelGame() {
 
                   // Show success message
                   toast({
-                    title: "ODD Selected!",
-                    description: `You got ODD ${odd.oddId}: ${odd.name.en} - ${scenarioType}`,
+                    title: t('wheel.oddSelected.title'),
+                    description: t('wheel.oddSelected.description', { 
+                      oddId: odd.oddId, 
+                      name: odd.name.en, 
+                      type: scenarioType 
+                    }),
                   })
 
                   // Clear pending result
@@ -545,14 +556,14 @@ export default function WheelGame() {
                 {isSpinning ? (
                   <>
                     <RotateCcw className="mr-2 h-5 w-5 animate-spin" />
-                    Spinning...
+                    {t('wheel.spinButton.spinning')}
                   </>
                 ) : !canSpinToday ? (
-                  "Daily Limit Reached"
+                  t('wheel.spinButton.dailyLimit')
                 ) : (
                   <>
                     <Play className="mr-2 h-5 w-5" />
-                    Spin the Wheel
+                    {t('wheel.spinButton.spin')}
                   </>
                 )}
               </Button>
@@ -576,9 +587,9 @@ export default function WheelGame() {
                   <Card className="bg-zinc-800/50 border-zinc-700">
                     <CardContent className="p-12 text-center">
                       <div className="text-6xl mb-4">🎯</div>
-                      <h3 className="text-2xl font-bold text-white mb-2">Ready to Make an Impact?</h3>
+                      <h3 className="text-2xl font-bold text-white mb-2">{t('wheel.waitingState.title')}</h3>
                       <p className="text-zinc-400">
-                        Spin the wheel to discover your daily challenge or quiz!
+                        {t('wheel.waitingState.description')}
                       </p>
                     </CardContent>
                   </Card>
@@ -590,21 +601,21 @@ export default function WheelGame() {
             {isAuthenticated && user && (
               <Card className="bg-zinc-800/50 border-zinc-700">
                 <CardHeader>
-                  <CardTitle className="text-white">Your Progress</CardTitle>
+                  <CardTitle className="text-white">{t('wheel.userStats.title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
                       <div className="text-2xl font-bold text-purple-400">{user.totalPoints || 0}</div>
-                      <div className="text-sm text-zinc-400">Total Points</div>
+                      <div className="text-sm text-zinc-400">{t('wheel.userStats.totalPoints')}</div>
                     </div>
                     <div>
                       <div className="text-2xl font-bold text-green-400">{user.badges?.length || 0}</div>
-                      <div className="text-sm text-zinc-400">Badges</div>
+                      <div className="text-sm text-zinc-400">{t('wheel.userStats.badges')}</div>
                     </div>
                     <div>
                       <div className="text-2xl font-bold text-blue-400">{user.level || "Explorer"}</div>
-                      <div className="text-sm text-zinc-400">Level</div>
+                      <div className="text-sm text-zinc-400">{t('wheel.userStats.level')}</div>
                     </div>
                   </div>
                 </CardContent>

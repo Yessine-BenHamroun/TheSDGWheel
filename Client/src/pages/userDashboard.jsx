@@ -29,6 +29,7 @@ import { Progress } from "../components/ui/progress"
 import { MouseFollower } from "../components/mouse-follower"
 import { ScrollProgress } from "../components/scroll-progress"
 import { useToast } from "../hooks/use-toast"
+import { useTranslation } from "react-i18next"
 import UserNavbar from "../components/UserNavbar"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -51,6 +52,7 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { user } = useAuth()
+  const { t } = useTranslation()
   
   useEffect(() => {
     if (user && user.role === "admin") {
@@ -206,9 +208,9 @@ export default function Dashboard() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-600 mb-2">
-              Welcome back, {user?.username}!
+              {t('dashboard.welcome', { name: user?.username })}
             </h1>
-            <p className="text-zinc-400">Track your sustainability journey and impact</p>
+            <p className="text-zinc-400">{t('dashboard.subtitle')}</p>
           </div>
 
           {/* Status Cards */}
@@ -218,15 +220,15 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                   <Trophy className="h-5 w-5 text-yellow-400" />
-                  <span className="text-sm font-medium text-zinc-300">Total Points</span>
+                  <span className="text-sm font-medium text-zinc-300">{t('dashboard.totalPoints')}</span>
                 </div>
                 <Badge variant="outline" className="text-yellow-400 border-yellow-400/50">
-                  Level {user?.level || 1}
+                  {t('dashboard.level', { level: user?.level || 1 })}
                 </Badge>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-400">Points</span>
+                  <span className="text-zinc-400">{t('dashboard.points')}</span>
                   <span className="text-white">{user?.totalPoints || 0}</span>
                 </div>
                 <div className="w-full bg-zinc-800 rounded-full h-2">
@@ -235,7 +237,7 @@ export default function Dashboard() {
                     style={{ width: `${getProgressPercentage()}%` }}
                   ></div>
                 </div>
-                <p className="text-xs text-zinc-500">{getNextLevelPoints()} points to next level</p>
+                <p className="text-xs text-zinc-500">{t('dashboard.pointsToNextLevel', { points: getNextLevelPoints() })}</p>
               </div>
             </div>
 
@@ -244,7 +246,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                   <Target className="h-5 w-5 text-blue-400" />
-                  <span className="text-sm font-medium text-zinc-300">Active Challenges</span>
+                  <span className="text-sm font-medium text-zinc-300">{t('dashboard.activeChallenges')}</span>
                 </div>
                 <Badge variant="outline" className="text-blue-400 border-blue-400/50">
                   {pendingChallenges.length}
@@ -252,7 +254,7 @@ export default function Dashboard() {
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-400">In Progress</span>
+                  <span className="text-zinc-400">{t('dashboard.inProgress')}</span>
                   <span className="text-white">{pendingChallenges.filter(c => c.status === 'PENDING').length}</span>
                 </div>
                 <div className="w-full bg-zinc-800 rounded-full h-2">
@@ -269,7 +271,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                   <TrendingUp className="h-5 w-5 text-green-400" />
-                  <span className="text-sm font-medium text-zinc-300">Leaderboard Rank</span>
+                  <span className="text-sm font-medium text-zinc-300">{t('dashboard.leaderboardRank')}</span>
                 </div>
                 <Badge variant="outline" className="text-green-400 border-green-400/50">
                   #{leaderboardPosition || 'N/A'}
@@ -277,8 +279,8 @@ export default function Dashboard() {
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-400">Global Position</span>
-                  <span className="text-white">#{leaderboardPosition || 'Unranked'}</span>
+                  <span className="text-zinc-400">{t('dashboard.globalPosition')}</span>
+                  <span className="text-white">#{leaderboardPosition || t('dashboard.unranked')}</span>
                 </div>
                 <div className="w-full bg-zinc-800 rounded-full h-2">
                   <div
@@ -294,7 +296,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                   <Globe className="h-5 w-5 text-purple-400" />
-                  <span className="text-sm font-medium text-zinc-300">SDG Impact</span>
+                  <span className="text-sm font-medium text-zinc-300">{t('dashboard.sdgImpact')}</span>
                 </div>
                 <Badge variant="outline" className="text-purple-400 border-purple-400/50">
                   {userProgress.length} SDGs
@@ -302,7 +304,7 @@ export default function Dashboard() {
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-400">Total Impact</span>
+                  <span className="text-zinc-400">{t('dashboard.totalImpact')}</span>
                   <span className="text-white">{userProgress.reduce((sum, p) => sum + (p.points || 0), 0)} pts</span>
                 </div>
                 <div className="w-full bg-zinc-800 rounded-full h-2">
@@ -329,7 +331,7 @@ export default function Dashboard() {
                       <div className="flex items-center justify-between">
                         <h2 className="text-xl font-bold text-white flex items-center">
                           <Activity className="mr-2 h-5 w-5 text-purple-500" />
-                          Your Sustainability Journey
+                          {t('dashboard.sustainabilityJourney')}
                         </h2>
                         <div className="flex items-center space-x-2">
                           <Badge
@@ -337,7 +339,7 @@ export default function Dashboard() {
                             className="bg-zinc-800/50 text-purple-400 border-purple-500/50 text-xs"
                           >
                             <div className="h-1.5 w-1.5 rounded-full bg-purple-500 mr-1 animate-pulse"></div>
-                            LIVE
+                            {t('dashboard.live')}
                           </Badge>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400" onClick={loadUserDashboardData}>
                             <Activity className="h-4 w-4" />
@@ -349,28 +351,28 @@ export default function Dashboard() {
                     <div className="p-6">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <UserMetricCard
-                          title="Completed Challenges"
+                          title={t('dashboard.completedChallengesTitle')}
                           value={userStats?.completedChallenges || 0}
                           icon={CheckCircle}
                           trend="up"
                           color="purple"
-                          detail="This month"
+                          detail={t('dashboard.thisMonth')}
                         />
                         <UserMetricCard
-                          title="SDGs Contributed"
+                          title={t('dashboard.sdgsContributed')}
                           value={userProgress.length}
                           icon={Globe}
                           trend="stable"
                           color="pink"
-                          detail="Total goals"
+                          detail={t('dashboard.totalGoals')}
                         />
                         <UserMetricCard
-                          title="Community Rank"
+                          title={t('dashboard.communityRank')}
                           value={leaderboardPosition || 0}
                           icon={Trophy}
                           trend="up"
                           color="blue"
-                          detail="Global position"
+                          detail={t('dashboard.globalPosition')}
                         />
                       </div>
 
@@ -477,7 +479,7 @@ export default function Dashboard() {
                                 <div className="text-center py-12">
                                   <Target className="h-12 w-12 text-zinc-600 mx-auto mb-4" />
                                   <h3 className="text-lg font-medium text-zinc-400 mb-2">No Active Challenges</h3>
-                                  <p className="text-zinc-500 mb-4">Start your sustainability journey by spinning the wheel!</p>
+                                  <p className="text-zinc-500 mb-4">{t('dashboard.startJourney')}</p>
                                   <Button onClick={() => navigate('/wheel')}>
                                     Spin the Wheel
                                   </Button>

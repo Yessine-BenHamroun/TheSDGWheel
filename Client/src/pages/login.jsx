@@ -12,6 +12,8 @@ import { ScrollProgress } from "../components/scroll-progress"
 import { useAuth } from "../contexts/AuthContext"
 import ApiService from "../services/api"
 import AlertService from "../services/alertService"
+import { useTranslation } from "react-i18next"
+import LanguageSwitcher from "../components/LanguageSwitcher"
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
@@ -23,6 +25,7 @@ export default function Login() {
   const { toast } = useToast()
   const navigate = useNavigate()
   const { login } = useAuth()
+  const { t } = useTranslation()
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -46,7 +49,7 @@ export default function Login() {
       console.log('Login successful:', response)
 
       AlertService.close();
-      AlertService.success("Welcome Back!", `Great to see you again, ${response.user.username}!`);
+      AlertService.success(t('auth.login.loginSuccess'), t('dashboard.welcome', { name: response.user.username }));
 
       // Redirection selon le rôle
       if (response.user.role === "admin") {
@@ -60,11 +63,11 @@ export default function Login() {
       AlertService.close();
       
       if (error.message.includes('401') || error.message.includes('Invalid')) {
-        AlertService.error("Login Failed", "Invalid email or password. Please check your credentials and try again.");
+        AlertService.error(t('auth.login.loginError'), t('auth.login.loginError'));
       } else if (error.message.includes('network') || error.message.includes('fetch')) {
         AlertService.networkError();
       } else {
-        AlertService.error("Login Error", error.message || "An unexpected error occurred. Please try again.");
+        AlertService.error(t('common.error'), error.message || t('common.unexpectedError', { defaultValue: 'An unexpected error occurred. Please try again.' }));
       }
     } finally {
       setIsLoading(false)
@@ -93,13 +96,14 @@ export default function Login() {
                 <span className="text-white">Wheel</span>
           </Link>
           <div className="flex items-center gap-4">
-            <span className="text-zinc-400">Don't have an account?</span>
+            <LanguageSwitcher variant="ghost" size="sm" />
+            <span className="text-zinc-400">{t('auth.login.noAccount')}</span>
             <Button
               variant="outline"
               className="border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500 bg-transparent"
               asChild
             >
-              <Link to="/register">Sign Up</Link>
+              <Link to="/register">{t('navigation.register')}</Link>
             </Button>
           </div>
         </div>
@@ -127,7 +131,7 @@ export default function Login() {
                 >
                   <div className="inline-block">
                     <div className="relative px-3 py-1 text-sm font-medium rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-4">
-                      <span className="relative z-10">Welcome Back</span>
+                      <span className="relative z-10">{t('auth.login.title')}</span>
                       <span className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 animate-pulse"></span>
                     </div>
                   </div>
@@ -139,7 +143,7 @@ export default function Login() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                 >
-                  Sign In
+                  {t('navigation.login')}
                 </motion.h1>
                 <motion.p
                   className="text-zinc-400"
@@ -147,7 +151,7 @@ export default function Login() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                 >
-                  Enter your credentials to access your account
+                  {t('auth.login.subtitle')}
                 </motion.p>
               </div>
 
@@ -162,7 +166,7 @@ export default function Login() {
                 {/* Email Field */}
                 <div className="space-y-2">
                   <label htmlFor="email" className="text-sm font-medium text-zinc-300">
-                    Email Address
+                    {t('auth.login.email')}
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
@@ -170,7 +174,7 @@ export default function Login() {
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder={t('auth.login.email')}
                       value={formData.email}
                       onChange={handleInputChange}
                       className="pl-10 bg-zinc-900/50 border-zinc-700 focus:border-purple-500 focus:ring-purple-500/20 h-12"
@@ -182,7 +186,7 @@ export default function Login() {
                 {/* Password Field */}
                 <div className="space-y-2">
                   <label htmlFor="password" className="text-sm font-medium text-zinc-300">
-                    Password
+                    {t('auth.login.password')}
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
@@ -190,7 +194,7 @@ export default function Login() {
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
+                      placeholder={t('auth.login.password')}
                       value={formData.password}
                       onChange={handleInputChange}
                       className="pl-10 pr-10 bg-zinc-900/50 border-zinc-700 focus:border-purple-500 focus:ring-purple-500/20 h-12"
@@ -213,10 +217,10 @@ export default function Login() {
                       type="checkbox"
                       className="w-4 h-4 rounded border-zinc-700 bg-zinc-900/50 text-purple-500 focus:ring-purple-500/20"
                     />
-                    <span className="text-sm text-zinc-400">Remember me</span>
+                    <span className="text-sm text-zinc-400">{t('auth.login.rememberMe')}</span>
                   </label>
                   <Link to="/forgot-password" className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
-                    Forgot password?
+                    {t('auth.login.forgotPassword')}
                   </Link>
                 </div>
 
@@ -229,11 +233,11 @@ export default function Login() {
                   {isLoading ? (
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      Signing In...
+                      {t('common.loading')}
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      Sign In
+                      {t('auth.login.loginButton')}
                       <ArrowRight className="h-4 w-4" />
                     </div>
                   )}
@@ -243,7 +247,7 @@ export default function Login() {
               {/* Divider */}
               <div className="my-8 flex items-center">
                 <div className="flex-1 border-t border-zinc-700"></div>
-                <span className="px-4 text-sm text-zinc-500">Don't have an account?</span>
+                <span className="px-4 text-sm text-zinc-500">{t('auth.login.noAccount')}</span>
                 <div className="flex-1 border-t border-zinc-700"></div>
               </div>
 
@@ -266,7 +270,7 @@ export default function Login() {
               <div className="mt-8 text-center">
                 
                 <Link to="/register" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">
-                  Create one here
+                  {t('auth.login.signUpLink')}
                 </Link>
               </div>
             </div>

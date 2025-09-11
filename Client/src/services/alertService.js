@@ -1,4 +1,10 @@
 import Swal from 'sweetalert2';
+import i18n from '../i18n/i18n';
+
+// Helper function to get translations
+const getTranslation = (key, options = {}) => {
+  return i18n.t(key, options);
+};
 
 // Custom theme configuration matching your website
 const defaultConfig = {
@@ -35,10 +41,10 @@ const defaultConfig = {
 
 export const AlertService = {
   // Success alerts
-  success: (title, text = '') => {
+  success: (title = '', text = '') => {
     return Swal.fire({
       ...defaultConfig,
-      title,
+      title: title || getTranslation('common.success'),
       text,
       html: `
         <div class="success-icon-container" style="margin-bottom: 1rem;">
@@ -71,7 +77,7 @@ export const AlertService = {
           }
         </style>
       `,
-      confirmButtonText: 'Perfect!',
+      confirmButtonText: getTranslation('common.ok'),
       timer: 4000,
       timerProgressBar: true,
       showConfirmButton: true,
@@ -83,69 +89,73 @@ export const AlertService = {
   },
 
   // Error alerts
-  error: (title, text = '') => {
+  error: (title = '', text = '') => {
     return Swal.fire({
       ...defaultConfig,
-      title,
+      title: title || getTranslation('common.error'),
       text,
       icon: 'error',
-      confirmButtonText: 'Try Again',
+      confirmButtonText: getTranslation('common.retry'),
       showConfirmButton: true,
       iconColor: '#ef4444'
     });
   },
 
   // Warning alerts
-  warning: (title, text = '') => {
+  warning: (title = '', text = '') => {
     return Swal.fire({
       ...defaultConfig,
-      title,
+      title: title || getTranslation('common.warning'),
       text,
       icon: 'warning',
-      confirmButtonText: 'Got it!',
+      confirmButtonText: getTranslation('common.ok'),
       showConfirmButton: true,
       iconColor: '#f59e0b'
     });
   },
 
   // Info alerts
-  info: (title, text = '') => {
+  info: (title = '', text = '') => {
     return Swal.fire({
       ...defaultConfig,
-      title,
+      title: title || getTranslation('common.info'),
       text,
       icon: 'info',
-      confirmButtonText: 'Got it!',
+      confirmButtonText: getTranslation('common.ok'),
       showConfirmButton: true,
       iconColor: '#3b82f6'
     });
   },
 
   // Confirmation dialogs
-  confirm: (title, text = '', confirmText = 'Yes', cancelText = 'Cancel') => {
+  confirm: (title = '', text = '', confirmText = '', cancelText = '') => {
     return Swal.fire({
       ...defaultConfig,
-      title,
+      title: title || getTranslation('common.confirm'),
       text,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonText: confirmText,
-      cancelButtonText: cancelText,
+      confirmButtonText: confirmText || getTranslation('common.yes'),
+      cancelButtonText: cancelText || getTranslation('common.cancel'),
       reverseButtons: true,
       iconColor: '#8b5cf6'
     });
   },
 
   // Delete confirmation
-  confirmDelete: (itemName = 'this item') => {
+  confirmDelete: (itemName = '') => {
+    const defaultItemName = getTranslation('common.item', { defaultValue: 'this item' });
     return Swal.fire({
       ...defaultConfig,
-      title: 'Delete Confirmation',
-      text: `Are you sure you want to delete ${itemName}? This action cannot be undone!`,
+      title: getTranslation('admin.confirmDelete', { defaultValue: 'Delete Confirmation' }),
+      text: getTranslation('admin.confirmDeleteText', { 
+        defaultValue: `Are you sure you want to delete ${itemName || defaultItemName}? This action cannot be undone!`,
+        item: itemName || defaultItemName
+      }),
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Keep it safe',
+      confirmButtonText: getTranslation('common.delete'),
+      cancelButtonText: getTranslation('common.cancel'),
       customClass: {
         ...defaultConfig.customClass,
         confirmButton: 'swal-custom-deny-btn'
@@ -156,15 +166,15 @@ export const AlertService = {
   },
 
   // Advanced delete confirmation with custom parameters
-  deleteConfirm: (title, text, confirmText = 'Delete', cancelText = 'Cancel') => {
+  deleteConfirm: (title = '', text = '', confirmText = '', cancelText = '') => {
     return Swal.fire({
       ...defaultConfig,
-      title,
+      title: title || getTranslation('admin.confirmDelete'),
       text,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: confirmText,
-      cancelButtonText: cancelText,
+      confirmButtonText: confirmText || getTranslation('common.delete'),
+      cancelButtonText: cancelText || getTranslation('common.cancel'),
       customClass: {
         ...defaultConfig.customClass,
         confirmButton: 'swal-custom-deny-btn'
@@ -177,11 +187,11 @@ export const AlertService = {
   },
 
   // Loading alert
-  loading: (title = 'Loading...', text = 'Please wait') => {
+  loading: (title = '', text = '') => {
     return Swal.fire({
       ...defaultConfig,
-      title,
-      text,
+      title: title || getTranslation('common.loading'),
+      text: text || getTranslation('common.pleaseWait', { defaultValue: 'Please wait...' }),
       allowOutsideClick: false,
       allowEscapeKey: false,
       showConfirmButton: false,
@@ -200,10 +210,10 @@ export const AlertService = {
   networkError: () => {
     return Swal.fire({
       ...defaultConfig,
-      title: 'Network Error',
-      text: 'Please check your internet connection and try again.',
+      title: getTranslation('common.networkError', { defaultValue: 'Network Error' }),
+      text: getTranslation('common.networkErrorText', { defaultValue: 'Please check your internet connection and try again.' }),
       icon: 'error',
-      confirmButtonText: 'Retry'
+      confirmButtonText: getTranslation('common.retry')
     });
   },
 
@@ -211,12 +221,12 @@ export const AlertService = {
   authError: () => {
     return Swal.fire({
       ...defaultConfig,
-      title: 'Authentication Required',
-      text: 'Please log in to continue.',
+      title: getTranslation('common.authRequired', { defaultValue: 'Authentication Required' }),
+      text: getTranslation('common.authRequiredText', { defaultValue: 'Please log in to continue.' }),
       icon: 'warning',
-      confirmButtonText: 'Login',
+      confirmButtonText: getTranslation('navigation.login'),
       showCancelButton: true,
-      cancelButtonText: 'Cancel'
+      cancelButtonText: getTranslation('common.cancel')
     });
   },
 
@@ -224,10 +234,10 @@ export const AlertService = {
   permissionDenied: () => {
     return Swal.fire({
       ...defaultConfig,
-      title: 'Access Denied',
-      text: 'You don\'t have permission to perform this action.',
+      title: getTranslation('common.accessDenied'),
+      text: getTranslation('common.accessDeniedText'),
       icon: 'error',
-      confirmButtonText: 'OK'
+      confirmButtonText: getTranslation('common.ok')
     });
   },
 
@@ -314,11 +324,11 @@ export const AlertService = {
       input: inputType,
       inputPlaceholder: placeholder,
       showCancelButton: true,
-      confirmButtonText: 'Submit',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: getTranslation('common.submit'),
+      cancelButtonText: getTranslation('common.cancel'),
       inputValidator: (value) => {
         if (!value) {
-          return 'You need to write something!';
+          return getTranslation('common.inputRequired');
         }
       }
     });
@@ -332,11 +342,11 @@ export const AlertService = {
       input: 'textarea',
       inputPlaceholder: placeholder,
       showCancelButton: true,
-      confirmButtonText: 'Submit',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: getTranslation('common.submit'),
+      cancelButtonText: getTranslation('common.cancel'),
       inputValidator: (value) => {
         if (!value) {
-          return 'You need to write something!';
+          return getTranslation('common.inputRequired');
         }
       }
     });

@@ -1,6 +1,8 @@
 const Proof = require('../models/Proof');
 const Vote = require('../models/Vote');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
+const socketService = require('../services/socketService');
 
 // Get community posts (approved proofs with user info)
 const getCommunityPosts = async (req, res, next) => {
@@ -117,6 +119,31 @@ const voteOnPost = async (req, res, next) => {
 
     // Get updated vote count
     const voteCount = await Vote.countDocuments({ proof: postId });
+
+    // Create notification for post owner
+    const voter = await User.findById(userId).select('username');
+    console.log(`📝 Creating notification for post owner ${proof.user} from voter ${voter.username}`);
+    
+    const notification = await Notification.createNotification(
+      proof.user,
+      'POST_VOTED',
+      'New Vote on Your Post!',
+      `${voter.username} voted on your post. You now have ${voteCount} vote${voteCount === 1 ? '' : 's'}!`,
+      {
+        postId: postId,
+        voterUsername: voter.username,
+        voterId: userId,
+        totalVotes: voteCount,
+        pointsAwarded: 1
+      },
+      'MEDIUM'
+    );
+
+    console.log(`📢 Notification created:`, notification);
+
+    // Send real-time notification via socket
+    console.log(`🔌 Sending real-time notification to user ${proof.user.toString()}`);
+    await socketService.sendNotificationToUser(proof.user.toString(), notification);
 
     res.json({ 
       success: true, 

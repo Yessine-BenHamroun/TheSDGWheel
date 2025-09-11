@@ -6,18 +6,21 @@ import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useMobile } from "@/hooks/use-mobile"
 import { useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
+import LanguageSwitcher from "./LanguageSwitcher"
 
 export function FloatingNav() {
   const [isOpen, setIsOpen] = useState(false)
   const isMobile = useMobile()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const navItems = [
-    { name: "About", href: "#about" },
+    { name: t('navigation.about'), href: "#about" },
     { name: "Key Features", href: "#key_features" },
     { name: "Objectives", href: "#objectives" },
     { name: "Scoring System", href: "#scoring_system" },
-    { name: "Contact", href: "#contact" },
+    { name: t('navigation.contact'), href: "#contact" },
   ]
 
   const handleNavClick = () => {
@@ -87,12 +90,13 @@ export function FloatingNav() {
                   {item.name}
                 </button>
               ))}
+              <LanguageSwitcher variant="ghost" size="sm" className="mx-2" />
               <Button
                 size="sm"
                 onClick={handleLoginClick}
                 className="ml-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 border-0"
               >
-                Login
+                {t('navigation.login')}
               </Button>
             </div>
           )}
@@ -117,11 +121,14 @@ export function FloatingNav() {
                 {item.name}
               </button>
             ))}
+            <div className="my-4">
+              <LanguageSwitcher variant="ghost" size="lg" />
+            </div>
             <Button
               onClick={handleLoginClick}
               className="mt-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 border-0"
             >
-              Login
+              {t('navigation.login')}
             </Button>
           </div>
         </motion.div>

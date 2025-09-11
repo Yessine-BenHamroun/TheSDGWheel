@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { HistoryIcon, Search, Calendar, User, Target, FileCheck, Settings, Zap, ArrowRight } from "lucide-react"
+import { HistoryIcon, Search, Calendar, User, Target, FileCheck, Settings, Zap, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog"
 
 export default function History() {
@@ -18,20 +18,43 @@ export default function History() {
   const [filterType, setFilterType] = useState("all")
   const [activities, setActivities] = useState([])
   const [selectedLog, setSelectedLog] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
+  const [statistics, setStatistics] = useState({
+    todayCount: 0,
+    userActionsCount: 0,
+    adminActionsCount: 0
+  })
+  const activitiesPerPage = 15
 
   useEffect(() => {
     fetchLogs()
-  }, [])
+  }, [currentPage, searchTerm, filterType])
 
   const fetchLogs = async () => {
     setLoading(true)
     try {
-      const res = await ApiService.getActivityLogs()
+      const res = await ApiService.getActivityLogs(currentPage, activitiesPerPage, searchTerm, filterType)
       setActivities(res.logs || [])
+      setTotalPages(res.pagination?.totalPages || 1)
+      setTotalCount(res.pagination?.totalCount || 0)
+      setStatistics(res.statistics || {
+        todayCount: 0,
+        userActionsCount: 0,
+        adminActionsCount: 0
+      })
     } catch (e) {
       setActivities([])
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -42,17 +65,15 @@ export default function History() {
     return "";
   }
 
-  const filteredActivities = activities.filter((activity) => {
-    const userName = getUserName(activity)
-    const action = activity.action || ""
-    const details = activity.details || ""
-    const matchesSearch =
-      userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      details.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = filterType === "all" || activity.type === filterType
-    return matchesSearch && matchesFilter
-  })
+  const handleSearchChange = (value) => {
+    setSearchTerm(value)
+    setCurrentPage(1) // Reset to first page when searching
+  }
+
+  const handleFilterChange = (value) => {
+    setFilterType(value)
+    setCurrentPage(1) // Reset to first page when filtering
+  }
 
   const getActivityIcon = (type) => {
     switch (type) {
@@ -173,14 +194,14 @@ export default function History() {
             <Input
               placeholder="Search activities by user, action, or details..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-10 bg-zinc-800/50 border-zinc-700 focus:border-yellow-500"
             />
           </div>
           <div className="flex gap-2">
             <select
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
+              onChange={(e) => handleFilterChange(e.target.value)}
               className="px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-md text-white focus:border-yellow-500"
             >
               <option value="all">All Activities</option>
@@ -208,7 +229,7 @@ export default function History() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white/80">Total Activities</p>
-                  <p className="text-2xl font-bold text-white">{activities.length}</p>
+                  <p className="text-2xl font-bold text-white">{totalCount}</p>
                 </div>
                 <HistoryIcon className="h-8 w-8 text-blue-400" />
               </div>
@@ -220,12 +241,7 @@ export default function History() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white/80">Today</p>
-                  <p className="text-2xl font-bold text-white">
-                    {
-                      activities.filter((a) => new Date(a.timestamp).toDateString() === new Date().toDateString())
-                        .length
-                    }
-                  </p>
+                  <p className="text-2xl font-bold text-white">{statistics.todayCount}</p>
                 </div>
                 <Calendar className="h-8 w-8 text-green-400" />
               </div>
@@ -237,9 +253,7 @@ export default function History() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white/80">User Actions</p>
-                  <p className="text-2xl font-bold text-white">
-                    {activities.filter((a) => !["admin_action", "system_action"].includes(a.type)).length}
-                  </p>
+                  <p className="text-2xl font-bold text-white">{statistics.userActionsCount}</p>
                 </div>
                 <User className="h-8 w-8 text-purple-400" />
               </div>
@@ -251,9 +265,7 @@ export default function History() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white/80">Admin Actions</p>
-                  <p className="text-2xl font-bold text-white">
-                    {activities.filter((a) => ["admin_action", "system_action"].includes(a.type)).length}
-                  </p>
+                  <p className="text-2xl font-bold text-white">{statistics.adminActionsCount}</p>
                 </div>
                 <Settings className="h-8 w-8 text-orange-400" />
               </div>
@@ -269,7 +281,7 @@ export default function History() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {filteredActivities.map((activity) => {
+              {activities.map((activity) => {
                 const { date, time } = formatTimestamp(activity.timestamp)
                 return (
                   <div
@@ -320,7 +332,7 @@ export default function History() {
               })}
             </div>
 
-            {filteredActivities.length === 0 && (
+            {activities.length === 0 && !loading && (
               <div className="text-center py-12">
                 <div className="flex justify-center items-center mb-4">
                   <svg
@@ -397,6 +409,68 @@ export default function History() {
             )}
           </CardContent>
         </Card>
+
+        {/* Pagination */}
+        {!loading && activities.length > 0 && totalPages > 1 && (
+          <div className="mt-8 flex items-center justify-between">
+            <div className="text-sm text-zinc-400">
+              Showing {((currentPage - 1) * activitiesPerPage) + 1} - {Math.min(currentPage * activitiesPerPage, totalCount)} of {totalCount} activities
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="bg-zinc-800 border-zinc-600 text-white hover:bg-zinc-700"
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Previous
+              </Button>
+              
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handlePageChange(pageNum)}
+                      className={currentPage === pageNum 
+                        ? "bg-yellow-600 text-white" 
+                        : "bg-zinc-800 border-zinc-600 text-white hover:bg-zinc-700"
+                      }
+                    >
+                      {pageNum}
+                    </Button>
+                  );
+                })}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="bg-zinc-800 border-zinc-600 text-white hover:bg-zinc-700"
+              >
+                Next
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
       
       {/* Modal de détails du log */}

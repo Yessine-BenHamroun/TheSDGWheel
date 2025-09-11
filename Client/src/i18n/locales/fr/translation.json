@@ -1,0 +1,796 @@
+{
+  "navigation": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "leaderboard": "Classement",
+    "community": "Communauté",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "about": "À propos",
+    "contact": "Contact",
+    "admin": "Admin"
+  },
+  "auth": {
+    "login": {
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous à votre compte",
+      "email": "Email",
+      "password": "Mot de passe",
+      "rememberMe": "Se souvenir de moi",
+      "forgotPassword": "Mot de passe oublié?",
+      "loginButton": "Se connecter",
+      "noAccount": "Vous n'avez pas de compte?",
+      "signUpLink": "Inscrivez-vous ici"
+    },
+    "loginSuccess": "Connexion réussie!",
+      "loginError": "Identifiants invalides. Veuillez réessayer.",
+      "emailRequired": "L'email est requis",
+      "passwordRequired": "Le mot de passe est requis"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Rejoignez la communauté SDG Wheel",
+      "name": "Nom complet",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "registerButton": "Créer un compte",
+      "hasAccount": "Vous avez déjà un compte?",
+      "signInLink": "Connectez-vous ici",
+      "registerSuccess": "Compte créé avec succès! Veuillez vérifier votre email pour la vérification.",
+      "registerError": "Échec de l'inscription. Veuillez réessayer.",
+      "nameRequired": "Le nom est requis",
+      "emailRequired": "L'email est requis",
+      "passwordRequired": "Le mot de passe est requis",
+      "passwordsMatch": "Les mots de passe doivent correspondre"
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "subtitle": "Entrez votre email pour réinitialiser le mot de passe",
+      "email": "Email",
+      "sendReset": "Envoyer le lien de réinitialisation",
+      "backToLogin": "Retour à la connexion",
+      "resetSent": "Lien de réinitialisation envoyé à votre email!",
+      "resetError": "Échec de l'envoi du lien de réinitialisation. Veuillez réessayer."
+    },
+    "resetPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "subtitle": "Entrez votre nouveau mot de passe",
+      "password": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "resetButton": "Réinitialiser le mot de passe",
+      "resetSuccess": "Mot de passe réinitialisé avec succès!",
+      "resetError": "Échec de la réinitialisation du mot de passe. Veuillez réessayer."
+    },
+  
+  "hero": {
+    "welcome": "Bienvenue sur",
+    "title": "La Roue des ODD",
+    "description": "Une application web gamifiée pour sensibiliser aux 17 Objectifs de Développement Durable (ODD) avec un accent particulier sur les thèmes liés au climat.",
+    "exploreButton": "Explorer la Roue",
+    "getStarted": "Commencer",
+    "learnMore": "En savoir plus",
+    "heroDescription": "Rejoignez notre communauté pour avoir un impact positif sur le monde à travers des défis et activités engageants alignés sur les Objectifs de Développement Durable de l'ONU."
+  },
+  "about": {
+    "title": "À Propos de La Roue des ODD",
+    "subtitle": "Gamifier la sensibilisation au développement durable",
+    "projectOverview": {
+      "title": "Aperçu du Projet",
+      "description1": "La Roue des ODD est une application web gamifiée conçue pour sensibiliser les citoyens, en particulier les jeunes, aux 17 Objectifs de Développement Durable (ODD), avec un accent particulier sur les thèmes liés au climat.",
+      "description2": "Les utilisateurs font tourner une roue interactive représentant les 17 ODD, tirent des défis ou des quiz, répondent, justifient leurs actions avec des preuves (photos/vidéos), accumulent des points et progressent dans leur profil d'engagement durable.",
+      "targetAudience": {
+        "label": "Public Cible",
+        "value": "Citoyens et jeunes intéressés par la durabilité"
+      },
+      "focusAreas": {
+        "label": "Domaines d'Intervention",
+        "value": "ODD Climatiques: 13, 7, 6, 12, 15, 2"
+      },
+      "engagementMethod": {
+        "label": "Méthode d'Engagement",
+        "value": "Gamification avec badges, classements et récompenses"
+      }
+    }
+  },
+  "keyFeatures": {
+    "title": "Fonctionnalités Clés",
+    "subtitle": "Fonctionnalités principales de La Roue des ODD",
+    "sdgWheel": {
+      "title": "Roue des ODD",
+      "description": "Roue circulaire interactive avec 17 segments présentant les couleurs et icônes des ODD. Tirage aléatoire influencé par des poids personnalisables."
+    },
+    "challengesQuizzes": {
+      "title": "Défis et Quiz",
+      "description": "Base de données de contenu avec 2 types: quiz à choix multiples et défis nécessitant une justification par preuve."
+    },
+    "userProgress": {
+      "title": "Progression Utilisateur",
+      "description": "Scores cumulatifs, badges par ODD validé, et niveaux de progression: Explorateur, Acteur Engagé, Ambassadeur ODD."
+    },
+    "userAccounts": {
+      "title": "Comptes Utilisateur",
+      "description": "Création de compte avec nom d'utilisateur/email, avatar et pays optionnels, tableau de bord personnel avec scores et historique."
+    },
+    "monthlyPodium": {
+      "title": "Podium Mensuel",
+      "description": "Classement des 10 meilleurs utilisateurs avec points + bonus preuves + votes communautaires. Section \"Mur des Héros Éco\"."
+    },
+    "proofSystem": {
+      "title": "Système de Preuves",
+      "description": "Téléchargement de photos/vidéos ou liens externes avec interface de validation admin et système de vote communautaire."
+    }
+  },
+  "objectives": {
+    "title": "Objectifs du Projet",
+    "subtitle": "Buts et cibles d'impact",
+    "climateAwareness": {
+      "title": "Sensibilisation Climatique",
+      "description": "Sensibiliser aux 17 ODD de manière ludique, avec un accent particulier sur les thèmes climatiques (ODD 13, 7, 6, 12, 15, 2)."
+    },
+    "individualAction": {
+      "title": "Action Individuelle",
+      "description": "Encourager des actions individuelles concrètes et visibles qui contribuent aux objectifs de développement durable."
+    },
+    "engagementRecognition": {
+      "title": "Reconnaissance de l'Engagement",
+      "description": "Valoriser l'engagement par des badges, classements et récompenses pour motiver la participation continue."
+    },
+    "adaptableTool": {
+      "title": "Outil Adaptable",
+      "description": "Fournir un outil adaptable pour les campagnes ciblées et les initiatives éducatives."
+    }
+  },
+  "scoringSystem": {
+    "title": "Système de Points",
+    "subtitle": "Récompenses",
+    "hybridSystem": {
+      "title": "Système de Points Hybride",
+      "basePoints": {
+        "label": "Points de Base",
+        "description": "Accomplissement de défi avec preuve validée"
+      },
+      "perVote": {
+        "label": "Par Vote",
+        "description": "Votes communautaires (max +10 points)"
+      },
+      "topBonus": {
+        "label": "Bonus Top 3",
+        "description": "Top 3 mensuel des défis les plus votés"
+      },
+      "recognition": {
+        "label": "Reconnaissance",
+        "description": "Actions réelles + approbation communautaire"
+      }
+    },
+    "userJourney": {
+      "title": "Parcours Utilisateur",
+      "steps": {
+        "step1": "Faire tourner la roue interactive des ODD",
+        "step2": "Recevoir un défi ou quiz",
+        "step3": "Compléter et fournir une preuve",
+        "step4": "Gagner des points et badges",
+        "step5": "Progresser à travers les niveaux"
+      }
+    },
+    "progressionLevels": {
+      "title": "Niveaux de Progression",
+      "explorer": {
+        "title": "Explorateur",
+        "description": "Débuter votre parcours de durabilité"
+      },
+      "engagedActor": {
+        "title": "Acteur Engagé",
+        "description": "Participer activement aux défis"
+      },
+      "sdgAmbassador": {
+        "title": "Ambassadeur ODD",
+        "description": "Montrer l'exemple en matière de durabilité"
+      }
+    }
+  },
+  "contact": {
+    "title": "Participez",
+    "subtitle": "Rejoignez le mouvement de développement durable",
+    "projectInfo": {
+      "title": "Informations sur le Projet",
+      "focus": {
+        "label": "Focus",
+        "value": "17 Objectifs de Développement Durable de l'ONU"
+      },
+      "target": {
+        "label": "Cible",
+        "value": "Citoyens et jeunes sensibilisés au climat"
+      },
+      "method": {
+        "label": "Méthode",
+        "value": "Apprentissage et engagement gamifiés"
+      }
+    },
+    "projectStatus": {
+      "title": "État du Projet",
+      "message": "En développement actif - Rejoignez-nous pour créer un impact positif!"
+    }
+  },
+  "footer": {
+    "brand": {
+      "part1": "La Roue des",
+      "part2": " ODD"
+    },
+    "copyright": "© {{year}} Le Projet Roue des ODD. Construire ensemble un avenir durable."
+  },
+  "contactForm": {
+    "title": "Envoyez-nous un message",
+    "form": {
+      "namePlaceholder": "Votre nom",
+      "emailPlaceholder": "Votre email",
+      "subjectPlaceholder": "Sujet",
+      "messagePlaceholder": "Votre message",
+      "sendButton": "Envoyer le message",
+      "sendingButton": "Envoi en cours..."
+    },
+    "validation": {
+      "missingInfo": {
+        "title": "Informations manquantes",
+        "message": "Veuillez remplir tous les champs avant d'envoyer votre message."
+      }
+    },
+    "sending": {
+      "title": "Envoi du message",
+      "message": "Veuillez patienter pendant l'envoi de votre message..."
+    },
+    "success": {
+      "title": "Message envoyé! ✉️",
+      "message": "Merci de nous avoir contactés! Nous avons reçu votre message et vous répondrons dès que possible."
+    },
+    "errors": {
+      "invalidEmail": {
+        "title": "Email invalide",
+        "message": "Veuillez entrer une adresse email valide."
+      },
+      "sendFailed": {
+        "title": "Échec de l'envoi du message",
+        "message": "Nous n'avons pas pu envoyer votre message maintenant. Veuillez réessayer plus tard ou nous contacter directement."
+      }
+    }
+  },
+  "wheel": {
+    "title": "La Roue des ODD",
+    "subtitle": "Faites tourner pour découvrir votre prochain défi",
+    "description": "Faites tourner la roue pour découvrir votre défi ou quiz quotidien et avoir un impact positif sur le monde!",
+    "spinButton": {
+      "spin": "Faire tourner la roue",
+      "spinning": "Rotation en cours...",
+      "dailyLimit": "Limite quotidienne atteinte"
+    },
+    "congratulations": "Félicitations!",
+    "youLanded": "Vous êtes tombé sur",
+    "earnedPoints": "Vous avez gagné {{points}} points!",
+    "startChallenge": "Commencer le défi",
+    "dailySpinUsed": "Rotation quotidienne utilisée. Revenez demain!",
+    "cannotSpin": "Vous ne pouvez pas tourner aujourd'hui. Réessayez demain!",
+    "spinCooldown": "Vous pouvez tourner à nouveau dans {{hours}} heures",
+    "dailyLimit": "Vous avez déjà fait tourner aujourd'hui! Revenez demain pour une autre chance.",
+    "nextSpinTime": "Prochaine rotation disponible: {{time}}",
+    "welcomeTitle": "Bienvenue sur La Roue des ODD",
+    "welcomeSubtitle": "Faites tourner la roue pour découvrir votre défi ou quiz quotidien et avoir un impact positif sur le monde!",
+    "loginRequired": "Connexion requise",
+    "loginRequiredMessage": "Veuillez vous connecter pour faire tourner la roue et participer aux défis ODD!",
+    "spinFailed": "Échec de la rotation",
+    "spinFailedMessage": "Impossible de faire tourner la roue. Veuillez réessayer plus tard.",
+    "oncePerDay": "Rappel: Vous ne pouvez faire tourner la roue qu'une fois par jour!",
+    "gameArea": "Zone de jeu",
+    "instructions": "Cliquez sur le bouton ci-dessous pour faire tourner la roue et découvrir votre défi du jour!",
+    "pendingChallenges": {
+      "title": "Défis en attente",
+      "description": "Vous avez {{count}} défi(s) accepté(s) en attente de soumission de preuve:",
+      "accepted": "Accepté: {{date}}",
+      "submitProof": "Soumettre une preuve"
+    },
+    "submittedProofs": {
+      "title": "Preuves en cours d'examen",
+      "description": "Vous avez {{count}} preuve(s) en attente de vérification administrative:",
+      "submitted": "Soumis: {{date}}",
+      "underReview": "En cours d'examen"
+    },
+    "completedChallenges": {
+      "title": "Résultats des défis récents",
+      "description": "Résultats des défis récemment terminés:",
+      "approved": "Approuvé le {{date}} - {{points}} points gagnés!",
+      "rejected": "Rejeté le {{date}}",
+      "adminFeedback": "Commentaire administrateur: {{feedback}}",
+      "approvedBadge": "Approuvé ✅",
+      "rejectedBadge": "Rejeté ❌"
+    },
+    "waitingState": {
+      "title": "Prêt à avoir un impact?",
+      "description": "Faites tourner la roue pour découvrir votre défi ou quiz quotidien!"
+    },
+    "userStats": {
+      "title": "Vos progrès",
+      "totalPoints": "Points totaux",
+      "badges": "Badges",
+      "level": "Niveau"
+    },
+    "oddSelected": {
+      "title": "ODD sélectionné!",
+      "description": "Vous avez obtenu l'ODD {{oddId}}: {{name}} - {{type}}"
+    },
+    "quiz": {
+      "correct": "Bonne réponse! 🎉",
+      "incorrect": "Mauvaise réponse",
+      "pointsEarned": "Vous avez gagné {{points}} points!",
+      "submitted": "Quiz soumis! 📝",
+      "score": "Score",
+      "submitError": "Échec de la soumission de la réponse du quiz"
+    },
+    "challenge": {
+      "accepted": "Défi accepté! 💪",
+      "uploadReady": "Vous pouvez télécharger une preuve quand vous voulez",
+      "declined": "Défi refusé",
+      "seeTomorrow": "À demain pour une autre rotation!",
+      "acceptError": "Échec de l'acceptation du défi",
+      "declineError": "Échec du refus du défi"
+    },
+    "errors": {
+      "spinFailed": "Échec de la rotation de la roue. Veuillez réessayer.",
+      "loadStatusFailed": "Échec du chargement du statut de la roue"
+    }
+  },
+  "dashboard": {
+    "welcome": "Bon retour, {{name}}!",
+    "subtitle": "Suivez votre parcours et votre impact en matière de durabilité",
+    "totalPoints": "Points totaux",
+    "points": "Points",
+    "level": "Niveau {{level}}",
+    "pointsToNextLevel": "{{points}} points pour le niveau suivant",
+    "activeChallenges": "Défis actifs",
+    "inProgress": "En cours",
+    "leaderboardRank": "Rang dans le classement",
+    "globalPosition": "Position mondiale",
+    "unranked": "Non classé",
+    "sdgImpact": "Impact ODD",
+    "totalImpact": "Impact total",
+    "sustainabilityJourney": "Votre parcours de durabilité",
+    "live": "EN DIRECT",
+    "completedChallenges": "Défis terminés",
+    "currentRank": "Rang actuel",
+    "pendingChallenges": "Défis en attente",
+    "proofsUnderReview": "Preuves en cours d'examen",
+    "completedToday": "Terminé aujourd'hui",
+    "recentActivity": "Activité récente",
+    "viewAll": "Voir tout",
+    "noActivity": "Aucune activité récente",
+    "statistics": "Statistiques",
+    "achievements": "Réalisations",
+    "badges": "Badges",
+    "quickActions": "Actions rapides",
+    "spinWheelToday": "Faire tourner la roue aujourd'hui",
+    "viewChallenges": "Voir les défis",
+    "checkLeaderboard": "Consulter le classement",
+    "manageProfile": "Gérer le profil",
+    "progressOverview": "Aperçu des progrès",
+    "weeklyGoal": "Objectif hebdomadaire",
+    "monthlyProgress": "Progrès mensuel",
+    "streakCounter": "Série actuelle",
+    "days": "jours",
+    "nextLevel": "Niveau suivant",
+    "experiencePoints": "XP",
+    "notifications": "Notifications récentes",
+    "seeAllNotifications": "Voir toutes les notifications",
+    "noNotifications": "Aucune notification pour le moment",
+    "todaysChallenge": "Défi du jour",
+    "availableQuizzes": "Quiz disponibles",
+    "upcomingEvents": "Événements à venir",
+    "startJourney": "Commencez votre parcours de durabilité en faisant tourner la roue !",
+    "completedChallengesTitle": "Défis terminés",
+    "sdgsContributed": "ODD contributés",
+    "communityRank": "Rang communautaire",
+    "thisMonth": "Ce mois-ci",
+    "totalGoals": "Objectifs totaux"
+  },
+  "challenges": {
+    "title": "Défis",
+    "allChallenges": "Tous les défis",
+    "myProgress": "Mon progrès",
+    "difficulty": {
+      "easy": "Facile",
+      "medium": "Moyen",
+      "hard": "Difficile"
+    },
+    "status": {
+      "pending": "En attente",
+      "completed": "Terminé",
+      "inReview": "En cours d'examen",
+      "approved": "Approuvé",
+      "rejected": "Rejeté"
+    },
+    "points": "{{points}} points",
+    "submitProof": "Soumettre une preuve",
+    "viewProof": "Voir la preuve",
+    "startChallenge": "Commencer le défi",
+    "challengeCompleted": "Défi terminé",
+    "uploadProof": "Télécharger une preuve",
+    "proofDescription": "Description de la preuve",
+    "submitSuccess": "Preuve soumise avec succès!",
+    "submitError": "Échec de la soumission de la preuve. Veuillez réessayer.",
+    "noProofFile": "Veuillez sélectionner un fichier de preuve",
+    "noDescription": "Veuillez fournir une description"
+  },
+  "quizzes": {
+    "title": "Quiz",
+    "takeQuiz": "Faire le quiz",
+    "question": "Question {{current}} sur {{total}}",
+    "nextQuestion": "Question suivante",
+    "submitQuiz": "Soumettre le quiz",
+    "quizCompleted": "Quiz terminé!",
+    "yourScore": "Votre score: {{score}}/{{total}}",
+    "correctAnswer": "Bonne réponse",
+    "wrongAnswer": "Mauvaise réponse",
+    "explanation": "Explication",
+    "tryAgain": "Réessayer",
+    "backToQuizzes": "Retour aux quiz",
+    "timeRemaining": "Temps restant: {{time}}",
+    "timeUp": "Temps écoulé!"
+  },
+  "leaderboard": {
+    "title": "Classement",
+    "subtitle": "Célébrez les champions qui font une vraie différence dans le développement durable",
+    "loading": "Chargement du classement...",
+    "error": "Erreur",
+    "errorDescription": "Échec du chargement des données du classement",
+    "currentLeaders": "Leaders actuels",
+    "ecoHeroes": "Héros écologiques",
+    "currentChampions": "Champions actuels",
+    "filterByCountry": "Filtrer par pays",
+    "rank": "Rang",
+    "user": "Utilisateur",
+    "points": "Points",
+    "challenges": "Défis",
+    "myRank": "Mon rang: #{{rank}}",
+    "topUsers": "Meilleurs utilisateurs",
+    "thisWeek": "Cette semaine",
+    "thisMonth": "Ce mois",
+    "allTime": "Tout le temps",
+    "yourRank": "Votre rang",
+    "totalPlayers": "Nombre total de joueurs",
+    "sdgHeroes": "Héros ODD",
+    "sdgHeroesDescription": "Découvrez les Objectifs de Développement Durable les plus joués et leurs champions",
+    "challengesCompleted": "Défis terminés",
+    "totalChallenges": "Défis totaux",
+    "first": "1er",
+    "second": "2ème", 
+    "third": "3ème",
+    "position": "Position",
+    "wallOfEcoHeroes": "Mur des héros écologiques",
+    "popularSdgsDescription": "Les Objectifs de Développement Durable les plus populaires classés par engagement communautaire",
+    "rankedBySpins": "Classés par le nombre total de tours de roue - découvrez pour quels ODD nos héros écologiques sont les plus passionnés !",
+    "timesPlayed": "fois joué",
+    "yourPosition": "Votre position",
+    "totalPlayersText": "Joueurs totaux",
+    "wheelSpins": "tours de roue",
+    "climateFocus": "Focus climat",
+    "ofTotalSpins": "du total des tours",
+    "buildingOurImpact": "Construisons notre impact",
+    "sdgDataWillAppear": "Les données de popularité des ODD apparaîtront à mesure que notre communauté grandit",
+    "levels": {
+      "sdgAmbassador": "Ambassadeur ODD",
+      "engagedActor": "Acteur Engagé",
+      "explorer": "Explorateur"
+    },
+    "noLeadersYet": "Aucun leader pour le moment",
+    "beFirstToMakeImpact": "Soyez le premier à avoir un impact !",
+    "yourCurrentStanding": "Votre Position Actuelle",
+    "keepClimbingLeaderboard": "Continuez à gravir le classement !",
+    "pointsLabel": "points",
+    "rankLabel": "rang"
+  },
+  "community": {
+    "title": "Communauté",
+    "discussions": "Discussions",
+    "members": "Membres",
+    "events": "Événements",
+    "createPost": "Créer un post",
+    "joinDiscussion": "Rejoindre la discussion",
+    "latestPosts": "Derniers posts",
+    "popularTopics": "Sujets populaires",
+    "onlineMembers": "Membres en ligne",
+    "feed": {
+      "title": "Flux Communautaire",
+      "subtitle": "Découvrez et votez sur les preuves de durabilité de la communauté",
+      "noPosts": "Aucun post pour le moment",
+      "beFirstToShare": "Soyez le premier à partager votre preuve de durabilité !",
+      "loading": "Chargement des posts de la communauté...",
+      "anonymous": "Anonyme",
+      "comment": "Commenter",
+      "share": "Partager",
+      "points": "points",
+      "documentFile": "Fichier document",
+      "openFile": "Ouvrir le fichier",
+      "unableToLoadMedia": "Impossible de charger le média",
+      "fileMayBeCorrupted": "Le fichier peut être corrompu ou déplacé",
+      "proofSubmission": "Soumission de preuve",
+      "videoNotSupported": "Votre navigateur ne prend pas en charge la balise vidéo.",
+      "timeAgo": {
+        "justNow": "À l'instant",
+        "minutesAgo": "il y a {{count}}m",
+        "hoursAgo": "il y a {{count}}h", 
+        "daysAgo": "il y a {{count}}j"
+      },
+      "status": {
+        "approved": "APPROUVÉ",
+        "accepted": "ACCEPTÉ",
+        "rejected": "REJETÉ",
+        "underReview": "EN RÉVISION",
+        "submitted": "SOUMIS"
+      }
+    },
+    "pagination": {
+      "showing": "Affichage",
+      "of": "de",
+      "posts": "publications",
+      "previous": "Précédent",
+      "next": "Suivant"
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "personalInfo": "Informations personnelles",
+    "editProfile": "Modifier le profil",
+    "changePassword": "Changer le mot de passe",
+    "deleteAccount": "Supprimer le compte",
+    "name": "Nom",
+    "email": "Email",
+    "joinDate": "Date d'inscription",
+    "totalPoints": "Points totaux",
+    "completedChallenges": "Défis terminés",
+    "badges": "Badges",
+    "updateSuccess": "Profil mis à jour avec succès!",
+    "updateError": "Échec de la mise à jour du profil. Veuillez réessayer.",
+    "passwordChanged": "Mot de passe changé avec succès!",
+    "passwordError": "Échec du changement de mot de passe. Veuillez réessayer."
+  },
+  "settings": {
+    "title": "Paramètres de Profil",
+    "subtitle": "Gérez votre compte et vos préférences",
+    "profileOverview": {
+      "title": "Aperçu du Profil",
+      "description": "Votre niveau actuel et vos réalisations"
+    },
+    "editProfile": {
+      "title": "Modifier le Profil", 
+      "description": "Mettre à jour vos informations personnelles",
+      "profilePicture": "Photo de Profil",
+      "username": "Nom d'utilisateur",
+      "emailAddress": "Adresse Email",
+      "country": "Pays",
+      "selectCountry": "Sélectionnez votre pays",
+      "password": "Mot de passe",
+      "changeEmail": "Changer l'email",
+      "changePassword": "Changer le mot de passe"
+    },
+    "emailChange": {
+      "emailVerificationPending": "Vérification email en attente",
+      "verificationEmailSent": "Email de Vérification Envoyé !",
+      "checkInbox": "Veuillez vérifier votre boîte de réception et cliquer sur le lien de vérification pour finaliser le changement d'email.",
+      "newEmail": "Nouvel Email",
+      "confirmEmail": "Confirmer le Nouvel Email",
+      "currentPassword": "Mot de Passe Actuel",
+      "enterNewEmail": "Entrez le nouvel email",
+      "confirmNewEmail": "Confirmez le nouvel email", 
+      "enterCurrentPassword": "Entrez le mot de passe actuel",
+      "updateEmail": "Mettre à Jour l'Email",
+      "cancel": "Annuler"
+    },
+    "passwordChange": {
+      "currentPassword": "Mot de Passe Actuel",
+      "newPassword": "Nouveau Mot de Passe",
+      "confirmNewPassword": "Confirmer le Nouveau Mot de Passe",
+      "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
+      "passwordsMatch": "Les mots de passe correspondent",
+      "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+      "updatePassword": "Mettre à Jour le Mot de Passe",
+      "cancel": "Annuler"
+    },
+    "passwordStrength": {
+      "weak": "Faible",
+      "fair": "Moyen", 
+      "good": "Bon",
+      "strong": "Fort"
+    },
+    "buttons": {
+      "editProfile": "Modifier le Profil",
+      "saveProfile": "Enregistrer les Modifications du Profil",
+      "save": "Enregistrer les Modifications",
+      "saving": "Enregistrement...",
+      "updating": "Mise à Jour",
+      "cancel": "Annuler",
+      "close": "Fermer"
+    },
+    "placeholders": {
+      "enterUsername": "Entrez votre nom d'utilisateur",
+      "enterNewEmail": "Entrez le nouvel email",
+      "confirmNewEmail": "Confirmez le nouvel email",
+      "enterCurrentPassword": "Entrez le mot de passe actuel",
+      "enterNewPassword": "Entrez le nouveau mot de passe",
+      "confirmNewPassword": "Confirmez le nouveau mot de passe"
+    },
+    "alerts": {
+      "profileLoadFailed": "Échec du Chargement du Profil",
+      "profileLoadError": "Impossible de récupérer vos informations de profil",
+      "invalidFileType": "Type de Fichier Invalide", 
+      "invalidFileTypeDesc": "Veuillez sélectionner un fichier image valide (JPG, PNG, GIF, etc.).",
+      "fileTooLarge": "Fichier Trop Volumineux",
+      "fileTooLargeDesc": "La taille de l'image doit être inférieure à 5 Mo. Veuillez choisir une image plus petite.",
+      "noChanges": "Aucune Modification",
+      "noChangesDesc": "Il n'y a aucune modification à enregistrer. Veuillez d'abord modifier vos informations de profil.",
+      "savingProfile": "Enregistrement du Profil",
+      "savingProfileDesc": "Veuillez patienter pendant que nous mettons à jour votre profil...",
+      "profileUpdated": "Profil Mis à Jour !",
+      "profileUpdatedDesc": "Votre profil a été mis à jour et enregistré avec succès.",
+      "profileUpdateFailed": "Échec de la Mise à Jour du Profil",
+      "profileUpdateFailedDesc": "Impossible de mettre à jour le profil. Veuillez réessayer.",
+      "emailRequired": "Email Requis",
+      "emailRequiredDesc": "Veuillez entrer votre nouvelle adresse email.",
+      "sameEmail": "Même Email",
+      "sameEmailDesc": "Le nouvel email doit être différent de votre adresse email actuelle.",
+      "emailMismatch": "Les Emails ne Correspondent Pas",
+      "emailMismatchDesc": "Les adresses email ne correspondent pas. Veuillez vérifier les deux champs.",
+      "passwordRequired": "Mot de Passe Requis",
+      "passwordRequiredDesc": "Veuillez entrer votre mot de passe actuel pour confirmer cette modification.",
+      "invalidEmail": "Email Invalide",
+      "invalidEmailDesc": "Veuillez entrer un format d'adresse email valide.",
+      "updatingEmail": "Mise à Jour de l'Email",
+      "updatingEmailDesc": "Veuillez patienter pendant que nous traitons votre demande de changement d'email...",
+      "verificationEmailSent": "Email de Vérification Envoyé !",
+      "verificationEmailSentDesc": "Nous avons envoyé un lien de vérification à votre nouvel email. Veuillez vérifier votre boîte de réception et cliquer sur le lien pour finaliser votre changement d'email.",
+      "invalidPassword": "Mot de Passe Invalide",
+      "invalidPasswordDesc": "Votre mot de passe actuel est incorrect. Veuillez réessayer.",
+      "emailAlreadyExists": "Email Déjà Existant",
+      "emailAlreadyExistsDesc": "Cette adresse email est déjà enregistrée. Veuillez choisir un email différent.",
+      "emailChangeFailed": "Échec du Changement d'Email",
+      "emailChangeFailedDesc": "Impossible de demander le changement d'email. Veuillez réessayer.",
+      "currentPasswordRequired": "Mot de Passe Actuel Requis",
+      "currentPasswordRequiredDesc": "Veuillez entrer votre mot de passe actuel pour continuer.",
+      "newPasswordRequired": "Nouveau Mot de Passe Requis", 
+      "newPasswordRequiredDesc": "Veuillez entrer un nouveau mot de passe.",
+      "passwordsDontMatch": "Les Mots de Passe ne Correspondent Pas",
+      "passwordsDontMatchDesc": "Le nouveau mot de passe et la confirmation doivent être identiques.",
+      "passwordTooShort": "Mot de Passe Trop Court",
+      "passwordTooShortDesc": "Votre nouveau mot de passe doit contenir au moins 6 caractères pour la sécurité.",
+      "updatingPassword": "Mise à Jour du Mot de Passe",
+      "updatingPasswordDesc": "Veuillez patienter pendant que nous mettons à jour votre mot de passe en toute sécurité...",
+      "passwordUpdated": "Mot de Passe Mis à Jour !",
+      "passwordUpdatedDesc": "Votre mot de passe a été modifié avec succès. Veuillez utiliser votre nouveau mot de passe pour les connexions futures.",
+      "incorrectCurrentPassword": "Mot de Passe Actuel Incorrect",
+      "incorrectCurrentPasswordDesc": "Le mot de passe actuel que vous avez entré est incorrect. Veuillez réessayer.",
+      "samePassword": "Même Mot de Passe",
+      "samePasswordDesc": "Votre nouveau mot de passe doit être différent de votre mot de passe actuel.",
+      "passwordUpdateFailed": "Échec de la Mise à Jour du Mot de Passe",
+      "passwordUpdateFailedDesc": "Impossible de mettre à jour le mot de passe. Veuillez réessayer."
+    }
+  },
+  "admin": {
+    "title": "Tableau de bord Admin",
+    "users": "Utilisateurs",
+    "challenges": "Défis",
+    "quizzes": "Quiz",
+    "messages": "Messages",
+    "statistics": "Statistiques",
+    "userManagement": "Gestion des utilisateurs",
+    "challengeManagement": "Gestion des défis",
+    "quizManagement": "Gestion des quiz",
+    "messageManagement": "Gestion des messages",
+    "proofModeration": "Modération des preuves",
+    "approveProof": "Approuver la preuve",
+    "rejectProof": "Rejeter la preuve",
+    "deleteUser": "Supprimer l'utilisateur",
+    "deleteChallenge": "Supprimer le défi",
+    "deleteQuiz": "Supprimer le quiz",
+    "deleteMessage": "Supprimer le message",
+    "confirmDelete": "Confirmation de suppression",
+    "confirmDeleteText": "Êtes-vous sûr de vouloir supprimer {{item}} ? Cette action ne peut pas être annulée !",
+    "deleteSuccess": "Élément supprimé avec succès!",
+    "deleteError": "Échec de la suppression de l'élément. Veuillez réessayer.",
+    "approveSuccess": "Preuve approuvée avec succès!",
+    "rejectSuccess": "Preuve rejetée avec succès!",
+    "moderationError": "Échec de la modération de la preuve. Veuillez réessayer."
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "warning": "Avertissement",
+    "info": "Information",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "save": "Sauvegarder",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "retry": "Réessayer",
+    "refresh": "Actualiser",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "upload": "Télécharger",
+    "download": "Télécharger",
+    "share": "Partager",
+    "copy": "Copier",
+    "paste": "Coller",
+    "cut": "Couper",
+    "undo": "Annuler",
+    "redo": "Refaire",
+    "selectAll": "Tout sélectionner",
+    "none": "Aucun",
+    "all": "Tout",
+    "more": "Plus",
+    "less": "Moins",
+    "expand": "Développer",
+    "collapse": "Réduire",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "item": "cet élément",
+    "pleaseWait": "Veuillez patienter...",
+    "networkError": "Erreur réseau",
+    "networkErrorText": "Veuillez vérifier votre connexion internet et réessayer.",
+    "authRequired": "Authentification requise",
+    "authRequiredText": "Veuillez vous connecter pour continuer.",
+    "accessDenied": "Accès refusé",
+    "accessDeniedText": "Vous n'avez pas la permission d'effectuer cette action.",
+    "inputRequired": "Vous devez écrire quelque chose !"
+  },
+  "sdg": {
+    "goal1": "Pas de pauvreté",
+    "goal2": "Faim zéro",
+    "goal3": "Bonne santé et bien-être",
+    "goal4": "Éducation de qualité",
+    "goal5": "Égalité entre les sexes",
+    "goal6": "Eau propre et assainissement",
+    "goal7": "Énergie propre et d'un coût abordable",
+    "goal8": "Travail décent et croissance économique",
+    "goal9": "Industrie, innovation et infrastructure",
+    "goal10": "Inégalités réduites",
+    "goal11": "Villes et communautés durables",
+    "goal12": "Consommation et production responsables",
+    "goal13": "Mesures relatives à la lutte contre les changements climatiques",
+    "goal14": "Vie aquatique",
+    "goal15": "Vie terrestre",
+    "goal16": "Paix, justice et institutions efficaces",
+    "goal17": "Partenariats pour la réalisation des objectifs"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "loading": "Chargement des notifications...",
+    "offline": "Hors ligne",
+    "markAllRead": "Marquer tout comme lu",
+    "noNotifications": "Aucune notification",
+    "newChallenge": "Nouveau défi disponible",
+    "proofApproved": "Votre preuve a été approuvée",
+    "proofRejected": "Votre preuve a été rejetée",
+    "pointsEarned": "Vous avez gagné {{points}} points",
+    "badgeUnlocked": "Nouveau badge débloqué",
+    "messageReceived": "Nouveau message reçu",
+    "postVoted": "Quelqu'un a voté pour votre publication",
+    "voteReceived": "{{username}} a voté pour votre publication ! Total des votes : {{count}}",
+    "timeAgo": {
+      "justNow": "À l'instant",
+      "minutesAgo": "Il y a {{count}}m",
+      "minutesAgo_plural": "Il y a {{count}}m",
+      "hoursAgo": "Il y a {{count}}h",
+      "hoursAgo_plural": "Il y a {{count}}h",
+      "daysAgo": "Il y a {{count}}j",
+      "daysAgo_plural": "Il y a {{count}}j"
+    }
+  }
+}

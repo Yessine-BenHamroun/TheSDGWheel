@@ -23,15 +23,44 @@ export const NotificationProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Notification sound function
+  const playNotificationSound = () => {
+    try {
+      // Create an audio context and play a notification sound
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime); // Higher pitch
+      oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1); // Lower pitch
+      
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+    } catch (error) {
+      console.log('Could not play notification sound:', error);
+    }
+  };
+
   // Initialize socket connection when user is authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
       const token = localStorage.getItem('token');
       if (token) {
         socketService.connect(token);
+        // Load initial data (unread count and notifications)
+        loadInitialData();
       }
     } else {
       socketService.disconnect();
+      // Reset state when user logs out
+      setNotifications([]);
+      setUnreadCount(0);
     }
 
     return () => {
@@ -39,9 +68,32 @@ export const NotificationProvider = ({ children }) => {
     };
   }, [isAuthenticated, user]);
 
+  // Load initial unread count and notifications
+  const loadInitialData = async () => {
+    if (!isAuthenticated) return;
+    
+    try {
+      // Load unread count
+      const countResponse = await ApiService.getUnreadNotificationsCount();
+      const count = countResponse.unreadCount || 0;
+      setUnreadCount(count);
+      console.log('📊 Initial unread count loaded:', count);
+      
+      // Also load recent notifications if there are any unread
+      if (count > 0) {
+        const notificationsResponse = await ApiService.getUserNotifications(1, 10);
+        setNotifications(notificationsResponse.notifications || []);
+        console.log('📋 Initial notifications loaded:', notificationsResponse.notifications?.length);
+      }
+    } catch (error) {
+      console.error('Failed to load initial notification data:', error);
+    }
+  };
+
   // Set up socket event listeners
   useEffect(() => {
     const handleConnected = () => {
+      console.log('🔌 Socket connected - requesting initial data');
       setIsConnected(true);
       // Request initial unread count and notifications
       socketService.getUnreadCount();
@@ -49,14 +101,22 @@ export const NotificationProvider = ({ children }) => {
     };
 
     const handleDisconnected = () => {
+      console.log('🔌 Socket disconnected');
       setIsConnected(false);
     };
 
     const handleNewNotification = (data) => {
+      console.log('📢 Real-time notification received:', data);
       const { notification } = data;
       
       // Add to notifications list
       setNotifications(prev => [notification, ...prev]);
+      
+      // Update unread count
+      setUnreadCount(prev => prev + 1);
+      
+      // Play notification sound
+      playNotificationSound();
       
       // Show toast notification
       toast({
@@ -66,12 +126,14 @@ export const NotificationProvider = ({ children }) => {
       });
     };
 
-    const handleUnreadCount = (count) => {
-      setUnreadCount(count);
+    const handleUnreadCount = (data) => {
+      console.log('📊 Unread count updated:', data);
+      setUnreadCount(data.count || data || 0);
     };
 
-    const handleUnreadNotifications = (notifications) => {
-      setNotifications(notifications);
+    const handleUnreadNotifications = (data) => {
+      console.log('📋 Unread notifications received:', data);
+      setNotifications(data.notifications || []);
     };
 
     const handleAllNotificationsRead = () => {
@@ -119,23 +181,38 @@ export const NotificationProvider = ({ children }) => {
     
     try {
       setIsLoading(true);
-      const response = await ApiService.getUserNotifications(page, limit);
+      
+      // Add timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout')), 10000)
+      );
+      
+      const apiPromise = ApiService.getUserNotifications(page, limit);
+      const response = await Promise.race([apiPromise, timeoutPromise]);
       
       if (page === 1) {
-        setNotifications(response.notifications);
+        setNotifications(response.notifications || []);
       } else {
-        setNotifications(prev => [...prev, ...response.notifications]);
+        setNotifications(prev => [...prev, ...(response.notifications || [])]);
       }
       
-      setUnreadCount(response.unreadCount);
+      setUnreadCount(response.unreadCount || 0);
       return response;
     } catch (error) {
       console.error('Failed to load notifications:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load notifications",
-        variant: "destructive",
-      });
+      // Set empty notifications on error to avoid infinite loading
+      if (page === 1) {
+        setNotifications([]);
+      }
+      setUnreadCount(0);
+      
+      if (error.message !== 'Request timeout') {
+        toast({
+          title: "Error",
+          description: "Failed to load notifications",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }

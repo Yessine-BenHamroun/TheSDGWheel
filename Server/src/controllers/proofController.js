@@ -4,6 +4,8 @@ const Challenge = require('../models/Challenge');
 const User = require('../models/User');
 const UserProgress = require('../models/UserProgress');
 const ActivityLog = require('../models/ActivityLog');
+const Notification = require('../models/Notification');
+const socketService = require('../services/socketService');
 
 const getAllProofs = async (req, res, next) => {
   try {
@@ -211,6 +213,24 @@ const updateProofStatus = async (req, res, next) => {
         await user.save();
       }
 
+      // Create notification for user about proof approval
+      const approvalNotification = await Notification.createNotification(
+        proof.user,
+        'PROOF_APPROVED',
+        '🎉 Proof Approved!',
+        `Your proof for "${challenge.title}" has been approved! You earned ${challenge.points} points.`,
+        {
+          challengeId: challenge._id,
+          challengeTitle: challenge.title,
+          pointsAwarded: challenge.points,
+          proofId: proof._id
+        },
+        'HIGH'
+      );
+
+      // Send real-time notification
+      await socketService.sendNotificationToUser(proof.user, approvalNotification);
+
       // Get the full challenge document and increment completion count
       const Challenge = require('../models/Challenge');
       const fullChallenge = await Challenge.findById(challenge._id);
@@ -257,6 +277,24 @@ const updateProofStatus = async (req, res, next) => {
         target: proof._id,
         targetModel: 'Proof'
       });
+
+      // Create notification for user about proof rejection
+      const rejectionNotification = await Notification.createNotification(
+        proof.user,
+        'PROOF_REJECTED',
+        '❌ Proof Rejected',
+        `Your proof for "${proof.challenge.title}" was not approved. ${rejectionReason ? `Reason: ${rejectionReason}` : 'Please try again with better evidence.'}`,
+        {
+          challengeId: proof.challenge._id,
+          challengeTitle: proof.challenge.title,
+          rejectionReason: rejectionReason,
+          proofId: proof._id
+        },
+        'HIGH'
+      );
+
+      // Send real-time notification
+      await socketService.sendNotificationToUser(proof.user, rejectionNotification);
     }
 
     // Final validation: Ensure ProofLog exists

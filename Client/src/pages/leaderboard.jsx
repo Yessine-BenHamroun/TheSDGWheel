@@ -15,11 +15,13 @@ import { MouseFollower } from "../components/mouse-follower"
 import { ScrollProgress } from "../components/scroll-progress"
 import { getAvatarUrl } from "../utils/avatarUtils"
 import { useToast } from "../hooks/use-toast"
+import { useTranslation } from "react-i18next"
 import UserNavbar from "../components/UserNavbar"
 
 export default function Leaderboard() {
   const { user } = useAuth()
   const { toast } = useToast()
+  const { t } = useTranslation()
   const [leaderboardData, setLeaderboardData] = useState([])
   const [sdgData, setSdgData] = useState([])
   const [loading, setLoading] = useState(true)
@@ -94,8 +96,8 @@ export default function Leaderboard() {
     } catch (error) {
       console.error("Error loading leaderboard:", error)
       toast({
-        title: "Error",
-        description: "Failed to load leaderboard data",
+        title: t('leaderboard.error'),
+        description: t('leaderboard.errorDescription'),
         variant: "destructive",
       })
       // Fallback to mock data
@@ -175,6 +177,19 @@ export default function Leaderboard() {
     }
   }
 
+  const getTranslatedLevel = (level) => {
+    switch (level) {
+      case "SDG Ambassador":
+        return t('leaderboard.levels.sdgAmbassador')
+      case "Engaged Actor":
+        return t('leaderboard.levels.engagedActor')
+      case "Explorer":
+        return t('leaderboard.levels.explorer')
+      default:
+        return level
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 via-zinc-900 to-black text-white">
       <MouseFollower />
@@ -193,7 +208,7 @@ export default function Leaderboard() {
         <div className="relative z-10 flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-            <p className="text-zinc-400">Loading leaderboard...</p>
+            <p className="text-zinc-400">{t('leaderboard.loading')}</p>
           </div>
         </div>
       )}
@@ -204,11 +219,11 @@ export default function Leaderboard() {
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-purple-600">
-              Leaderboard
+              {t('leaderboard.title')}
             </span>
           </h1>
           <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-            Celebrate the champions making a real difference in sustainable development
+            {t('leaderboard.subtitle')}
           </p>
         </div>
 
@@ -216,21 +231,21 @@ export default function Leaderboard() {
           <TabsList className="grid w-full grid-cols-2 bg-zinc-800/50">
             <TabsTrigger value="monthly" className="data-[state=active]:bg-purple-600">
               <Calendar className="h-4 w-4 mr-2" />
-              Current Leaders
+              {t('leaderboard.currentLeaders')}
             </TabsTrigger>
             <TabsTrigger value="heroes" className="data-[state=active]:bg-purple-600">
               <Star className="h-4 w-4 mr-2" />
-              Eco Heroes
+              {t('leaderboard.ecoHeroes')}
             </TabsTrigger>
           </TabsList>
 
           {/* Current Leaders */}
           <TabsContent value="monthly" className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-white">Current Champions</h2>
+              <h2 className="text-2xl font-bold text-white">{t('leaderboard.currentChampions')}</h2>
               <Button variant="outline" className="border-zinc-700 bg-transparent">
                 <Filter className="h-4 w-4 mr-2" />
-                Filter by Country
+                {t('leaderboard.filterByCountry')}
               </Button>
             </div>
 
@@ -250,7 +265,7 @@ export default function Leaderboard() {
                     <Card className="bg-gradient-to-br from-gray-400/20 to-gray-600/20 border-gray-400/50 mb-4 w-48 relative overflow-hidden">
                       <div className="absolute top-2 right-2">
                         <div className="bg-gray-400/30 text-gray-200 px-2 py-1 rounded-full text-xs font-bold">
-                          🥈 2nd
+                          🥈 {t('leaderboard.second')}
                         </div>
                       </div>
                       <CardContent className="pt-6 pb-4">
@@ -268,7 +283,7 @@ export default function Leaderboard() {
                           <p className="text-zinc-400 text-xs mb-2">{leaderboardData[1].country}</p>
                           <div className="text-center">
                             <span className="text-xl font-bold text-gray-300">{leaderboardData[1].totalPoints.toLocaleString()}</span>
-                            <p className="text-xs text-zinc-400">points</p>
+                            <p className="text-xs text-zinc-400">{t('leaderboard.points')}</p>
                           </div>
                           <Badge variant="outline" className="text-gray-300 border-gray-400/50 text-xs mt-2">
                             {leaderboardData[1].level}
@@ -297,7 +312,7 @@ export default function Leaderboard() {
                     <Card className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-yellow-500/50 mb-4 w-52 relative overflow-hidden">
                       <div className="absolute top-2 right-2">
                         <div className="bg-yellow-500/30 text-yellow-200 px-2 py-1 rounded-full text-xs font-bold">
-                          🥇 1st
+                          🥇 {t('leaderboard.first')}
                         </div>
                       </div>
                       <CardContent className="pt-6 pb-4">
@@ -315,7 +330,7 @@ export default function Leaderboard() {
                           <p className="text-zinc-400 text-sm mb-2">{leaderboardData[0].country}</p>
                           <div className="text-center">
                             <span className="text-2xl font-bold text-yellow-300">{leaderboardData[0].totalPoints.toLocaleString()}</span>
-                            <p className="text-sm text-zinc-400">points</p>
+                            <p className="text-sm text-zinc-400">{t('leaderboard.points')}</p>
                           </div>
                           <Badge variant="outline" className="text-yellow-300 border-yellow-500/50 text-sm mt-2">
                             {leaderboardData[0].level}
@@ -342,7 +357,7 @@ export default function Leaderboard() {
                     <Card className="bg-gradient-to-br from-amber-600/20 to-amber-800/20 border-amber-600/50 mb-4 w-44 relative overflow-hidden">
                       <div className="absolute top-2 right-2">
                         <div className="bg-amber-600/30 text-amber-200 px-2 py-1 rounded-full text-xs font-bold">
-                          🥉 3rd
+                          🥉 {t('leaderboard.third')}
                         </div>
                       </div>
                       <CardContent className="pt-6 pb-4">
@@ -360,7 +375,7 @@ export default function Leaderboard() {
                           <p className="text-zinc-400 text-xs mb-2">{leaderboardData[2].country}</p>
                           <div className="text-center">
                             <span className="text-lg font-bold text-amber-300">{leaderboardData[2].totalPoints.toLocaleString()}</span>
-                            <p className="text-xs text-zinc-400">points</p>
+                            <p className="text-xs text-zinc-400">{t('leaderboard.points')}</p>
                           </div>
                           <Badge variant="outline" className="text-amber-300 border-amber-600/50 text-xs mt-2">
                             {leaderboardData[2].level}
@@ -410,7 +425,7 @@ export default function Leaderboard() {
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-white">{leader.totalPoints.toLocaleString()}</div>
-                          <div className="text-sm text-zinc-400">points</div>
+                          <div className="text-sm text-zinc-400">{t('leaderboard.points')}</div>
                         </div>
                         <div className="flex flex-col items-center space-y-1">
                           <Badge variant="outline" className={getLevelColor(leader.level)}>
@@ -430,8 +445,8 @@ export default function Leaderboard() {
             {(!Array.isArray(leaderboardData) || leaderboardData.length === 0) && !loading && (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🏆</div>
-                <h3 className="text-2xl font-bold text-white mb-2">No leaders yet</h3>
-                <p className="text-zinc-400">Be the first to make an impact!</p>
+                <h3 className="text-2xl font-bold text-white mb-2">{t('leaderboard.noLeadersYet')}</h3>
+                <p className="text-zinc-400">{t('leaderboard.beFirstToMakeImpact')}</p>
               </div>
             )}
           </TabsContent>
@@ -439,12 +454,12 @@ export default function Leaderboard() {
           {/* Eco Heroes Wall */}
           <TabsContent value="heroes" className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-white mb-4">Wall of Eco Heroes</h2>
+              <h2 className="text-3xl font-bold text-white mb-4">{t('leaderboard.wallOfEcoHeroes')}</h2>
               <p className="text-zinc-400">
-                The most popular Sustainable Development Goals ranked by community engagement
+                {t('leaderboard.popularSdgsDescription')}
               </p>
               <p className="text-zinc-500 text-sm mt-2">
-                Ranked by total wheel spins - see which SDGs our eco heroes are most passionate about!
+                {t('leaderboard.rankedBySpins')}
               </p>
             </div>
 
@@ -505,12 +520,12 @@ export default function Leaderboard() {
                             <div className="text-purple-400 font-bold">
                               {sdg.spinCount || 0}
                             </div>
-                            <div className="text-zinc-500">wheel spins</div>
+                            <div className="text-zinc-500">{t('leaderboard.wheelSpins')}</div>
                           </div>
 
                           {sdg.isClimateFocus && (
                             <Badge className="bg-green-600/20 text-green-300 border-green-600/50">
-                              🌱 Climate Focus
+                              🌱 {t('leaderboard.climateFocus')}
                             </Badge>
                           )}
                         </div>
@@ -527,7 +542,7 @@ export default function Leaderboard() {
                           </div>
                           <p className="text-xs text-zinc-500 mt-1">
                             {(sdg.totalSpinsForPercentage && sdg.totalSpinsForPercentage > 0) ? 
-                              ((sdg.spinCount || 0) / sdg.totalSpinsForPercentage * 100).toFixed(1) : 0}% of total spins
+                              ((sdg.spinCount || 0) / sdg.totalSpinsForPercentage * 100).toFixed(1) : 0}% {t('leaderboard.ofTotalSpins')}
                           </p>
                         </div>
                       </div>
@@ -540,9 +555,9 @@ export default function Leaderboard() {
             {/* Empty State */}
             {sdgData.length === 0 && (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4">�</div>
-                <h3 className="text-2xl font-bold text-white mb-2">Building Our Impact</h3>
-                <p className="text-zinc-400">SDG popularity data will appear as our community grows</p>
+                <div className="text-6xl mb-4">🌱</div>
+                <h3 className="text-2xl font-bold text-white mb-2">{t('leaderboard.buildingOurImpact')}</h3>
+                <p className="text-zinc-400">{t('leaderboard.sdgDataWillAppear')}</p>
               </div>
             )}
           </TabsContent>
@@ -558,8 +573,8 @@ export default function Leaderboard() {
           >
             <Card className="bg-zinc-900/50 border-zinc-700/50 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">Your Current Standing</CardTitle>
-                <CardDescription>Keep climbing the leaderboard!</CardDescription>
+                <CardTitle className="text-white">{t('leaderboard.yourCurrentStanding')}</CardTitle>
+                <CardDescription>{t('leaderboard.keepClimbingLeaderboard')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-4">
@@ -578,14 +593,14 @@ export default function Leaderboard() {
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-purple-400">{user.totalPoints || 0}</div>
-                    <div className="text-sm text-zinc-400">points</div>
+                    <div className="text-sm text-zinc-400">{t('leaderboard.pointsLabel')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-lg font-bold text-zinc-300">#{getUserRank()}</div>
-                    <div className="text-sm text-zinc-400">rank</div>
+                    <div className="text-sm text-zinc-400">{t('leaderboard.rankLabel')}</div>
                   </div>
                   <Badge variant="outline" className={getLevelColor(user.level || "Explorer")}>
-                    {user.level || "Explorer"}
+                    {getTranslatedLevel(user.level || "Explorer")}
                   </Badge>
                 </div>
               </CardContent>

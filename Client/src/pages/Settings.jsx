@@ -15,9 +15,10 @@ import api from "@/services/api"
 import { getAvatarUrl } from "@/utils/avatarUtils"
 import { useAuth } from "@/contexts/AuthContext"
 import AlertService from "@/services/alertService"
+import { useTranslation } from "react-i18next"
 
 // Password strength calculation
-const getPasswordStrength = (password) => {
+const getPasswordStrength = (password, t) => {
   if (!password) return { score: 0, label: '', color: '' }
   
   let score = 0
@@ -34,14 +35,15 @@ const getPasswordStrength = (password) => {
   if (/[^A-Za-z0-9]/.test(password)) score += 1
   
   // Return strength assessment
-  if (score < 2) return { score, label: 'Weak', color: 'red' }
-  if (score < 4) return { score, label: 'Fair', color: 'yellow' }
-  if (score < 6) return { score, label: 'Good', color: 'blue' }
-  return { score, label: 'Strong', color: 'green' }
+  if (score < 2) return { score, label: t('settings.passwordStrength.weak'), color: 'red' }
+  if (score < 4) return { score, label: t('settings.passwordStrength.fair'), color: 'yellow' }
+  if (score < 6) return { score, label: t('settings.passwordStrength.good'), color: 'blue' }
+  return { score, label: t('settings.passwordStrength.strong'), color: 'green' }
 }
 
 export default function Settings() {
   const { refreshUserProfile, logout } = useAuth()
+  const { t } = useTranslation()
   
   const [profile, setProfile] = useState({
     username: '',
@@ -131,7 +133,7 @@ export default function Settings() {
       })
     } catch (error) {
       console.error('❌ [FRONTEND] Failed to fetch profile:', error)
-      AlertService.error("Failed to Load Profile", `Unable to retrieve your profile information: ${error.message}`);
+      AlertService.error("settings.alerts.profileLoadFailed", `settings.alerts.profileLoadError: ${error.message}`);
     } finally {
       setLoading(false)
     }
@@ -146,13 +148,13 @@ export default function Settings() {
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        AlertService.warning("Invalid File Type", "Please select a valid image file (JPG, PNG, GIF, etc.).");
+        AlertService.warning("settings.alerts.invalidFileType", "settings.alerts.invalidFileTypeDesc");
         return
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        AlertService.warning("File Too Large", "Image size must be less than 5MB. Please choose a smaller image.");
+        AlertService.warning("settings.alerts.fileTooLarge", "settings.alerts.fileTooLargeDesc");
         return
       }
 
@@ -189,12 +191,12 @@ export default function Settings() {
 
       // If nothing changed and no avatar, show error
       if (Object.keys(updateData).length === 0 && !avatarFile) {
-        AlertService.info("No Changes", "There are no changes to save. Please modify your profile information first.");
+        AlertService.info("settings.alerts.noChanges", "settings.alerts.noChangesDesc");
         setSaving(false)
         return
       }
 
-      AlertService.loading("Saving Profile", "Please wait while we update your profile...");
+      AlertService.loading("settings.alerts.savingProfile", "settings.alerts.savingProfileDesc");
 
       let response
       // Handle avatar upload if changed
@@ -209,7 +211,7 @@ export default function Settings() {
       console.log('✅ [SAVE PROFILE] Response received:', response)
 
       AlertService.close();
-      AlertService.success("Profile Updated!", "Your profile has been successfully updated and saved.")
+      AlertService.success("settings.alerts.profileUpdated", "settings.alerts.profileUpdatedDesc")
       
       // Update profile with response data
       if (response?.data) {
@@ -244,7 +246,7 @@ export default function Settings() {
       })
       
       AlertService.close();
-      AlertService.error("Profile Update Failed", error.response?.data?.error || error.response?.data?.message || error.message || 'Failed to update profile. Please try again.');
+      AlertService.error("settings.alerts.profileUpdateFailed", error.response?.data?.error || error.response?.data?.message || error.message || 'settings.alerts.profileUpdateFailedDesc');
     } finally {
       setSaving(false)
     }
@@ -259,29 +261,29 @@ export default function Settings() {
 
       // Validate email form
       if (!emailForm.newEmail?.trim()) {
-        AlertService.warning("Email Required", "Please enter your new email address.");
+        AlertService.warning("settings.alerts.emailRequired", "settings.alerts.emailRequiredDesc");
         return
       }
 
       if (emailForm.newEmail.toLowerCase().trim() === profile.email?.toLowerCase().trim()) {
-        AlertService.warning("Same Email", "The new email must be different from your current email address.");
+        AlertService.warning("settings.alerts.sameEmail", "settings.alerts.sameEmailDesc");
         return
       }
 
       if (emailForm.newEmail !== emailForm.confirmEmail) {
-        AlertService.warning("Email Mismatch", "The email addresses do not match. Please check both fields.");
+        AlertService.warning("settings.alerts.emailMismatch", "settings.alerts.emailMismatchDesc");
         return
       }
 
       if (!emailForm.currentPassword?.trim()) {
-        AlertService.warning("Password Required", "Please enter your current password to confirm this change.");
+        AlertService.warning("settings.alerts.passwordRequired", "settings.alerts.passwordRequiredDesc");
         return
       }
 
       // Email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(emailForm.newEmail)) {
-        AlertService.warning("Invalid Email", "Please enter a valid email address format.");
+        AlertService.warning("settings.alerts.invalidEmail", "settings.alerts.invalidEmailDesc");
         return
       }
 
@@ -290,7 +292,7 @@ export default function Settings() {
         currentPassword: emailForm.currentPassword
       }
 
-      AlertService.loading("Updating Email", "Please wait while we process your email change request...");
+      AlertService.loading("settings.alerts.updatingEmail", "settings.alerts.updatingEmailDesc");
 
       console.log('📧 [EMAIL CHANGE] Sending email change request...')
       const response = await api.requestEmailChange(emailData)
@@ -298,7 +300,7 @@ export default function Settings() {
 
       setEmailVerificationSent(true)
       AlertService.close();
-      AlertService.success("Verification Email Sent!", `We've sent a verification link to ${emailForm.newEmail}. Please check your inbox and click the link to complete your email change.`);
+      AlertService.success("settings.alerts.verificationEmailSent", `settings.alerts.verificationEmailSentDesc`);
       setEmailForm({ newEmail: '', confirmEmail: '', currentPassword: '' })
 
     } catch (error) {
@@ -306,11 +308,11 @@ export default function Settings() {
       AlertService.close();
       
       if (error.message.includes('password') || error.message.includes('401')) {
-        AlertService.error("Invalid Password", "Your current password is incorrect. Please try again.");
+        AlertService.error("settings.alerts.invalidPassword", "settings.alerts.invalidPasswordDesc");
       } else if (error.message.includes('email') && error.message.includes('exists')) {
-        AlertService.error("Email Already Exists", "This email address is already registered. Please choose a different email.");
+        AlertService.error("settings.alerts.emailAlreadyExists", "settings.alerts.emailAlreadyExistsDesc");
       } else {
-        AlertService.error("Email Change Failed", error.response?.data?.message || error.message || 'Failed to request email change. Please try again.');
+        AlertService.error("settings.alerts.emailChangeFailed", error.response?.data?.message || error.message || 'settings.alerts.emailChangeFailedDesc');
       }
     } finally {
       setUpdatingEmail(false)
@@ -325,22 +327,22 @@ export default function Settings() {
 
       // Validate password form
       if (!passwordForm.currentPassword?.trim()) {
-        AlertService.warning("Current Password Required", "Please enter your current password to continue.");
+        AlertService.warning("settings.alerts.currentPasswordRequired", "settings.alerts.currentPasswordRequiredDesc");
         return
       }
 
       if (!passwordForm.newPassword?.trim()) {
-        AlertService.warning("New Password Required", "Please enter a new password.");
+        AlertService.warning("settings.alerts.newPasswordRequired", "settings.alerts.newPasswordRequiredDesc");
         return
       }
 
       if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-        AlertService.warning("Passwords Don't Match", "The new password and confirmation password must be identical.");
+        AlertService.warning("settings.alerts.passwordsDontMatch", "settings.alerts.passwordsDontMatchDesc");
         return
       }
 
       if (passwordForm.newPassword.length < 6) {
-        AlertService.warning("Password Too Short", "Your new password must be at least 6 characters long for security.");
+        AlertService.warning("settings.alerts.passwordTooShort", "settings.alerts.passwordTooShortDesc");
         return
       }
 
@@ -349,7 +351,7 @@ export default function Settings() {
         newPassword: passwordForm.newPassword
       }
 
-      AlertService.loading("Updating Password", "Please wait while we securely update your password...");
+      AlertService.loading("settings.alerts.updatingPassword", "settings.alerts.updatingPasswordDesc");
 
       console.log('🔐 [PASSWORD CHANGE] Sending password update request...')
       const response = await api.updatePassword(passwordData)
@@ -359,12 +361,12 @@ export default function Settings() {
 
       // Check if re-authentication is required
       if (response.requiresReauth) {
-        AlertService.success("Password Updated!", "Your password has been updated successfully. You will be logged out for security reasons.")
+        AlertService.success("settings.alerts.passwordUpdated", "settings.alerts.passwordUpdatedDesc")
           .then(() => {
             logout()
           });
       } else {
-        AlertService.success("Password Updated!", "Your password has been updated successfully!");
+        AlertService.success("settings.alerts.passwordUpdated", "settings.alerts.passwordUpdatedDesc");
       }
       
       setShowPasswordForm(false)
@@ -381,11 +383,11 @@ export default function Settings() {
       AlertService.close();
 
       if (error.message.includes('current password') || error.message.includes('incorrect') || error.response?.status === 401) {
-        AlertService.error("Incorrect Current Password", "The current password you entered is incorrect. Please try again.");
+        AlertService.error("settings.alerts.incorrectCurrentPassword", "settings.alerts.incorrectCurrentPasswordDesc");
       } else if (error.message.includes('same password') || error.message.includes('identical')) {
-        AlertService.warning("Same Password", "Your new password must be different from your current password.");
+        AlertService.warning("settings.alerts.samePassword", "settings.alerts.samePasswordDesc");
       } else {
-        AlertService.error("Password Update Failed", error.response?.data?.error || error.response?.data?.message || error.message || 'Failed to update password. Please try again.');
+        AlertService.error("settings.alerts.passwordUpdateFailed", error.response?.data?.error || error.response?.data?.message || error.message || 'settings.alerts.passwordUpdateFailedDesc');
       }
     } finally {
       setUpdatingPassword(false)
@@ -439,9 +441,9 @@ export default function Settings() {
             {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 mb-2">
-              Profile Settings
+              {t('settings.title')}
             </h1>
-            <p className="text-zinc-400">Manage your account and preferences</p>
+            <p className="text-zinc-400">{t('settings.subtitle')}</p>
           </div>          {/* Message */}
           {message.text && (
             <Card className={`mb-6 border ${
@@ -468,8 +470,8 @@ export default function Settings() {
             {/* Profile Overview */}
             <Card className="bg-zinc-900/50 border-zinc-700">
               <CardHeader>
-                <CardTitle className="text-blue-400">Profile Overview</CardTitle>
-                <CardDescription>Your current level and achievements</CardDescription>
+                <CardTitle className="text-blue-400">{t('settings.profileOverview.title')}</CardTitle>
+                <CardDescription>{t('settings.profileOverview.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-4">
@@ -502,13 +504,13 @@ export default function Settings() {
             {/* Edit Profile */}
             <Card className="bg-zinc-900/50 border-zinc-700">
               <CardHeader>
-                <CardTitle className="text-purple-400">Edit Profile</CardTitle>
-                <CardDescription>Update your personal information</CardDescription>
+                <CardTitle className="text-purple-400">{t('settings.editProfile.title')}</CardTitle>
+                <CardDescription>{t('settings.editProfile.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Avatar Upload */}
                 <div className="space-y-2">
-                  <Label className="text-white">Profile Picture</Label>
+                  <Label className="text-white">{t('settings.editProfile.profilePicture')}</Label>
                   <div className="flex items-center space-x-4">
                     <Avatar className="w-20 h-20">
                       <AvatarImage 
@@ -543,7 +545,7 @@ export default function Settings() {
 
                 {/* Username */}
                 <div className="space-y-2">
-                  <Label htmlFor="username" className="text-white">Username</Label>
+                  <Label htmlFor="username" className="text-white">{t('settings.editProfile.username')}</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-zinc-400" />
                     <Input
@@ -551,14 +553,14 @@ export default function Settings() {
                       value={profile.username || ''}
                       onChange={(e) => handleInputChange('username', e.target.value)}
                       className="pl-10 bg-zinc-800 border-zinc-600 text-white"
-                      placeholder="Enter your username"
+                      placeholder={t('settings.placeholders.enterUsername')}
                     />
                   </div>
                 </div>
 
                 {/* Email Display with Change Button */}
                 <div className="space-y-2">
-                  <Label className="text-white">Email Address</Label>
+                  <Label className="text-white">{t('settings.editProfile.emailAddress')}</Label>
                   <div className="flex items-center space-x-3">
                     <div className="flex-1 relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-400" />
@@ -583,13 +585,13 @@ export default function Settings() {
                       onClick={() => setShowEmailForm(!showEmailForm)}
                       className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
                     >
-                      Change Email
+                      {t('settings.editProfile.changeEmail')}
                     </Button>
                   </div>
                   {profile.isVerified === false && (
                     <p className="text-sm text-yellow-400 flex items-center space-x-1">
                       <AlertCircle className="h-4 w-4" />
-                      <span>Email verification pending</span>
+                      <span>{t('settings.emailChange.emailVerificationPending')}</span>
                     </p>
                   )}
                   
@@ -600,9 +602,9 @@ export default function Settings() {
                         {emailVerificationSent ? (
                           <div className="text-center py-4">
                             <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-white mb-2">Verification Email Sent!</h3>
+                            <h3 className="text-lg font-semibold text-white mb-2">{t('settings.emailChange.verificationEmailSent')}</h3>
                             <p className="text-zinc-300 mb-4">
-                              We've sent a verification link to your new email address. Please check your inbox and click the link to complete the email change.
+                              {t('settings.emailChange.checkInbox')}
                             </p>
                             <Button
                               variant="outline"
@@ -613,44 +615,44 @@ export default function Settings() {
                               }}
                               className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
                             >
-                              Close
+                              {t('settings.buttons.close')}
                             </Button>
                           </div>
                         ) : (
                           <>
                             <div className="space-y-2">
-                              <Label htmlFor="newEmail" className="text-white">New Email</Label>
+                              <Label htmlFor="newEmail" className="text-white">{t('settings.emailChange.newEmail')}</Label>
                               <Input
                                 id="newEmail"
                                 type="email"
                                 value={emailForm.newEmail}
                                 onChange={(e) => setEmailForm(prev => ({ ...prev, newEmail: e.target.value }))}
                                 className="bg-zinc-700 border-zinc-600 text-white"
-                                placeholder="Enter new email"
+                                placeholder={t('settings.placeholders.enterNewEmail')}
                               />
                             </div>
                             
                             <div className="space-y-2">
-                              <Label htmlFor="confirmEmail" className="text-white">Confirm New Email</Label>
+                              <Label htmlFor="confirmEmail" className="text-white">{t('settings.emailChange.confirmEmail')}</Label>
                               <Input
                                 id="confirmEmail"
                                 type="email"
                                 value={emailForm.confirmEmail}
                                 onChange={(e) => setEmailForm(prev => ({ ...prev, confirmEmail: e.target.value }))}
                                 className="bg-zinc-700 border-zinc-600 text-white"
-                                placeholder="Confirm new email"
+                                placeholder={t('settings.placeholders.confirmNewEmail')}
                               />
                             </div>
                             
                             <div className="space-y-2">
-                              <Label htmlFor="emailPassword" className="text-white">Current Password</Label>
+                              <Label htmlFor="emailPassword" className="text-white">{t('settings.emailChange.currentPassword')}</Label>
                               <Input
                                 id="emailPassword"
                                 type="password"
                                 value={emailForm.currentPassword}
                                 onChange={(e) => setEmailForm(prev => ({ ...prev, currentPassword: e.target.value }))}
                                 className="bg-zinc-700 border-zinc-600 text-white"
-                                placeholder="Enter current password"
+                                placeholder={t('settings.placeholders.enterCurrentPassword')}
                               />
                             </div>
                             
@@ -663,10 +665,10 @@ export default function Settings() {
                                 {updatingEmail ? (
                                   <>
                                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                    Sending...
+                                    {t('settings.buttons.saving')}
                                   </>
                                 ) : (
-                                  'Send Verification Email'
+                                  t('settings.emailChange.updateEmail')
                                 )}
                               </Button>
                               <Button
@@ -676,7 +678,7 @@ export default function Settings() {
                                   setEmailForm({ newEmail: '', confirmEmail: '', currentPassword: '' })
                                 }}
                               >
-                                Cancel
+                                {t('settings.emailChange.cancel')}
                               </Button>
                             </div>
                           </>
@@ -686,9 +688,9 @@ export default function Settings() {
                   )}
                 </div>
 
-                {/* Country */}
+                {/* Country
                 <div className="space-y-2">
-                  <Label htmlFor="country" className="text-white">Country</Label>
+                  <Label htmlFor="country" className="text-white">{t('settings.editProfile.country')}</Label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-zinc-400" />
                     <select
@@ -697,17 +699,17 @@ export default function Settings() {
                       onChange={(e) => handleInputChange('country', e.target.value)}
                       className="w-full pl-10 pr-4 py-2 bg-zinc-800 border border-zinc-600 rounded-md text-white focus:border-purple-500 focus:outline-none"
                     >
-                      <option value="">Select your country</option>
+                      <option value="">{t('settings.editProfile.selectCountry')}</option>
                       {countries.map(country => (
                         <option key={country} value={country}>{country}</option>
                       ))}
                     </select>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Password Change Section */}
                 <div className="space-y-2">
-                  <Label className="text-white">Password</Label>
+                  <Label className="text-white">{t('settings.editProfile.password')}</Label>
                   <div className="flex items-center space-x-3">
                     <div className="flex-1">
                       <Input
@@ -721,7 +723,7 @@ export default function Settings() {
                       onClick={() => setShowPasswordForm(!showPasswordForm)}
                       className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
                     >
-                      Change Password
+                      {t('settings.editProfile.changePassword')}
                     </Button>
                   </div>
                   
@@ -730,7 +732,7 @@ export default function Settings() {
                     <Card className="bg-zinc-800/50 border-zinc-600 mt-4">
                       <CardContent className="pt-6 space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="currentPassword" className="text-white">Current Password</Label>
+                          <Label htmlFor="currentPassword" className="text-white">{t('settings.passwordChange.currentPassword')}</Label>
                           <div className="relative">
                             <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-400" />
                             <Input
@@ -739,7 +741,7 @@ export default function Settings() {
                               value={passwordForm.currentPassword}
                               onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
                               className="pl-10 pr-10 bg-zinc-700 border-zinc-600 text-white"
-                              placeholder="Enter current password"
+                              placeholder={t('settings.placeholders.enterCurrentPassword')}
                             />
                             <button
                               type="button"
@@ -752,7 +754,7 @@ export default function Settings() {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="newPassword" className="text-white">New Password</Label>
+                          <Label htmlFor="newPassword" className="text-white">{t('settings.passwordChange.newPassword')}</Label>
                           <div className="relative">
                             <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-400" />
                             <Input
@@ -761,7 +763,7 @@ export default function Settings() {
                               value={passwordForm.newPassword}
                               onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
                               className="pl-10 pr-10 bg-zinc-700 border-zinc-600 text-white focus:border-purple-500"
-                              placeholder="Enter new password"
+                              placeholder={t('settings.placeholders.enterNewPassword')}
                               autoComplete="new-password"
                             />
                             <button
@@ -773,12 +775,12 @@ export default function Settings() {
                             </button>
                           </div>
                           {passwordForm.newPassword && passwordForm.newPassword.length < 6 && (
-                            <p className="text-red-400 text-sm">Password must be at least 6 characters</p>
+                            <p className="text-red-400 text-sm">{t('settings.passwordChange.passwordMinLength')}</p>
                           )}
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="confirmNewPassword" className="text-white">Confirm New Password</Label>
+                          <Label htmlFor="confirmNewPassword" className="text-white">{t('settings.passwordChange.confirmNewPassword')}</Label>
                           <div className="relative">
                             <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-400" />
                             <Input
@@ -787,7 +789,7 @@ export default function Settings() {
                               value={passwordForm.confirmPassword}
                               onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
                               className="pl-10 pr-10 bg-zinc-700 border-zinc-600 text-white focus:border-purple-500"
-                              placeholder="Confirm new password"
+                              placeholder={t('settings.placeholders.confirmNewPassword')}
                               autoComplete="new-password"
                             />
                             <button
@@ -803,12 +805,12 @@ export default function Settings() {
                               {passwordForm.newPassword === passwordForm.confirmPassword ? (
                                 <p className="text-green-400 text-sm flex items-center gap-1">
                                   <CheckCircle className="h-3 w-3" />
-                                  Passwords match
+                                  {t('settings.passwordChange.passwordsMatch')}
                                 </p>
                               ) : (
                                 <p className="text-red-400 text-sm flex items-center gap-1">
                                   <AlertCircle className="h-3 w-3" />
-                                  Passwords do not match
+                                  {t('settings.passwordChange.passwordsDoNotMatch')}
                                 </p>
                               )}
                             </>
@@ -832,10 +834,10 @@ export default function Settings() {
                             {updatingPassword ? (
                               <>
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                Updating...
+                                {t('settings.buttons.updating')}
                               </>
                             ) : (
-                              'Update Password'
+                              t('settings.passwordChange.updatePassword')
                             )}
                           </Button>
                           <Button
@@ -846,7 +848,7 @@ export default function Settings() {
                               setShowPasswords({ current: false, new: false, confirm: false })
                             }}
                           >
-                            Cancel
+                            {t('settings.passwordChange.cancel')}
                           </Button>
                         </div>
                       </CardContent>
@@ -863,12 +865,12 @@ export default function Settings() {
                   {saving ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Saving Profile...
+                      {t('settings.buttons.saving')}...
                     </>
                   ) : (
                     <>
                       <Save className="h-4 w-4 mr-2" />
-                      Save Profile Changes
+                      {t('settings.buttons.saveProfile')}
                     </>
                   )}
                 </Button>
