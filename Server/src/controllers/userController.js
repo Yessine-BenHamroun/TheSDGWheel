@@ -5,8 +5,6 @@ const Challenge = require('../models/Challenge');
 const ProofLog = require('../models/ProofLog');
 const EmailChangeRequest = require('../models/EmailChangeRequest');
 const ActivityLog = require('../models/ActivityLog');
-const Notification = require('../models/Notification');
-const socketService = require('../services/socketService');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
@@ -751,22 +749,6 @@ const updateUserRole = async (req, res, next) => {
       action: `User role changed`,
       details: `Changed role for user ${user.email} to ${role}`
     });
-
-    // Create notification for user about role change
-    const roleChangeNotification = await Notification.createNotification(
-      user._id,
-      'SYSTEM_ANNOUNCEMENT',
-      '👤 Account Role Updated',
-      `Your account role has been updated to ${role === 'admin' ? 'Administrator' : 'User'} by an administrator.`,
-      {
-        newRole: role,
-        changedBy: req.user.userId
-      },
-      'HIGH'
-    );
-
-    // Send real-time notification
-    await socketService.sendNotificationToUser(user._id, roleChangeNotification);
 
     console.log('✅ [UPDATE USER ROLE] Role updated:', {
       userId,

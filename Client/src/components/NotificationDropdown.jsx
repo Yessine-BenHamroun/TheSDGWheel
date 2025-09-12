@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Check, CheckCheck, Trash2, X } from 'lucide-react';
 import { useNotifications } from '../contexts/NotificationContext';
-import { useTranslation } from 'react-i18next';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import {
@@ -12,9 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { ScrollArea } from './ui/scroll-area';
 
 const NotificationDropdown = () => {
-  const { t } = useTranslation();
   const {
     notifications,
     unreadCount,
@@ -27,16 +26,13 @@ const NotificationDropdown = () => {
   } = useNotifications();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [hasLoaded, setHasLoaded] = useState(false);
 
-  // Load notifications when dropdown opens for the first time
+  // Load notifications when dropdown opens
   useEffect(() => {
-    if (isOpen && !hasLoaded && !isLoading) {
-      loadNotifications().finally(() => {
-        setHasLoaded(true);
-      });
+    if (isOpen && notifications.length === 0) {
+      loadNotifications();
     }
-  }, [isOpen, hasLoaded, isLoading, loadNotifications]);
+  }, [isOpen, notifications.length, loadNotifications]);
 
   const handleNotificationClick = async (notification) => {
     if (!notification.isRead) {
@@ -67,8 +63,6 @@ const NotificationDropdown = () => {
         return '⬆️';
       case 'SYSTEM_ANNOUNCEMENT':
         return '📢';
-      case 'POST_VOTED':
-        return '👍';
       default:
         return '📬';
     }
@@ -89,8 +83,6 @@ const NotificationDropdown = () => {
         return 'border-l-red-500';
       case 'SYSTEM_ANNOUNCEMENT':
         return 'border-l-blue-500';
-      case 'POST_VOTED':
-        return 'border-l-purple-500';
       default:
         return 'border-l-gray-500';
     }
@@ -102,16 +94,16 @@ const NotificationDropdown = () => {
     const diffInSeconds = Math.floor((now - notificationDate) / 1000);
 
     if (diffInSeconds < 60) {
-      return t('notifications.timeAgo.justNow');
+      return 'Just now';
     } else if (diffInSeconds < 3600) {
       const minutes = Math.floor(diffInSeconds / 60);
-      return t('notifications.timeAgo.minutesAgo', { count: minutes });
+      return `${minutes}m ago`;
     } else if (diffInSeconds < 86400) {
       const hours = Math.floor(diffInSeconds / 3600);
-      return t('notifications.timeAgo.hoursAgo', { count: hours });
+      return `${hours}h ago`;
     } else {
       const days = Math.floor(diffInSeconds / 86400);
-      return t('notifications.timeAgo.daysAgo', { count: days });
+      return `${days}d ago`;
     }
   };
 
@@ -145,13 +137,13 @@ const NotificationDropdown = () => {
       >
         <DropdownMenuHeader className="px-4 py-3 border-b border-zinc-700">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-white">{t('notifications.title')}</h3>
+            <h3 className="font-semibold text-white">Notifications</h3>
             <div className="flex items-center gap-2">
-              {/* {!isConnected && (
-                // <Badge variant="outline" className="text-xs border-red-500 text-red-400">
-                //   {t('notifications.offline')}
-                // </Badge>
-              )} */}
+              {!isConnected && (
+                <Badge variant="outline" className="text-xs border-red-500 text-red-400">
+                  Offline
+                </Badge>
+              )}
               {unreadCount > 0 && (
                 <Button
                   variant="ghost"
@@ -160,35 +152,35 @@ const NotificationDropdown = () => {
                   className="h-6 px-2 text-xs text-zinc-400 hover:text-white"
                 >
                   <CheckCheck className="h-3 w-3 mr-1" />
-                  {t('notifications.markAllRead')}
+                  Mark all read
                 </Button>
               )}
             </div>
           </div>
         </DropdownMenuHeader>
 
-        <div className="max-h-80 overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
+        <ScrollArea className="max-h-96">
           {isLoading ? (
             <div className="p-4 text-center text-zinc-400">
-              {t('notifications.loading')}
+              Loading notifications...
             </div>
           ) : notifications.length === 0 ? (
             <div className="p-4 text-center text-zinc-400">
               <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p>{t('notifications.noNotifications')}</p>
+              <p>No notifications yet</p>
             </div>
           ) : (
-            <div className="py-1">
-              {notifications.slice(0, 20).map((notification) => (
-                <div
+            <div className="py-2">
+              {notifications.slice(0, 10).map((notification) => (
+                <DropdownMenuItem
                   key={notification._id}
-                  className={`px-4 py-3 cursor-pointer border-l-4 hover:bg-zinc-800/30 ${getNotificationColor(
+                  className={`px-4 py-3 cursor-pointer border-l-4 ${getNotificationColor(
                     notification.type,
                     notification.priority
                   )} ${
                     !notification.isRead
-                      ? 'bg-zinc-800/50'
-                      : ''
+                      ? 'bg-zinc-800/50 hover:bg-zinc-800'
+                      : 'hover:bg-zinc-800/30'
                   }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
@@ -237,17 +229,17 @@ const NotificationDropdown = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </DropdownMenuItem>
               ))}
               
-              {notifications.length > 20 && (
-                <div className="border-t border-zinc-700 mx-4" />
+              {notifications.length > 10 && (
+                <DropdownMenuSeparator className="border-zinc-700" />
               )}
             </div>
           )}
-        </div>
+        </ScrollArea>
 
-        {/* {notifications.length > 0 && (
+        {notifications.length > 0 && (
           <>
             <DropdownMenuSeparator className="border-zinc-700" />
             <div className="p-2">
@@ -265,7 +257,7 @@ const NotificationDropdown = () => {
               </Button>
             </div>
           </>
-        )} */}
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

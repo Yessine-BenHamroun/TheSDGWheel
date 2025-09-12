@@ -1,8 +1,6 @@
 const Badge = require('../models/Badge');
 const UserBadge = require('../models/UserBadge');
 const ODD = require('../models/ODD');
-const Notification = require('../models/Notification');
-const socketService = require('../services/socketService');
 
 const getAllBadges = async (req, res, next) => {
   try {
@@ -87,33 +85,12 @@ const awardBadge = async (req, res, next) => {
   try {
     const { badgeId, userId } = req.body;
 
-    const badge = await Badge.findById(badgeId)
-      .populate('associatedODD', 'name icon color');
+    const badge = await Badge.findById(badgeId);
     if (!badge) {
       return res.status(404).json({ error: 'Badge not found' });
     }
 
     await badge.awardToUser(userId);
-
-    // Create notification for user about badge award
-    const badgeNotification = await Notification.createNotification(
-      userId,
-      'BADGE_EARNED',
-      '🏆 Badge Earned!',
-      `Congratulations! You've earned the "${badge.name}" badge!`,
-      {
-        badgeId: badge._id,
-        badgeName: badge.name,
-        badgeIcon: badge.icon,
-        associatedODD: badge.associatedODD?.name,
-        requiredPoints: badge.requiredPoints
-      },
-      'HIGH'
-    );
-
-    // Send real-time notification
-    await socketService.sendNotificationToUser(userId, badgeNotification);
-
     res.json({ message: 'Badge awarded successfully' });
   } catch (error) {
     if (error.message === 'User already has this badge') {

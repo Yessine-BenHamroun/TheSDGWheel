@@ -1,0 +1,30 @@
+{
+  "name": "sdg-wheel-app",
+  "version": "1.0.0",
+  "description": "The SDG Wheel - A gamified web application for SDG awareness",
+  "main": "Server/src/server.js",
+  "scripts": {
+    "start": "./start.sh",
+    "build": "cd Client && npm run build",
+    "install-deps": "cd Server; npm install; cd ../Client; npm install",
+    "dev": "concurrently \"cd Server; npm run dev\" \"cd Client; npm run dev\"",
+    "server": "cd Server; npm run dev",
+    "client": "cd Client; npm run dev"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "sdg",
+    "sustainability",
+    "gamification",
+    "education",
+    "react",
+    "node"
+  ],
+  "author": "Yessine Ben Hamroun",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

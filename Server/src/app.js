@@ -53,15 +53,25 @@ app.use((req, res, next) => {
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Serve static files from client build (for production)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../public')));
+}
+
 // API routes
 app.use('/api', routes);
 
 // 404 handler
 app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: 'The requested resource was not found'
-  });
+  // In production, serve React app for client-side routing
+  if (process.env.NODE_ENV === 'production' && !req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  } else {
+    res.status(404).json({
+      error: 'Not Found',
+      message: 'The requested resource was not found'
+    });
+  }
 });
 
 // Error handling middleware

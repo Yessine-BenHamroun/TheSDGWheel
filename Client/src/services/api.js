@@ -536,16 +536,9 @@ class ApiService {
   }
 
   // Activity Log endpoints
-  async getActivityLogs(page = 1, limit = 15, search = "", type = "all") {
-    const params = new URLSearchParams({ 
-      page: page.toString(), 
-      limit: limit.toString() 
-    });
-    
-    if (search) params.append('search', search);
-    if (type && type !== 'all') params.append('type', type);
-    
-    return this.request(`/activity-logs?${params.toString()}`);
+  async getActivityLogs(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return this.request(`/activity-logs${query ? '?' + query : ''}`);
   }
 
   async getMyActivityLogs(params = {}) {
@@ -589,8 +582,8 @@ class ApiService {
   }
 
   // Community Feed Methods
-  async getCommunityPosts(page = 1, limit = 10) {
-    return this.request(`/community/posts?page=${page}&limit=${limit}`);
+  async getCommunityPosts() {
+    return this.request('/community/posts');
   }
 
   async getUserVotes() {
