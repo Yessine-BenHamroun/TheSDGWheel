@@ -1,5 +1,4 @@
-[providers]
-nodejs = true
+providers = ["nodejs"]
 
 [variables]
 NODE_ENV = "production"
