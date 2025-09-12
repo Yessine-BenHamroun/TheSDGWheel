@@ -8,26 +8,33 @@ echo "🚀 Starting SDG Wheel deployment..."
 # Set default port if not provided
 export PORT=${PORT:-3001}
 
-# Check if we're in development or production
-if [ "$NODE_ENV" = "production" ]; then
+# Always treat Railway as production
+if [ "$RAILWAY_ENVIRONMENT" ] || [ "$NODE_ENV" = "production" ]; then
     echo "📦 Production build starting..."
     
     # Install server dependencies
     echo "Installing server dependencies..."
     cd Server
-    npm ci --only=production
+    npm install --omit=dev
     
     # Install client dependencies and build
     echo "Installing client dependencies and building..."
     cd ../Client
-    npm ci
+    npm install
+    
+    # Build the client
+    echo "Building client application..."
     npm run build
     
-    # Copy built client files to server public directory (if needed)
+    # Copy built client files to server public directory
     if [ -d "dist" ]; then
         echo "Copying built client files..."
         mkdir -p ../Server/public
         cp -r dist/* ../Server/public/
+    elif [ -d "build" ]; then
+        echo "Copying built client files..."
+        mkdir -p ../Server/public
+        cp -r build/* ../Server/public/
     fi
     
     # Start the server (client will be served as static files)
@@ -47,26 +54,18 @@ else
     cd ../Client
     npm install
     
-    # In Railway, even in dev mode, we should run production-like setup
-    if [ "$RAILWAY_ENVIRONMENT" ]; then
-        echo "🚂 Railway environment detected, running production setup..."
-        npm run build
-        cd ../Server
-        npm start
-    else
-        echo "🎯 Starting development servers..."
-        
-        # Start server in background
-        cd ../Server
-        npm run dev &
-        SERVER_PID=$!
-        
-        # Start client
-        cd ../Client
-        npm run dev &
-        CLIENT_PID=$!
-        
-        # Wait for both processes
-        wait $SERVER_PID $CLIENT_PID
-    fi
+    echo "🎯 Starting development servers..."
+    
+    # Start server in background
+    cd ../Server
+    npm run dev &
+    SERVER_PID=$!
+    
+    # Start client
+    cd ../Client
+    npm run dev &
+    CLIENT_PID=$!
+    
+    # Wait for both processes
+    wait $SERVER_PID $CLIENT_PID
 fi

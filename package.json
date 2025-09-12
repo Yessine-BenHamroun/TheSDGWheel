@@ -5,11 +5,11 @@
   "main": "Server/src/server.js",
   "scripts": {
     "start": "./start.sh",
-    "build": "cd Client && npm run build",
-    "install-deps": "cd Server; npm install; cd ../Client; npm install",
-    "dev": "concurrently \"cd Server; npm run dev\" \"cd Client; npm run dev\"",
-    "server": "cd Server; npm run dev",
-    "client": "cd Client; npm run dev"
+    "build": "echo 'Build will be handled by start.sh'",
+    "install-deps": "cd Server && npm install && cd ../Client && npm install",
+    "dev": "concurrently \"cd Server && npm run dev\" \"cd Client && npm run dev\"",
+    "server": "cd Server && npm run dev",
+    "client": "cd Client && npm run dev"
   },
   "engines": {
     "node": ">=18.0.0"

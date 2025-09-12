@@ -11,3 +11,4 @@ restartPolicyMaxRetries = 10
 [env]
 NODE_ENV = "production"
 PORT = 3001
+NIXPACKS_BUILD_CMD = "echo 'Skipping build - handled by start script'"
