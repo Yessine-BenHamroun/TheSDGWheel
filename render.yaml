@@ -2,7 +2,7 @@ services:
   - type: web
     name: frontend
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: npm install
     startCommand: npm run dev
     rootDir: Client
 
@@ -10,5 +10,5 @@ services:
     name: backend
     env: node
     buildCommand: npm install
-    startCommand: npm run dev
+    startCommand: npm start
     rootDir: Server
