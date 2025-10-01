@@ -9,6 +9,6 @@ services:
   - type: web
     name: backend
     env: node
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: npm install --production=false
+    startCommand: node src/server.js
     rootDir: Server
