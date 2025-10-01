@@ -2,22 +2,13 @@ services:
   - type: web
     name: frontend
     env: node
-    buildCommand: npm install
+    buildCommand: npm install && npm run build
     startCommand: npm run dev
     rootDir: Client
-    plan:
-      - name: Install dependencies
-        command: npm install
-      - name: Start frontend
-        command: npm run dev
+
   - type: web
     name: backend
     env: node
     buildCommand: npm install
     startCommand: npm run dev
     rootDir: Server
-    plan:
-      - name: Install dependencies
-        command: npm install
-      - name: Start backend
-        command: npm run dev
